@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <!-- Simple type -->
+
+    <!-- List of email addresses separated by ; -->
+    <xs:simpleType name="emailAddressListType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[^@;]+@[^\.]+\.[^;]+(;[^@;]+@[^\.]+\.[^;]+)*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- <email address>@<servername> -->
+    <xs:simpleType name="preferredSmtpServerType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[^@]+@[^\.]+\.[^@]+@.+"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- empty or starttls -->
+    <xs:simpleType name="tlsModeType" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none"/>
+            <xs:enumeration value="starttls"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- 1 to 65535 -->
+    <xs:simpleType name="portType">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="65535"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- hh:mm -->
+    <xs:simpleType name="timeType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="([0-1][0-9]||2[0-4]):[0-5][0-9]"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- critical, major, minor, warning, info-->
+    <xs:simpleType name="severityType" final="restriction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="critical"/>
+            <xs:enumeration value="major"/>
+            <xs:enumeration value="minor"/>
+            <xs:enumeration value="warning"/>
+            <xs:enumeration value="info"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- 1 to 10 -->
+    <xs:simpleType name="maxRetriesType">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="10"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- 1s to 1h -->
+    <xs:simpleType name="pollingPeriodType">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="1000"/>
+            <xs:maxInclusive value="3600000"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- 0.5s to 1min -->
+    <xs:simpleType name="timeoutType">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="500"/>
+            <xs:maxInclusive value="60000"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- 1 to 5 -->
+    <xs:simpleType name="connectionLostThresholdType">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="5"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Root element -->
+
+    <xs:element name="configuration" type="configurationType"/>
+
+    <xs:complexType name="configurationType">
+        <xs:sequence>
+            <xs:element type="emailType" name="email" minOccurs="1" maxOccurs="1"/>
+            <xs:element type="alarmsType" name="alarms" minOccurs="1" maxOccurs="1"/>
+            <xs:element type="monitoringType" name="monitoring" minOccurs="1" maxOccurs="1"/>
+            <xs:element type="globalMonitoringConfigurationType" name="globalMonitoringConfiguration" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="version"/>
+    </xs:complexType>
+
+    <!-- Email element and children -->
+
+    <xs:complexType name="emailType">
+        <xs:sequence>
+            <xs:element type="smtpServersType" name="smtpServers" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute type="emailAddressListType" name="recipientList"/>
+    </xs:complexType>
+
+    <xs:complexType name="smtpServersType">
+        <xs:sequence>
+            <xs:element type="smtpServerType" name="smtpServer" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute type="preferredSmtpServerType" name="preferredSmtpServer"/>
+    </xs:complexType>
+
+    <xs:complexType name="smtpServerType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="name" use="required"/>
+                <xs:attribute type="tlsModeType" name="tlsMode"/>
+                <xs:attribute type="portType" name="port"/>
+                <xs:attribute type="xs:string" name="user" use="required"/>
+                <xs:attribute type="xs:string" name="login"/>
+                <xs:attribute type="xs:string" name="password"/>
+                <xs:attribute type="xs:integer" name="connectionTimeout"/>
+                <xs:attribute type="xs:integer" name="timeout"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <!-- Alarms element and children -->
+
+    <xs:complexType name="alarmsType">
+        <xs:sequence>
+            <xs:element type="audibleType" name="audible" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="alarmType" name="alarm" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="audibleType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:boolean" name="audibleEnabled"/>
+                <xs:attribute type="timeType" name="muteStartTime"/>
+                <xs:attribute type="timeType" name="muteEndTime"/>
+                <xs:attribute type="xs:anyURI" name="critical"/>
+                <xs:attribute type="xs:anyURI" name="major"/>
+                <xs:attribute type="xs:anyURI" name="minor"/>
+                <xs:attribute type="xs:anyURI" name="warning"/>
+                <xs:attribute type="xs:anyURI" name="info"/>
+                <xs:attribute type="xs:anyURI" name="clear"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="alarmType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="id" use="required"/>
+                <xs:attribute type="xs:boolean" name="isFiltered"/>
+                <xs:attribute type="severityType" name="newSeverity"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <!-- Monitoring element and children -->
+
+    <xs:complexType name="monitoringType">
+        <xs:sequence>
+            <xs:element type="networkInterfacesType" name="networkInterfaces" minOccurs="1" maxOccurs="1"/>
+            <xs:element type="defaultsType" name="defaults" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="networkType" name="wan" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="networkType" name="lan" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="networkInterfacesType">
+        <xs:sequence>
+            <xs:element type="networkInterfaceType" name="networkInterface" minOccurs="1" maxOccurs="2" />
+        </xs:sequence>
+        <xs:attribute type="xs:boolean" name="alertIfSecondaryIsDown"/>
+    </xs:complexType>
+
+    <xs:complexType name="networkInterfaceType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="name" use="required"/>
+                <xs:attribute type="xs:integer" name="priority" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="defaultsType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="maxRetriesType" name="maxRetries"/>
+                <xs:attribute type="pollingPeriodType" name="pollingPeriod"/>
+                <xs:attribute type="timeoutType" name="timeout"/>
+                <xs:attribute type="connectionLostThresholdType" name="connectionLostThreshold"/>
+                <xs:attribute type="xs:boolean" name="ipv6"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="networkType">
+        <xs:sequence>
+            <xs:element type="serverType" name="preferredServer"  minOccurs="1" maxOccurs="1"/>
+            <xs:element type="serverType" name="backupServer"  minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute type="xs:boolean" name="useProxy"/>
+    </xs:complexType>
+
+    <xs:complexType name="serverType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="hostname" use="required"/>
+                <xs:attribute type="maxRetriesType" name="maxRetries"/>
+                <xs:attribute type="pollingPeriodType" name="pollingPeriod"/>
+                <xs:attribute type="timeoutType" name="timeout"/>
+                <xs:attribute type="connectionLostThresholdType" name="connectionLostThreshold"/>
+                <xs:attribute type="xs:boolean" name="ipv6"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <!-- Global Monitoring element and children -->
+
+    <xs:complexType name="globalMonitoringConfigurationType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="pollingPeriodType" name="pollingPeriod"/>
+                <xs:attribute type="xs:integer" name="meanTimeBetweenTwoConnectionsLostThreshold1"/>
+                <xs:attribute type="xs:integer" name="meanTimeBetweenTwoConnectionsLostThreshold2"/>
+                <xs:attribute type="xs:integer" name="meanTimeBetweenTwoConnectionsLostThreshold3"/>
+                <xs:attribute type="xs:integer" name="connectionsLostForgetTime"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+</xs:schema>

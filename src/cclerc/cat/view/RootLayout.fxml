@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.input.KeyCodeCombination?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cclerc.cat.view.RootLayout">
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="%root.menu.file">
+            <items>
+                  <MenuItem mnemonicParsing="false" onAction="#saveMenuItem" text="%root.menu.file.save">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem fx:id="saveAs" onAction="#saveAsMenuItem" text="%root.menu.file.saveAs">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+              <MenuItem mnemonicParsing="false" onAction="#closeMenuItem" text="%root.menu.file.close">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="W" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="%root.menu.edit">
+            <items>
+                  <MenuItem mnemonicParsing="false" onAction="#configureMonitoringJobs" text="%root.menu.edit.configuration">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="C" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <Menu mnemonicParsing="false" text="%root.menu.edit.preferences">
+                    <items>
+                        <CheckMenuItem fx:id="autoSaveConfigurationPreference" mnemonicParsing="false" onAction="#setAutoSaveConfiguration" text="%root.menu.edit.preferences.autoSaveConfiguration" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <CheckMenuItem fx:id="enableGeneralTooltipPreference" mnemonicParsing="false" onAction="#setEnableGeneralTooltip" text="%root.menu.edit.preferences.enableGeneralTooltip" />
+                        <CheckMenuItem fx:id="enableDetailTooltipPreference" mnemonicParsing="false" onAction="#setEnableDetailTooltip" text="%root.menu.edit.preferences.enableDetailTooltip" />
+                    </items>
+                  </Menu>
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="%root.menu.help">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#about" text="%root.menu.help.about">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="A" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+</BorderPane>

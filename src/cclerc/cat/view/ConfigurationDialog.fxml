@@ -1,0 +1,661 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="860.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cclerc.cat.view.ConfigurationDialog">
+    <children>
+      <TabPane fx:id="configurationTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        <tabs>
+          <Tab text="%configuration.monitoringJobs.servers">
+            <content>
+              <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
+                     <children>
+                        <TabPane fx:id="monitoringJobsTabPane" layoutX="20.0" layoutY="20.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="tab-pane-with-border" tabMaxWidth="100.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+                           <tabs>
+                            <Tab closable="false" text="%configuration.monitoringJobs.networkInterfaceConfiguration">
+                              <content>
+                                <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
+                                       <children>
+                                          <VBox layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                                             <children>
+                                                <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0" VBox.vgrow="ALWAYS">
+                                                   <children>
+                                                      <TableView fx:id="interfacesTable" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" HBox.hgrow="NEVER">
+                                                        <columns>
+                                                          <TableColumn fx:id="interfacePriorityColumn" maxWidth="75.0" minWidth="20.0" prefWidth="50.0" text="%configuration.monitoringJobs.networkInterfaceConfiguration.priority" />
+                                                          <TableColumn fx:id="interfaceNameColumn" maxWidth="1.7976931348623157E308" text="%configuration.monitoringJobs.networkInterfaceConfiguration.name" />
+                                                            <TableColumn fx:id="interfaceDisplayedNameColumn" maxWidth="1.7976931348623157E308" minWidth="60.0" prefWidth="220.0" text="%configuration.monitoringJobs.networkInterfaceConfiguration.displayedName" />
+                                                            <TableColumn fx:id="interfaceIpv4Column" maxWidth="1.7976931348623157E308" minWidth="60.0" prefWidth="100.0" text="%configuration.monitoringJobs.networkInterfaceConfiguration.ipv4" />
+                                                            <TableColumn fx:id="interfaceIpv6Column" maxWidth="1.7976931348623157E308" minWidth="60.0" prefWidth="250.0" text="%configuration.monitoringJobs.networkInterfaceConfiguration.ipv6" />
+                                                        </columns>
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </TableView>
+                                                      <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" HBox.hgrow="NEVER">
+                                                         <children>
+                                                            <Button fx:id="addInterfaceButton" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#addInterfaces" prefWidth="80.0" text="%configuration.monitoringJobs.networkInterfaceConfiguration.add">
+                                                               <VBox.margin>
+                                                                  <Insets />
+                                                               </VBox.margin>
+                                                            </Button>
+                                                            <Button fx:id="deleteInterfaceButton" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#deleteInterfaces" prefWidth="80.0" text="%configuration.monitoringJobs.networkInterfaceConfiguration.remove">
+                                                               <VBox.margin>
+                                                                  <Insets bottom="5.0" />
+                                                               </VBox.margin>
+                                                            </Button>
+                                                            <Button fx:id="upInterfaceButton" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#upInterfaces" prefWidth="80.0" text="%configuration.monitoringJobs.networkInterfaceConfiguration.up">
+                                                               <VBox.margin>
+                                                                  <Insets top="5.0" />
+                                                               </VBox.margin>
+                                                            </Button>
+                                                            <Button fx:id="downInterfaceButton" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#downInterfaces" prefWidth="80.0" text="%configuration.monitoringJobs.networkInterfaceConfigurations.down">
+                                                               <VBox.margin>
+                                                                  <Insets />
+                                                               </VBox.margin>
+                                                            </Button>
+                                                         </children>
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                         <opaqueInsets>
+                                                            <Insets />
+                                                         </opaqueInsets>
+                                                      </VBox>
+                                                   </children>
+                                                </HBox>
+                                                <CheckBox fx:id="alertIfSecondaryIsDownCheckBox" mnemonicParsing="false" text="%configuration.monitoringJobs.networkInterfaceConfiguration.alertIfSecondaryIsDown">
+                                                   <VBox.margin>
+                                                      <Insets left="10.0" />
+                                                   </VBox.margin>
+                                                </CheckBox>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </Tab>
+                              <Tab closable="false" text="%configuration.monitoringJobs.networkConfiguration.wan">
+                                 <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                       <children>
+                                          <CheckBox fx:id="wanUseProxy" mnemonicParsing="false" text="%configuration.monitoringJobs.networkConfiguration.useProxyLabel">
+                                             <VBox.margin>
+                                                <Insets top="20.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
+                                          <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                             <center>
+                                                <GridPane alignment="CENTER" hgap="10.0" maxHeight="-Infinity" styleClass="attributesListGrid" BorderPane.alignment="TOP_CENTER">
+                                                   <columnConstraints>
+                                                      <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                      <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                   </columnConstraints>
+                                                   <rowConstraints>
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                   </rowConstraints>
+                                                   <children>
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.hostnameLabel" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.timeoutLabel" GridPane.rowIndex="1" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.maxRetriesLabel" GridPane.rowIndex="2" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.pollingPeriodLabel" GridPane.rowIndex="3" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.connectionLostThresholdLabel" GridPane.rowIndex="4" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.ipv6Label" GridPane.rowIndex="5" />
+                                                      <TextField fx:id="wanPreferredHostname" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" promptText="%configuration.monitoringJobs.serverConfiguration.emptyPreferredHostnameValue" styleClass="attributeValue" GridPane.columnIndex="1" />
+                                                      <TextField fx:id="wanPreferredTimeoutTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                      <TextField fx:id="wanPreferredMaxRetriesTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                      <TextField fx:id="wanPreferredPollingPeriodTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                      <TextField fx:id="wanPreferredConnectionLostThresholdTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                      <CheckBox id="default-value" fx:id="wanPreferredIpv6CheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                   </children>
+                                                   <BorderPane.margin>
+                                                      <Insets left="50.0" right="50.0" />
+                                                   </BorderPane.margin>
+                                                   <padding>
+                                                      <Insets left="10.0" right="10.0" />
+                                                   </padding>
+                                                </GridPane>
+                                             </center>
+                                             <top>
+                                                <Label styleClass="attributeNameMain" text="%configuration.monitoringJobs.serverConfiguration.preferred.titleLabel" BorderPane.alignment="CENTER_LEFT">
+                                                   <BorderPane.margin>
+                                                      <Insets bottom="20.0" />
+                                                   </BorderPane.margin>
+                                                </Label>
+                                             </top>
+                                             <padding>
+                                                <Insets top="20.0" />
+                                             </padding>
+                                          </BorderPane>
+                                          <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                             <center>
+                                                <GridPane alignment="CENTER" hgap="10.0" maxHeight="-Infinity" styleClass="attributesListGrid" BorderPane.alignment="TOP_CENTER">
+                                                   <columnConstraints>
+                                                      <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                      <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                   </columnConstraints>
+                                                   <rowConstraints>
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                   </rowConstraints>
+                                                   <children>
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.hostnameLabel" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.timeoutLabel" GridPane.rowIndex="1" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.maxRetriesLabel" GridPane.rowIndex="2" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.pollingPeriodLabel" GridPane.rowIndex="3" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.connectionLostThresholdLabel" GridPane.rowIndex="4" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.ipv6Label" GridPane.rowIndex="5" />
+                                                      <TextField fx:id="wanBackupHostname" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" promptText="%configuration.monitoringJobs.serverConfiguration.emptyBackupHostnameValue" styleClass="attributeValue" GridPane.columnIndex="1" />
+                                                      <TextField fx:id="wanBackupTimeoutTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                      <TextField fx:id="wanBackupMaxRetriesTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                      <TextField fx:id="wanBackupPollingPeriodTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                      <TextField fx:id="wanBackupConnectionLostThresholdTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                      <CheckBox fx:id="wanBackupIpv6CheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                   </children>
+                                                   <BorderPane.margin>
+                                                      <Insets left="50.0" right="50.0" />
+                                                   </BorderPane.margin>
+                                                   <padding>
+                                                      <Insets left="10.0" right="10.0" />
+                                                   </padding>
+                                                </GridPane>
+                                             </center>
+                                             <top>
+                                                <Label styleClass="attributeNameMain" text="%configuration.monitoringJobs.serverConfiguration.backup.titleLabel" BorderPane.alignment="CENTER_LEFT">
+                                                   <BorderPane.margin>
+                                                      <Insets bottom="20.0" />
+                                                   </BorderPane.margin>
+                                                </Label>
+                                             </top>
+                                             <padding>
+                                                <Insets top="20.0" />
+                                             </padding>
+                                          </BorderPane>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </Tab>
+                              <Tab closable="false" text="%configuration.monitoringJobs.networkConfiguration.lan">
+                                 <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                       <children>
+                                          <CheckBox fx:id="lanUseProxy" mnemonicParsing="false" text="%configuration.monitoringJobs.networkConfiguration.useProxyLabel">
+                                             <VBox.margin>
+                                                <Insets top="20.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
+                                          <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                             <center>
+                                                <GridPane alignment="CENTER" hgap="10.0" maxHeight="-Infinity" styleClass="attributesListGrid" BorderPane.alignment="TOP_CENTER">
+                                                   <columnConstraints>
+                                                      <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                      <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                   </columnConstraints>
+                                                   <rowConstraints>
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                   </rowConstraints>
+                                                   <children>
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.hostnameLabel" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.timeoutLabel" GridPane.rowIndex="1" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.maxRetriesLabel" GridPane.rowIndex="2" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.pollingPeriodLabel" GridPane.rowIndex="3" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.connectionLostThresholdLabel" GridPane.rowIndex="4" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.ipv6Label" GridPane.rowIndex="5" />
+                                                      <TextField fx:id="lanPreferredHostname" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" promptText="%configuration.monitoringJobs.serverConfiguration.emptyPreferredHostnameValue" styleClass="attributeValue" GridPane.columnIndex="1" />
+                                                      <TextField fx:id="lanPreferredTimeoutTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                      <TextField fx:id="lanPreferredMaxRetriesTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                      <TextField fx:id="lanPreferredPollingPeriodTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                      <TextField fx:id="lanPreferredConnectionLostThresholdTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                      <CheckBox fx:id="lanPreferredIpv6CheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                   </children>
+                                                   <BorderPane.margin>
+                                                      <Insets left="50.0" right="50.0" />
+                                                   </BorderPane.margin>
+                                                   <padding>
+                                                      <Insets left="10.0" right="10.0" />
+                                                   </padding>
+                                                </GridPane>
+                                             </center>
+                                             <top>
+                                                <Label styleClass="attributeNameMain" text="%configuration.monitoringJobs.serverConfiguration.preferred.titleLabel" BorderPane.alignment="CENTER_LEFT">
+                                                   <BorderPane.margin>
+                                                      <Insets bottom="20.0" />
+                                                   </BorderPane.margin>
+                                                </Label>
+                                             </top>
+                                             <padding>
+                                                <Insets top="20.0" />
+                                             </padding>
+                                          </BorderPane>
+                                          <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                             <center>
+                                                <GridPane alignment="CENTER" hgap="10.0" maxHeight="-Infinity" styleClass="attributesListGrid" BorderPane.alignment="TOP_CENTER">
+                                                   <columnConstraints>
+                                                      <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                      <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                   </columnConstraints>
+                                                   <rowConstraints>
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                   </rowConstraints>
+                                                   <children>
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.hostnameLabel" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.timeoutLabel" GridPane.rowIndex="1" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.maxRetriesLabel" GridPane.rowIndex="2" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.pollingPeriodLabel" GridPane.rowIndex="3" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.connectionLostThresholdLabel" GridPane.rowIndex="4" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.ipv6Label" GridPane.rowIndex="5" />
+                                                      <TextField fx:id="lanBackupHostname" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" promptText="%configuration.monitoringJobs.serverConfiguration.emptyBackupHostnameValue" styleClass="attributeValue" GridPane.columnIndex="1" />
+                                                      <TextField fx:id="lanBackupTimeoutTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                      <TextField fx:id="lanBackupMaxRetriesTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                      <TextField fx:id="lanBackupPollingPeriodTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                      <TextField fx:id="lanBackupConnectionLostThresholdTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                      <CheckBox fx:id="lanBackupIpv6CheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                   </children>
+                                                   <BorderPane.margin>
+                                                      <Insets left="50.0" right="50.0" />
+                                                   </BorderPane.margin>
+                                                   <padding>
+                                                      <Insets left="10.0" right="10.0" />
+                                                   </padding>
+                                                </GridPane>
+                                             </center>
+                                             <top>
+                                                <Label styleClass="attributeNameMain" text="%configuration.monitoringJobs.serverConfiguration.backup.titleLabel" BorderPane.alignment="CENTER_LEFT">
+                                                   <BorderPane.margin>
+                                                      <Insets bottom="20.0" />
+                                                   </BorderPane.margin>
+                                                </Label>
+                                             </top>
+                                             <padding>
+                                                <Insets top="20.0" />
+                                             </padding>
+                                          </BorderPane>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </Tab>
+                              <Tab closable="false" text="%configuration.monitoringJobs.monitoringDefaultsConfiguration">
+                                 <content>
+                                    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
+                                       <children>
+                                          <BorderPane layoutX="20.0" layoutY="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+                                             <center>
+                                                <GridPane alignment="CENTER" hgap="10.0" maxHeight="-Infinity" styleClass="attributesListGrid" BorderPane.alignment="TOP_CENTER">
+                                                  <columnConstraints>
+                                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                    <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                  </columnConstraints>
+                                                  <rowConstraints>
+                                                    <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                  </rowConstraints>
+                                                   <children>
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.timeoutLabel" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.maxRetriesLabel" GridPane.rowIndex="1" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.pollingPeriodLabel" GridPane.rowIndex="2" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.connectionLostThresholdLabel" GridPane.rowIndex="3" />
+                                                      <Label styleClass="attributeName" text="%configuration.monitoringJobs.serverConfiguration.ipv6Label" GridPane.rowIndex="4" />
+                                                      <TextField fx:id="defaultTimeoutTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="10" styleClass="attributeValue" GridPane.columnIndex="1" />
+                                                      <TextField fx:id="defaultMaxRetriesTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="10" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                      <TextField fx:id="defaultPollingPeriodTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="10" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                      <TextField fx:id="defaultConnectionLostThresholdTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="10" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                      <CheckBox fx:id="defaultIpv6CheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                   </children>
+                                                   <BorderPane.margin>
+                                                      <Insets left="50.0" right="50.0" />
+                                                   </BorderPane.margin>
+                                                   <padding>
+                                                      <Insets left="10.0" right="10.0" />
+                                                   </padding>
+                                                </GridPane>
+                                             </center>
+                                             <top>
+                                                <Label styleClass="attributeNameMain" text="%configuration.monitoringJobs.monitoringDefaultsConfiguration.titleLabel" BorderPane.alignment="CENTER_LEFT">
+                                                   <BorderPane.margin>
+                                                      <Insets bottom="20.0" />
+                                                   </BorderPane.margin>
+                                                </Label>
+                                             </top>
+                                          </BorderPane>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </Tab>
+                           </tabs>
+                        </TabPane>
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+            <Tab text="%configuration.monitoringJobs.globalMonitoringConfiguration">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <VBox spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+                           <children>
+                              <GridPane hgap="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="80.0" styleClass="attributesListGrid">
+                                 <columnConstraints>
+                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" prefWidth="270.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="80.0" />
+                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" prefWidth="270.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="80.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints />
+                                    <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                                 <children>
+                                    <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.globalMonitoringConfiguration.meanTimeBetweenTwoConnectionsLostThreshold3" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                                       <GridPane.margin>
+                                          <Insets />
+                                       </GridPane.margin>
+                                    </Label>
+                                    <TextField fx:id="globalMeanTimeBetweenTwoConnectionsLostThreshold3TextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                    <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.globalMonitoringConfiguration.pollingPeriod" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                                    <TextField fx:id="globalPollingPeriodTextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.globalMonitoringConfiguration.connectionsLostForgetTime" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+                                    <TextField fx:id="globalMeanTimeBetweenTwoConnectionsLostThreshold1TextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                    <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.globalMonitoringConfiguration.meanTimeBetweenTwoConnectionsLostThreshold1" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                                    <TextField fx:id="globalConnectionsLostForgetTimeTextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.globalMonitoringConfiguration.meanTimeBetweenTwoConnectionsLostThreshold2" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+                                    <TextField fx:id="globalMeanTimeBetweenTwoConnectionsLostThreshold2TextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="10.0" right="10.0" />
+                                 </padding>
+                              </GridPane>
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="%configuration.monitoringJobs.audibleAlarms">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <VBox layoutX="20.0" layoutY="20.0" spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+                           <children>
+                              <TableView fx:id="alarmsTable" editable="true" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0">
+                                 <columns>
+                                    <TableColumn fx:id="alarmIdColumn" maxWidth="75.0" minWidth="20.0" prefWidth="60.0" text="%configuration.monitoringJobs.audibleAlarms.id" />
+                                    <TableColumn fx:id="alarmNameColumn" maxWidth="1.7976931348623157E308" minWidth="20.0" prefWidth="300.0" text="%configuration.monitoringJobs.audibleAlarms.name" />
+                                    <TableColumn fx:id="alarmIsFilteredColumn" maxWidth="1.7976931348623157E308" prefWidth="100.0" text="%configuration.monitoringJobs.audibleAlarms.isFiltered" />
+                                    <TableColumn fx:id="alarmDefaultSeverityColumn" maxWidth="1.7976931348623157E308" minWidth="60.0" prefWidth="180.0" text="%configuration.monitoringJobs.audibleAlarms.defaultSeverity" />
+                                    <TableColumn fx:id="alarmNewSeverityColumn" maxWidth="1.7976931348623157E308" minWidth="60.0" prefWidth="180.0" text="%configuration.monitoringJobs.audibleAlarms.newSeverity" />
+                                 </columns>
+                              </TableView>
+                              <HBox prefWidth="200.0" spacing="20.0">
+                                 <children>
+                                    <GridPane>
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" />
+                                        <ColumnConstraints hgrow="SOMETIMES" />
+                                          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
+                                          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="20.0" />
+                                          <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" />
+                                          <ColumnConstraints hgrow="SOMETIMES" />
+                                          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
+                                          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+                                          <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <CheckBox fx:id="audibleAlarmsCheckBox" mnemonicParsing="false" text="%configuration.monitoringJobs.audibleAlarms.audibleEnabled">
+                                             <GridPane.margin>
+                                                <Insets />
+                                             </GridPane.margin></CheckBox>
+                                          <Label text="%configuration.monitoringJobs.audibleAlarms.muteStartTime" GridPane.columnIndex="1">
+                                             <GridPane.margin>
+                                                <Insets left="20.0" right="10.0" />
+                                             </GridPane.margin></Label>
+                                          <Spinner fx:id="muteStartTimeHourSpinner" editable="true" maxWidth="30.0" nodeOrientation="RIGHT_TO_LEFT" prefWidth="30.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
+                                             <GridPane.margin>
+                                                <Insets />
+                                             </GridPane.margin></Spinner>
+                                          <Label text="H" GridPane.columnIndex="3" GridPane.halignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets left="2.0" right="2.0" />
+                                             </GridPane.margin></Label>
+                                          <Spinner fx:id="muteStartTimeMinuteSpinner" editable="true" maxWidth="30.0" nodeOrientation="LEFT_TO_RIGHT" prefWidth="30.0" GridPane.columnIndex="4" GridPane.halignment="LEFT" />
+                                          <Label alignment="CENTER" contentDisplay="CENTER" text="H" GridPane.columnIndex="7" GridPane.halignment="CENTER">
+                                             <GridPane.margin>
+                                                <Insets left="2.0" right="2.0" />
+                                             </GridPane.margin></Label>
+                                          <Label text="%configuration.monitoringJobs.audibleAlarms.muteEndTime" GridPane.columnIndex="5">
+                                             <GridPane.margin>
+                                                <Insets left="20.0" right="10.0" />
+                                             </GridPane.margin></Label>
+                                          <Spinner fx:id="muteEndTimeHourSpinner" editable="true" maxWidth="30.0" nodeOrientation="RIGHT_TO_LEFT" prefWidth="30.0" GridPane.columnIndex="6" GridPane.halignment="RIGHT" />
+                                          <Spinner fx:id="muteEndTimeMinuteSpinner" editable="true" maxWidth="30.0" nodeOrientation="LEFT_TO_RIGHT" prefWidth="30.0" GridPane.columnIndex="8" GridPane.halignment="LEFT" />
+                                       </children>
+                                       <HBox.margin>
+                                          <Insets left="20.0" />
+                                       </HBox.margin>
+                                    </GridPane>
+                                 </children>
+                              </HBox>
+                              <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" spacing="10.0">
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" left="20.0" right="20.0" />
+                                 </VBox.margin>
+                                 <children>
+                                    <Label text="%configuration.monitoringJobs.audibleAlarms.alarmsSoundFiles" />
+                                    <GridPane hgap="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="80.0" styleClass="attributesListGrid">
+                                       <columnConstraints>
+                                          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" prefWidth="110.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="240.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" />
+                                          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" prefWidth="110.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="240.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints />
+                                          <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.audibleAlarms.clearSoundFile" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                                             <GridPane.margin>
+                                                <Insets />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <TextField fx:id="clearSoundFileTextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+                                          <Button fx:id="clearSoundFileButton" mnemonicParsing="false" text="..." GridPane.columnIndex="5" GridPane.rowIndex="3" />
+                                          <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.audibleAlarms.infoSoundFile" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                                          <TextField fx:id="infoSoundFileTextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <Button fx:id="infoSoundFileButton" mnemonicParsing="false" text="..." GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                          <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.audibleAlarms.minorSoundFile" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+                                          <Button fx:id="warningSoundFileButton" mnemonicParsing="false" text="..." GridPane.columnIndex="5" GridPane.rowIndex="1" />
+                                          <TextField fx:id="warningSoundFileTextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                                          <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.audibleAlarms.warningSoundFile" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                                          <TextField fx:id="minorSoundFileTextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.audibleAlarms.majorSoundFile" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+                                          <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.audibleAlarms.criticalSoundFile" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+                                          <Button fx:id="minorSoundFileButton" mnemonicParsing="false" text="..." GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                          <TextField fx:id="majorSoundFileTextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+                                          <Button fx:id="majorSoundFileButton" mnemonicParsing="false" text="..." GridPane.columnIndex="5" GridPane.rowIndex="2" />
+                                          <TextField fx:id="criticalSoundFileTextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          <Button fx:id="criticalSoundFileButton" mnemonicParsing="false" text="..." GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="10.0" right="10.0" />
+                                       </padding>
+                                    </GridPane>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="%configuration.monitoringJobs.email">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <VBox layoutX="20.0" layoutY="20.0" spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+                           <children>
+                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0">
+                                 <children>
+                                    <Label text="%configuration.monitoringJobs.email.smtpServers" />
+                                    <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0" VBox.vgrow="ALWAYS">
+                                       <children>
+                                          <TableView fx:id="smtpServersTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" HBox.hgrow="ALWAYS">
+                                             <columns>
+                                                <TableColumn fx:id="smtpServerNameColumn" maxWidth="1.7976931348623157E308" minWidth="150.0" prefWidth="100.0" text="%configuration.monitoringJobs.email.smtpServers.name" />
+                                                <TableColumn fx:id="smtpServerTlsModeColumn" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="90.0" text="%configuration.monitoringJobs.email.smtpServers.tlsMode" />
+                                                <TableColumn fx:id="smtpServerPortColumn" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="60.0" text="%configuration.monitoringJobs.email.smtpServers.port" />
+                                                <TableColumn fx:id="smtpServerUserColumn" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="100.0" text="%configuration.monitoringJobs.email.smtpServers.user" />
+                                                <TableColumn fx:id="smtpServerLoginColumn" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="100.0" text="%configuration.monitoringJobs.email.smtpServers.login" />
+                                                <TableColumn fx:id="smtpServerPasswordColumn" minWidth="-1.0" prefWidth="100.0" text="%configuration.monitoringJobs.email.smtpServers.password" />
+                                                <TableColumn fx:id="smtpServerConnectionTimeoutColumn" minWidth="-1.0" prefWidth="60.0" text="%configuration.monitoringJobs.email.smtpServers.connectionTimeout" />
+                                                <TableColumn fx:id="smtpServerTimeoutColumn" minWidth="-1.0" prefWidth="60.0" text="%configuration.monitoringJobs.email.smtpServers.timeout" />
+                                             </columns>
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </TableView>
+                                          <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" HBox.hgrow="NEVER">
+                                             <children>
+                                                <Button fx:id="addSmtpServerButton" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#addSmtpServer" prefWidth="80.0" text="%configuration.monitoringJobs.email.smtpServers.add">
+                                                   <VBox.margin>
+                                                      <Insets />
+                                                   </VBox.margin>
+                                                </Button>
+                                                <Button fx:id="deleteSmtpServerButton" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#deleteSmtpServers" prefWidth="80.0" text="%configuration.monitoringJobs.email.smtpServers.remove">
+                                                   <VBox.margin>
+                                                      <Insets bottom="5.0" />
+                                                   </VBox.margin>
+                                                </Button>
+                                                <Button fx:id="editSmtpServerButton" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#editSmtpServer" prefWidth="80.0" text="%configuration.monitoringJobs.email.smtpServers.edit">
+                                                   <VBox.margin>
+                                                      <Insets top="5.0" />
+                                                   </VBox.margin>
+                                                </Button>
+                                                <Button fx:id="preferredSmtpServerButton" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#setPreferredSmtpServer" prefWidth="80.0" text="%configuration.monitoringJobs.email.smtpServers.preferred">
+                                                   <VBox.margin>
+                                                      <Insets bottom="5.0" />
+                                                   </VBox.margin>
+                                                </Button>
+                                                <Button fx:id="upSmtpServerButton" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#upSmtpServers" prefWidth="80.0" text="%configuration.monitoringJobs.email.smtpServers.up">
+                                                   <VBox.margin>
+                                                      <Insets top="5.0" />
+                                                   </VBox.margin>
+                                                </Button>
+                                                <Button fx:id="downSmtpServerButton" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#downSmtpServers" prefWidth="80.0" text="%configuration.monitoringJobs.email.smtpServers.down">
+                                                   <VBox.margin>
+                                                      <Insets />
+                                                   </VBox.margin>
+                                                </Button>
+                                             </children>
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                             <opaqueInsets>
+                                                <Insets />
+                                             </opaqueInsets>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                              <GridPane hgap="10.0" styleClass="attributesListGrid" vgap="10.0">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                                 <children>
+                                    <Label styleClass="attributeName" text="%configuration.monitoringJobs.email.recipientList" />
+                                    <TextField fx:id="recipientListTextField" styleClass="attributeValue" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets />
+                                       </GridPane.margin>
+                                    </TextField>
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </padding>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </GridPane>
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+      <HBox VBox.vgrow="NEVER">
+         <children>
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#restoreDefaultConfiguration" text="%configuration.restoreDefaults" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <AnchorPane nodeOrientation="RIGHT_TO_LEFT">
+                     <children>
+                         <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancel" text="%configuration.cancel" />
+                         <Button fx:id="saveButton" mnemonicParsing="false" onAction="#save" text="%configuration.save" />
+                     </children>
+                  </AnchorPane>
+                          <Button fx:id="closeButton" mnemonicParsing="false" onAction="#close" text="%configuration.close" />
+               </children>
+            </HBox>
+         </children>
+         <VBox.margin>
+            <Insets bottom="10.0" left="20.0" right="20.0" />
+         </VBox.margin>
+      </HBox>
+    </children>
+</VBox>

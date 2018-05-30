@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+
+    <Properties>
+        <Property name="basePath">${sys:log4j.saveDirectory}</Property>
+        <Property name="baseName">cat</Property>
+    </Properties>
+
+    <CustomLevels>
+        <CustomLevel name="FILE" intLevel="650" />
+    </CustomLevels>
+
+    <Appenders>
+
+        <RollingFile name="fileLogger" fileName="${basePath}/${baseName}.log" filePattern="${basePath}/$${date:yyyy-MM}/${baseName}-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout>
+                <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%25t] %c{1} - %msg%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy minSize="0" />
+                <SizeBasedTriggeringPolicy size="1 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout   pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%25t] %c{1} - %msg%n" />
+        </Console>
+
+    </Appenders>
+
+    <Loggers>
+        <Logger name="cclerc.cat.Cat" level="FILE" additivity="true">
+            <appender-ref ref="fileLogger" level="FILE" />
+        </Logger>
+        <Root level="debug" additivity="false">
+            <appender-ref ref="console" level="trace" />
+        </Root>
+    </Loggers>
+
+</Configuration>

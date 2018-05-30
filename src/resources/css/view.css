@@ -1,0 +1,522 @@
+// ========== COMMON ==========
+
+// GENERAL
+
+.root {
+    -fx-font-family: "Arial";
+    -fx-font-size: 12;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+:focused {
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+}
+
+// CHECK BOXES
+
+.check-box:focused {
+    -fx-background-color: transparent;
+}
+
+.check-box:selected .mark {
+    -fx-background-color:black;
+}
+
+.check-box .box {
+    -fx-border-color: black;
+}
+
+// SPINNERS
+
+.spinner:focused {
+    -fx-border-style: none;
+    -fx-border-width: 0;
+}
+
+// SLIDER
+
+.slider .track  {
+    -fx-control-inner-background: black;
+    -fx-background: black;
+}
+
+.slider:focused{
+    -fx-background-color: transparent;
+}
+
+.slider .thumb {
+    -fx-background-color: lightgrey;
+    -fx-border-color: grey;
+    -fx-border-radius: 7;
+    -fx-background-insets: 1;
+}
+
+.slider .axis  {
+    -fx-tick-label-gap: 5;
+    -fx-tick-label-font-family: "Arial";
+    -fx-tick-label-font-style: italic;
+    -fx-tick-label-font-size: 12;
+}
+
+// TAB
+
+.tab:selected .tab-label {
+    -fx-font-weight: bold;
+}
+
+.tab-pane:top {
+    -fx-background-color: transparent;
+}
+
+.tab-pane-with-border {
+    -fx-border-color: lightgrey;
+}
+
+.anchor-pane:selected {
+    -fx-background-color: white;
+}
+
+// TABLE VIEW
+
+.table-view{
+    -fx-font-family: "Arial";
+    -fx-background-color: whitesmoke;
+}
+
+.table-view .column-header {
+    -fx-font-weight: bold;
+    -fx-font-size: 12;
+}
+
+.table-view:focused {
+    -fx-background-color: transparent;
+}
+
+.table-row-cell .text{
+    -fx-fill: black;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #005797;
+}
+
+.table-row-cell:selected .text{
+    -fx-fill: white;
+}
+
+.table-row-cell:acknowledged{
+    -fx-font-style: italic;
+    -fx-background-color: lavender;
+}
+
+.table-row-cell:acknowledged:selected {
+    -fx-background-color: #005797;
+}
+
+.table-row-cell:preferredSmtpServer{
+    -fx-font-weight: bold;
+}
+
+// COMBO BOXES
+
+.combo-box .list-cell {
+    -fx-background-color: darkgrey;
+}
+.combo-box .list-cell:hover {
+    -fx-background-color: dimgrey;
+}
+.combo-box .list-cell:selected {
+    -fx-background-color: #005797;
+}
+
+// TOOLTIP
+
+.tooltip {
+    -fx-font-weight: bold;
+    -fx-font-style: italic;
+    -fx-font-size: 12;
+}
+
+// MENU
+
+.menu-item {
+    -fx-background-color: whitesmoke;
+}
+
+.menu-item:focused, .menu-item:hovered {
+    -fx-background-color: lightgrey;
+}
+.menu-item .label {
+   -fx-text-fill: black;
+}
+
+.context-menu {
+    -fx-font-family: "System";
+}
+
+.context-menu-title:disabled {
+    -fx-opacity: 1.0;
+}
+
+.context-menu-title:disabled .label {
+    -fx-font-weight: bold;
+    -fx-opacity: 1.0;
+}
+
+// TEXT FIELD
+
+.text-field {
+    -fx-background-color: whitesmoke;
+    -fx-fill: black;
+}
+
+// CHOICE BOX
+.choice-box {
+    -fx-background-color: whitesmoke;
+}
+
+// ========== SPECIFIC ==========
+
+// MAIN ZONE
+
+.mainDisplayZone {
+    -fx-background-color: whitesmoke;
+}
+
+// BUTTONS ZONE
+
+.buttonsDisplayZone {
+    -fx-border-color: lightgrey;
+    -fx-border-width: 0 0 1 0;
+}
+
+// TITLE
+
+.title {
+    -fx-font-style: italic;
+    -fx-font-weight: bold;
+    -fx-font-size: 25;
+}
+
+.header {
+    -fx-font-size: 13;
+}
+
+// ATTRIBUTE
+
+.attributeNameBig {
+    -fx-font-style: italic;
+    -fx-font-size: 18;
+}
+
+.attributeValueBig {
+    -fx-font-weight: bold;
+    -fx-font-size: 18;
+}
+
+.attributeNameMain {
+    -fx-font-style: italic;
+    -fx-font-weight: bold;
+    -fx-font-size: 14;
+}
+
+.attributeValueMain {
+    -fx-font-weight: bold;
+    -fx-font-size: 14;
+}
+
+.attributeName {
+    -fx-font-style: italic;
+}
+
+.attributeValue {
+    -fx-font-weight: bold;
+}
+
+.attributeValueScrolled {
+    -fx-font-weight: bold;
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+
+// LIST OF ATTRIBUTES
+
+.attributesListGrid {
+    -fx-background-color: white;
+    -fx-border-color: black;
+    -fx-border-width: 1 1 1 1;
+}
+
+// MESSAGE LEVELS
+// Colors not defined here, defined by preference
+
+.message-info {
+    -fx-font-family: "Courier New";
+    -fx-font-weight: normal;
+}
+
+.message-ok {
+    -fx-font-family: "Courier New";
+    -fx-font-weight: normal;
+}
+
+.message-warning {
+    -fx-font-family: "Courier New";
+    -fx-font-weight: normal;
+}
+
+.message-error {
+    -fx-font-family: "Courier New";
+    -fx-font-weight: bold;
+}
+
+// CONFIGURATION ERRORS AND DEFAULTS
+
+#default-value {
+    -fx-text-fill: brown;
+}
+
+#new-value {
+    -fx-text-fill: blue;
+}
+
+#default-new-value {
+    -fx-text-fill: DarkOrchid;
+}
+
+#bad-value {
+    -fx-background-color: red;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: whitesmoke;
+}
+#bad-value .mark {
+    -fx-background-color: red;
+}
+
+
+.choice-box#default-value .label{
+    -fx-text-fill: brown;
+}
+
+.choice-box#new-value .label {
+    -fx-text-fill: blue;
+}
+
+.choice-box#default-new-value .label {
+    -fx-text-fill: DarkOrchid;
+}
+
+.choice-box#bad-value .label {
+    -fx-background-color: red;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: whitesmoke;
+}
+#bad-value .mark {
+    -fx-background-color: red;
+}
+
+
+#default-value .box {
+    -fx-border-color: brown;
+    -fx-border-radius: 3px;
+}
+#default-value:selected .mark {
+    -fx-background-color: brown;
+}
+
+#new-value .box {
+    -fx-border-color: blue;
+    -fx-border-radius: 3px;
+}
+#new-value:selected .mark {
+    -fx-background-color: blue;
+}
+
+#default-new-value .box {
+    -fx-border-color: DarkOrchid;
+    -fx-border-radius: 3px;
+}
+#default-new-value:selected .mark {
+    -fx-background-color: DarkOrchid;
+}
+
+#bad-value-spinner .text-field {
+    -fx-text-fill: red;
+}
+
+#default-value-spinner .text-field {
+    -fx-text-fill: brown;
+}
+
+#new-value-spinner .text-field {
+    -fx-text-fill: blue;
+}
+
+#default-new-value-spinner .text-field {
+    -fx-text-fill: DarkOrchid;
+}
+
+
+#default-list {
+    -fx-border-color: brown;
+    -fx-border-radius: 3px;
+}
+
+#new-list {
+    -fx-border-color: blue;
+    -fx-border-radius: 3px;
+}
+
+#default-new-list {
+    -fx-border-color: DarkOrchid;
+    -fx-border-radius: 3px;
+}
+
+#bad-list {
+    -fx-border-color: red;
+}
+
+// Line charts
+
+.chart-legend {
+   -fx-border-color: transparent;
+   -fx-border-width: 0;
+   -fx-background-color: transparent;
+   -fx-padding: 5px;
+}
+
+.chart .axis {
+    -fx-tick-label-fill: #914800;
+    -fx-tick-length: 5;
+}
+
+.axis {
+    -fx-padding: 5;
+}
+
+.axis-label {
+    -fx-text-fill: #4682b4;
+}
+
+.chart-series-line {
+    -fx-stroke-width: 2px;
+}
+
+// Internet/Ethernet
+.chart-line-symbol-1-PRIMARY {
+    -fx-background-insets: 2, 2;
+    -fx-background-color: #006600, #006600;
+}
+.chart-line-symbol-1-BACKUP {
+    -fx-background-insets: 0, 2;
+    -fx-background-color: #006600, white;
+}
+.chart-1 {
+    -fx-stroke: #006600;
+}
+.line-1-PRIMARY {
+     -fx-stroke: #006600;
+}
+.line-1-BACKUP {
+     -fx-stroke: #006600;
+     -fx-stroke-dash-array: 2 12 12 2;
+}
+
+// Internet/Wifi
+.chart-line-symbol-2-PRIMARY {
+    -fx-background-insets: 2, 2;
+    -fx-background-color: #3366cc, #3366cc;
+}
+.chart-line-symbol-2-BACKUP {
+    -fx-background-insets: 0, 2;
+    -fx-background-color: #3366cc, white;
+}
+.chart-2 {
+    -fx-stroke: #3366cc;
+}
+.line-2-PRIMARY {
+     -fx-stroke: #3366cc;
+}
+.line-2-BACKUP {
+     -fx-stroke: #3366cc;
+     -fx-stroke-dash-array: 2 12 12 2;
+}
+
+// Local/Ethernet
+.chart-line-symbol-3-PRIMARY {
+    -fx-background-insets: 2, 2;
+    -fx-background-color: #990000, #990000;
+}
+.chart-line-symbol-3-BACKUP {
+    -fx-background-insets: 0, 2;
+    -fx-background-color: #990000, white;
+}
+.chart-3 {
+    -fx-stroke: #990000;
+}
+.line-3-PRIMARY {
+     -fx-stroke: #990000;
+}
+.line-3-BACKUP {
+     -fx-stroke: #990000;
+     -fx-stroke-dash-array: 2 12 12 2;
+}
+
+// Local/Wifi
+.chart-line-symbol-4-PRIMARY {
+    -fx-background-insets: 2, 2;
+    -fx-background-color: #ff9900, #ff9900;
+}
+.chart-line-symbol-4-BACKUP {
+    -fx-background-insets: 0, 2;
+    -fx-background-color: #ff9900, white;
+}
+.chart-4 {
+    -fx-stroke: #ff9900;
+}
+.line-4-PRIMARY {
+     -fx-stroke: #ff9900;
+}
+.line-4-BACKUP {
+     -fx-stroke: #ff9900;
+     -fx-stroke-dash-array: 2 12 12 2;
+}
+
+// PSEUDO CLASSES
+
+// Used within a Timeline for making the text blink
+:blinkText {
+    -fx-text-fill: none;
+}
+
+.alarm-info {
+    -fx-text-fill: black;
+    -fx-alignment: top-center;
+    -fx-background-color: transparent;
+}
+
+.alarm-warning {
+    -fx-text-fill: white;
+    -fx-alignment: top-center;
+    -fx-background-color: blue;
+}
+
+.alarm-minor {
+    -fx-text-fill: black;
+    -fx-alignment: top-center;
+    -fx-background-color: yellow;
+}
+
+.alarm-major {
+    -fx-text-fill: black;
+    -fx-alignment: top-center;
+    -fx-background-color: orange;
+}
+
+.alarm-critical {
+    -fx-text-fill: white;
+    -fx-alignment: top-center;
+    -fx-background-color: red;
+}
