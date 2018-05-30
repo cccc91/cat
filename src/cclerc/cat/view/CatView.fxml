@@ -431,7 +431,7 @@
                                              <children>
                                                 <VBox alignment="CENTER_LEFT" spacing="5.0">
                                                    <children>
-                                                      <CheckBox fx:id="pingLineManageCheckBox" mnemonicParsing="false" selected="true" text="%catView.pingChartView.manage" />
+                                                      <CheckBox fx:id="pingLineManageCheckBox" mnemonicParsing="false" onAction="#refreshAllPingSeries" selected="true" text="%catView.pingChartView.manage" />
                                                       <Separator prefWidth="200.0" />
                                                       <CheckBox fx:id="pingLineWanFilterCheckBox" mnemonicParsing="false" onAction="#refreshAllPingSeries" selected="true" text="%catView.pingChartView.wan" />
                                                       <CheckBox fx:id="pingLineLanFilterCheckBox" mnemonicParsing="false" onAction="#refreshAllPingSeries" selected="true" text="%catView.pingChartView.lan" />

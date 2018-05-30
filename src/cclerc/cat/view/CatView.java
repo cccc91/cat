@@ -1551,6 +1551,29 @@ public class CatView {
             refreshPingsCount();
             refreshConnectionsLostCount();
 
+            // Reset chart data
+            for (int lKey : pingLines.keySet()) {
+
+                // Clear vertical markers
+                for (XYChart.Data lMarker : pingMarkers.get(lKey)) {
+                    pingLineChart.removeVerticalValueMarker(lMarker);
+                    lMarker.setNode(null);
+                }
+                pingMarkers.get(lKey).clear();
+
+                // Clear points on chart
+                pingLines.get(lKey).getSeries().getData().clear();
+                pingLines.get(lKey).setMinX(Long.MAX_VALUE);
+                pingLines.get(lKey).setMaxX(Long.MIN_VALUE);
+                pingLines.get(lKey).setMinY(Long.MAX_VALUE);
+                pingLines.get(lKey).setMaxY(Long.MIN_VALUE);
+
+                // Clear stored points
+                pingPoints.get(lKey).clear();
+
+            }
+            refreshPingAxisBounds();
+
             // Reset statistics for all jobs
             for (MonitoringJob lMonitoringJob : MonitoringJob.getMonitoringJobs()) {
                 lMonitoringJob.resetStatistics();
