@@ -56,6 +56,14 @@ public class Constants {
     // States
     public static final String PAUSE_STATE = "pause";
     public static final String SEND_MAIL_STATE = "sendMail";
+    public static final String PING_CHART_ENABLE_STATE = "pingChart.enable";
+    public static final String PING_CHART_DISPLAY_WAN_LINE_STATE = "pingChart.displayPingWanLine";
+    public static final String PING_CHART_DISPLAY_LAN_LINE_STATE = "pingChart.displayPingLanLine";
+    public static final String PING_CHART_DISPLAY_INTERFACE1_LINE_STATE = "pingChart.displayPingInterface1Line";
+    public static final String PING_CHART_DISPLAY_INTERFACE2_LINE_STATE = "pingChart.displayPingInterface1Line";
+    public static final String PING_CHART_HORIZONTAL_MOVE_SLIDER_STATE = "pingChart.horizontalMoveSliderPosition";
+    public static final String PING_CHART_HORIZONTAL_ZOOM_SLIDER_STATE = "pingChart.horizontalZoomSliderPosition";
+    public static final String PING_CHART_VERTICAL_ZOOM_SLIDER_STATE = "pingChart.verticalZoomSliderPosition";
 
     // Graphics
     public final static double DISABLED_IMAGE_TRANSPARENCY = 0.2d;

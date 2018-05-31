@@ -109,6 +109,20 @@ public class Properties {
     }
 
     /**
+     * Gets a property double value
+     * @param aInKey Property key
+     * @param aInDefaultValue Property default value if not found
+     * @return double value if found and valid, default value otherwise
+     */
+    public Double getDoubleValue(String aInKey, Double aInDefaultValue) {
+        try {
+            return Double.valueOf(getValue(aInKey, String.valueOf(aInDefaultValue)));
+        } catch (Exception e) {
+            return aInDefaultValue;
+        }
+    }
+
+    /**
      * Saves a property value
      * @param aInKey   Property key
      * @param aInValue Property value

@@ -325,12 +325,6 @@ public class CatView {
         lanMonitoringGridPanes.add(lan2MonitoringGridPane);
         monitoringGridPanes.put(EnumTypes.AddressType.LAN, lanMonitoringGridPanes);
 
-        // Initialize pingLineFilterCheckBoxes
-        pingLineFilterCheckBoxes.add(pingLineInterface1FilterCheckBox);
-        pingLineInterface1FilterCheckBox.setVisible(false);
-        pingLineFilterCheckBoxes.add(pingLineInterface2FilterCheckBox);
-        pingLineInterface2FilterCheckBox.setVisible(false);
-
         // Reset style of the tabs title when it is selected
         for (EnumTypes.AddressType lAddressType : EnumTypes.AddressType.values()) {
                 monitoringTabPanes.get(lAddressType).getSelectionModel().selectedItemProperty().addListener(
@@ -343,6 +337,12 @@ public class CatView {
                         });
         }
 
+        // Initialize ping chart
+        pingLineFilterCheckBoxes.add(pingLineInterface1FilterCheckBox);
+        pingLineInterface1FilterCheckBox.setVisible(false);
+        pingLineFilterCheckBoxes.add(pingLineInterface2FilterCheckBox);
+        pingLineInterface2FilterCheckBox.setVisible(false);
+
         pingLineChart.getYAxis().setLabel(Display.getViewResourceBundle().getString("catView.pingChartView.lineChart.yAxis.title"));
         pingLineChart.setAnimated(false);
         HBox.setHgrow(pingLineChart, Priority.ALWAYS);
@@ -352,9 +352,18 @@ public class CatView {
         pingLineChartXAxis.setMinorTickVisible(false);
         pingLineChartYAxis.setAutoRanging(false);
         pingLineChartYAxis.setMinorTickVisible(false);
+
         pingLineChartHorizontalMoveSlider.valueProperty().addListener(pingLinesHorizontalSliderChangeListener);
         pingLineChartHorizontalZoomSlider.valueProperty().addListener(pingLinesHorizontalSliderChangeListener);
         pingLineChartVerticalZoomSlider.valueProperty().addListener(pingLinesVerticalSliderChangeListener);
+
+        pingLineManageCheckBox.setSelected(States.getInstance().getBooleanValue(Constants.PING_CHART_ENABLE_STATE, true));
+        pingLineWanFilterCheckBox.setSelected(States.getInstance().getBooleanValue(Constants.PING_CHART_DISPLAY_WAN_LINE_STATE, true));
+        pingLineLanFilterCheckBox.setSelected(States.getInstance().getBooleanValue(Constants.PING_CHART_DISPLAY_LAN_LINE_STATE, true));
+        pingLineInterface1FilterCheckBox.setSelected(States.getInstance().getBooleanValue(Constants.PING_CHART_DISPLAY_INTERFACE1_LINE_STATE, true));
+        pingLineInterface2FilterCheckBox.setSelected(States.getInstance().getBooleanValue(Constants.PING_CHART_DISPLAY_INTERFACE2_LINE_STATE, true));
+        pingLineChartHorizontalZoomSlider.setValue(States.getInstance().getDoubleValue(Constants.PING_CHART_HORIZONTAL_ZOOM_SLIDER_STATE, 100d));
+        pingLineChartVerticalZoomSlider.setValue(States.getInstance().getDoubleValue(Constants.PING_CHART_VERTICAL_ZOOM_SLIDER_STATE, 100d));
 
         pingLineChartXAxis.setTickLabelFormatter(new StringConverter<Number>() {
 
@@ -382,8 +391,9 @@ public class CatView {
         Tooltip lVerticalZoomSliderTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.verticalZoomSlider"));
         pingLineChartVerticalZoomSlider.setTooltip(lVerticalZoomSliderTooltip);
 
-    }
+        checkPingChartState();
 
+    }
 
     /**
      * Initializes alarms tables
@@ -1854,10 +1864,24 @@ public class CatView {
      * Refreshes axis when zooming on Y axis
      */
     private void zoomPingYAxis() {
-        if (States.getInstance().getBooleanValue("enablePingChart", true)) {
+        if (pingLineManageCheckBox.isSelected()) {
             pingLineYZoomRatio = pingLineChartVerticalZoomSlider.getValue() / 100;
             refreshPingAxisBounds();
         }
+    }
+
+    /**
+     * Enables or disables controls related to ping chart depending on Manage ping chart check box
+     */
+    public void checkPingChartState() {
+        pingLineWanFilterCheckBox.setDisable(!pingLineManageCheckBox.isSelected());
+        pingLineLanFilterCheckBox.setDisable(!pingLineManageCheckBox.isSelected());
+        pingLineInterface1FilterCheckBox.setDisable(!pingLineManageCheckBox.isSelected());
+        pingLineInterface2FilterCheckBox.setDisable(!pingLineManageCheckBox.isSelected());
+        pingLineChartHorizontalMoveSlider.setDisable(!pingLineManageCheckBox.isSelected());
+        pingLineChartHorizontalZoomSlider.setDisable(!pingLineManageCheckBox.isSelected());
+        pingLineChartVerticalZoomSlider.setDisable(!pingLineManageCheckBox.isSelected());
+        pingLineChart.setDisable(!pingLineManageCheckBox.isSelected());
     }
 
     /**
@@ -1865,7 +1889,18 @@ public class CatView {
      */
     public void refreshAllPingSeries() {
 
-        if (States.getInstance().getBooleanValue("enablePingChart", true)) {
+        // Save sliders and check boxes states
+        States.getInstance().saveValue(Constants.PING_CHART_ENABLE_STATE, pingLineManageCheckBox.isSelected());
+        States.getInstance().saveValue(Constants.PING_CHART_DISPLAY_WAN_LINE_STATE, pingLineWanFilterCheckBox.isSelected());
+        States.getInstance().saveValue(Constants.PING_CHART_DISPLAY_LAN_LINE_STATE, pingLineLanFilterCheckBox.isSelected());
+        States.getInstance().saveValue(Constants.PING_CHART_DISPLAY_INTERFACE1_LINE_STATE, pingLineInterface1FilterCheckBox.isSelected());
+        States.getInstance().saveValue(Constants.PING_CHART_DISPLAY_INTERFACE2_LINE_STATE, pingLineInterface2FilterCheckBox.isSelected());
+        States.getInstance().saveValue(Constants.PING_CHART_HORIZONTAL_ZOOM_SLIDER_STATE, pingLineChartHorizontalZoomSlider.getValue());
+        States.getInstance().saveValue(Constants.PING_CHART_VERTICAL_ZOOM_SLIDER_STATE, pingLineChartVerticalZoomSlider.getValue());
+
+        checkPingChartState();
+
+        if (pingLineManageCheckBox.isSelected()) {
 
             // Recompute ratios depending on sliders position
             pingLineXMoveRatio = (100 - pingLineChartHorizontalMoveSlider.getValue()) / 100;
@@ -1956,7 +1991,7 @@ public class CatView {
         // Initialize time reference
         if (timeReference == 0) timeReference = aInEpoch;
 
-        if (States.getInstance().getBooleanValue("enablePingChart", true) && pingLineManageCheckBox.isSelected()) {
+        if (pingLineManageCheckBox.isSelected()) {
 
             int lKey = Objects.hash(aInAddressType, aInInterface);
 
