@@ -484,6 +484,10 @@
      -fx-stroke-dash-array: 2 12 12 2;
 }
 
+.textFlowWithBorder {
+     -fx-border-color: lightgrey;
+}
+
 // PSEUDO CLASSES
 
 // Used within a Timeline for making the text blink
