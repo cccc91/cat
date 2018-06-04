@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.TextFlow?>
+
+<GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cclerc.cat.view.CatView">
+   <columnConstraints>
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints maxHeight="-Infinity" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="-Infinity" minHeight="40.0" prefHeight="40.0" valignment="CENTER" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+   </rowConstraints>
+   <children>
+      <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="mainDisplayZone" GridPane.hgrow="ALWAYS">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="80.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="200.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="300.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="15.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="30.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="30.0" />
+          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="30.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <FlowPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+               <children>
+                  <ImageView fitHeight="77.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../resources/images/cat.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="31.0" fitWidth="86.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../resources/images/title.png" />
+                     </image>
+                     <FlowPane.margin>
+                        <Insets left="20.0" />
+                     </FlowPane.margin>
+                  </ImageView>
+               </children>
+            </FlowPane>
+            <GridPane GridPane.columnIndex="2">
+              <columnConstraints>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label fx:id="nameLabel" styleClass="attributeNameMain" text="%catView.general.connectionsLabel">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="nameCountLabel" styleClass="attributeValueMain" text="0" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="System Italic" size="12.0" />
+                     </font>
+                  </Label>
+               </children>
+            </GridPane>
+            <GridPane GridPane.columnIndex="3">
+              <columnConstraints>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label alignment="TOP_LEFT" styleClass="attributeName" text="%catView.pingCountLabel" />
+                  <Label fx:id="pingsCountLabel" styleClass="attributeValue" text="0" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="System Italic" size="12.0" />
+                     </font>
+                  </Label>
+               </children>
+            </GridPane>
+            <GridPane GridPane.columnIndex="4">
+              <columnConstraints>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label alignment="TOP_LEFT" styleClass="attributeName" text="%catView.lostConnectionsCountLabel" />
+                  <Label fx:id="lostConnectionsCountLabel" styleClass="attributeValue" text="0" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="System Italic" size="12.0" />
+                     </font>
+                  </Label>
+               </children>
+            </GridPane>
+            <GridPane GridPane.columnIndex="5">
+              <columnConstraints>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label alignment="TOP_LEFT" styleClass="attributeName" text="%catView.lastLostConnectionTimeLabel" />
+                  <Label fx:id="lastLostConnectionTimeLabel" alignment="BOTTOM_LEFT" styleClass="attributeValue" text="hh:mm:sss" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="System Italic" size="12.0" />
+                     </font>
+                  </Label>
+               </children>
+            </GridPane>
+            <GridPane GridPane.columnIndex="6">
+              <columnConstraints>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label alignment="TOP_LEFT" styleClass="attributeName" text="%catView.lastLostConnectionDetailsLabel" />
+                  <Label fx:id="lastLostConnectionDetailsLabel" alignment="BOTTOM_LEFT" styleClass="attributeValue" text="www.xxx.com" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="System Italic" size="12.0" />
+                     </font>
+                  </Label>
+               </children>
+            </GridPane>
+            <ImageView fitHeight="20.0" fitWidth="20.0" onMouseClicked="#resetStatistics" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="8">
+               <image>
+                  <Image url="@../../../resources/images/reset.png" />
+               </image>
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </ImageView>
+            <ImageView fx:id="pauseButtonImageView" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#playPause" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="10">
+               <image>
+                  <Image url="@../../../resources/images/pause.png" />
+               </image>
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </ImageView>
+            <ImageView fx:id="emailButtonImageView" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#switchEmail" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="9">
+               <image>
+                  <Image url="@../../../resources/images/email.png" />
+               </image>
+            </ImageView>
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </GridPane>
+      <GridPane fx:id="interfaceTypeSummaries" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="40.0" styleClass="mainDisplayZone" GridPane.rowIndex="1">
+        <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="50.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="50.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="50.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="50.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="50.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="50.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <children>
+            <ImageView fx:id="globalStateImageView" fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
+               <image>
+                  <Image url="@../../../resources/images/green.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="wanStateImageView" fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
+               <image>
+                  <Image url="@../../../resources/images/wan_ok.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="lanStateImageView" fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
+               <image>
+                  <Image url="@../../../resources/images/lan_ok.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="networkInterface1ImageView" fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
+               <image>
+                  <Image url="@../../../resources/images/eth_std.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="networkInterface2ImageView" fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
+               <image>
+                  <Image url="@../../../resources/images/wifi_std.png" />
+               </image>
+            </ImageView>
+         </children>
+         <GridPane.margin>
+            <Insets bottom="10.0" />
+         </GridPane.margin>
+      </GridPane>
+      <SplitPane fx:id="CatViewPane" dividerPositions="0.33, 0.66, 0.9" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+        <items>
+          <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="240.0" prefHeight="240.0" styleClass="mainDisplayZone">
+               <children>
+                  <TabPane fx:id="wanMonitoring" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <tabs>
+                        <Tab fx:id="wan1MonitoringTab" closable="false" text="1">
+                           <content>
+                              <GridPane fx:id="wan1MonitoringGridPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                              </GridPane>
+                           </content>
+                        </Tab>
+                        <Tab fx:id="wan2MonitoringTab" closable="false" text="2">
+                           <content>
+                              <GridPane fx:id="wan2MonitoringGridPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
+                           </content>
+                        </Tab>
+                     </tabs>
+                  </TabPane>
+               </children>
+            </AnchorPane>
+          <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="240.0" prefHeight="240.0" styleClass="mainDisplayZone">
+               <children>
+                  <TabPane fx:id="lanMonitoring" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <tabs>
+                        <Tab fx:id="lan1MonitoringTab" closable="false" text="1">
+                           <content>
+                              <GridPane fx:id="lan1MonitoringGridPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
+                           </content>
+                        </Tab>
+                        <Tab fx:id="lan2MonitoringTab" closable="false" text="2">
+                           <content>
+                              <GridPane fx:id="lan2MonitoringGridPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
+                           </content>
+                        </Tab>
+                     </tabs>
+                  </TabPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="50.0" styleClass="mainDisplayZone">
+               <children>
+                  <GridPane maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <GridPane>
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="350.0" />
+                              <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="120.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="250.0" />
+                              <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <FlowPane alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label styleClass="attributeName" text="%catView.globalView.alarmsTableSelectionLabel">
+                                       <padding>
+                                          <Insets right="10.0" />
+                                       </padding>
+                                    </Label>
+                                    <RadioButton fx:id="activeAlarmsButton" mnemonicParsing="false" onAction="#selectActiveAlarms" selected="true" styleClass="attributeValue" text="%catView.globalView.button.activeAlarms">
+                                       <padding>
+                                          <Insets right="10.0" />
+                                       </padding>
+                                    </RadioButton>
+                                    <RadioButton fx:id="historicalAlarmsButton" mnemonicParsing="false" onAction="#selectHistoricalAlarms" styleClass="attributeValue" text="%catView.globalView.button.historicalAlarms" />
+                                 </children>
+                                 <opaqueInsets>
+                                    <Insets right="5.0" />
+                                 </opaqueInsets>
+                                 <padding>
+                                    <Insets left="10.0" />
+                                 </padding>
+                              </FlowPane>
+                              <Label styleClass="attributeName" text="%catView.globalView.alarmsCountLabel" GridPane.columnIndex="1" />
+                              <Label fx:id="activeAlarmsCountLabel" styleClass="attributeValue" text="Label" GridPane.columnIndex="2">
+                                 <padding>
+                                    <Insets left="5.0" />
+                                 </padding>
+                              </Label>
+                              <Label fx:id="historicalAlarmsCountLabel" styleClass="attributeValue" text="Label" GridPane.columnIndex="2">
+                                 <padding>
+                                    <Insets left="5.0" />
+                                 </padding>
+                              </Label>
+                              <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%catView.globalView.filterLabel" GridPane.columnIndex="4">
+                                 <padding>
+                                    <Insets right="5.0" />
+                                 </padding>
+                              </Label>
+                              <TextField fx:id="activeAlarmsFilterTextField" GridPane.columnIndex="5">
+                                 <GridPane.margin>
+                                    <Insets right="10.0" />
+                                 </GridPane.margin></TextField>
+                              <TextField fx:id="historicalAlarmsFilterTextField" visible="false" GridPane.columnIndex="5" />
+                              <ImageView fx:id="generalEmailButtonImageView" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#switchGeneralEmail" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="6" GridPane.halignment="LEFT">
+                                 <GridPane.margin>
+                                    <Insets />
+                                 </GridPane.margin>
+                                 <image>
+                                    <Image url="@../../../resources/images/email.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </GridPane>
+                        <TableView fx:id="activateAlarmsTable" editable="true" tableMenuButtonVisible="true" GridPane.rowIndex="1">
+                          <columns>
+                            <TableColumn fx:id="activeAlarmSeverityColumn" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="100.0" text="%catView.alarmView.severity" />
+                              <TableColumn fx:id="activeAlarmOccurrencesColumn" maxWidth="1.7976931348623157E308" prefWidth="50.0" text="%catView.alarmView.occurrences" />
+                              <TableColumn fx:id="activeAlarmStateColumn" maxWidth="1.7976931348623157E308" text="%catView.alarmView.state" visible="false" />
+                            <TableColumn fx:id="activeAlarmRaiseDateColumn" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="150.0" sortType="DESCENDING" text="%catView.alarmView.raiseDate" />
+                              <TableColumn fx:id="activeAlarmModificationDateColumn" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="150.0" text="%catView.alarmView.modificationDate" />
+                              <TableColumn fx:id="activeAlarmClearDateColumn" maxWidth="1.7976931348623157E308" prefWidth="150.0" text="%catView.alarmView.clearDate" visible="false" />
+                              <TableColumn fx:id="activeAlarmIdColumn" maxWidth="1.7976931348623157E308" prefWidth="30.0" text="%catView.alarmView.id" />
+                              <TableColumn fx:id="activeAlarmNameColumn" maxWidth="1.7976931348623157E308" prefWidth="200.0" text="%catView.alarmView.name" />
+                              <TableColumn fx:id="activeAlarmSiteColumn" maxWidth="1.7976931348623157E308" prefWidth="200.0" text="%catView.alarmView.site" />
+                              <TableColumn fx:id="activeAlarmObjectTypeColumn" maxWidth="1.7976931348623157E308" prefWidth="120.0" text="%catView.alarmView.objectType" />
+                              <TableColumn fx:id="activeAlarmObjectNameColumn" maxWidth="1.7976931348623157E308" prefWidth="120.0" text="%catView.alarmView.objectName" />
+                              <TableColumn fx:id="activeAlarmTypeColumn" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="100.0" text="%catView.alarmView.type" />
+                              <TableColumn fx:id="activeAlarmProbableCauseColumn" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="200.0" text="%catView.alarmView.probableCause" />
+                              <TableColumn fx:id="activeAlarmRemedialActionColumn" maxWidth="1.7976931348623157E308" prefWidth="200.0" sortable="false" text="%catView.alarmView.remedialAction" />
+                              <TableColumn fx:id="activeAlarmAdditionalInfoColumn" maxWidth="1.7976931348623157E308" prefWidth="200.0" text="%catView.alarmView.additionalInfo" visible="false" />
+                          </columns>
+                        </TableView>
+                        <TableView fx:id="historicalAlarmsTable" visible="false" GridPane.rowIndex="1">
+                           <columns>
+                              <TableColumn fx:id="historicalAlarmSeverityColumn" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="100.0" text="%catView.alarmView.severity" />
+                              <TableColumn fx:id="historicalAlarmOccurrencesColumn" maxWidth="1.7976931348623157E308" prefWidth="50.0" text="%catView.alarmView.occurrences" />
+                              <TableColumn fx:id="historicalAlarmStateColumn" maxWidth="1.7976931348623157E308" sortable="false" text="%catView.alarmView.state" visible="false" />
+                              <TableColumn fx:id="historicalAlarmRaiseDateColumn" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="150.0" sortType="DESCENDING" text="%catView.alarmView.raiseDate" />
+                              <TableColumn fx:id="historicalAlarmModificationDateColumn" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="150.0" text="%catView.alarmView.modificationDate" />
+                              <TableColumn fx:id="historicalAlarmClearDateColumn" maxWidth="1.7976931348623157E308" prefWidth="150.0" sortType="DESCENDING" text="%catView.alarmView.clearDate" />
+                              <TableColumn fx:id="historicalAlarmIdColumn" maxWidth="1.7976931348623157E308" prefWidth="30.0" text="%catView.alarmView.id" />
+                              <TableColumn fx:id="historicalAlarmNameColumn" maxWidth="1.7976931348623157E308" prefWidth="200.0" text="%catView.alarmView.name" />
+                              <TableColumn fx:id="historicalAlarmSiteColumn" maxWidth="1.7976931348623157E308" prefWidth="200.0" text="%catView.alarmView.site" />
+                              <TableColumn fx:id="historicalAlarmObjectTypeColumn" maxWidth="1.7976931348623157E308" prefWidth="120.0" text="%catView.alarmView.objectType" />
+                              <TableColumn fx:id="historicalAlarmObjectNameColumn" maxWidth="1.7976931348623157E308" prefWidth="120.0" text="%catView.alarmView.objectName" />
+                              <TableColumn fx:id="historicalAlarmTypeColumn" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="200.0" text="%catView.alarmView.type" />
+                              <TableColumn fx:id="historicalAlarmProbableCauseColumn" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="200.0" text="%catView.alarmView.probableCause" />
+                              <TableColumn fx:id="historicalAlarmRemedialActionColumn" maxWidth="1.7976931348623157E308" prefWidth="200.0" sortable="false" text="%catView.alarmView.remedialAction" />
+                              <TableColumn fx:id="historicalAlarmAdditionalInfoColumn" maxWidth="1.7976931348623157E308" prefWidth="200.0" text="%catView.alarmView.additionalInfo" />
+                           </columns>
+                        </TableView>
+                     </children>
+                  </GridPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="270.0" minWidth="-Infinity" prefHeight="280.0" styleClass="mainDisplayZone">
+               <children>
+                  <TabPane fx:id="generalTabPane" side="LEFT" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <tabs>
+                        <Tab closable="false" text="%catView.charts">
+                           <content>
+                              <TabPane fx:id="chartTabPane">
+                                 <tabs>
+                                    <Tab closable="false" text="%catView.charts.ping">
+                                       <content>
+                                          <HBox>
+                                             <children>
+                                                <HBox HBox.hgrow="NEVER">
+                                                   <HBox.margin>
+                                                      <Insets bottom="10.0" left="10.0" top="10.0" />
+                                                   </HBox.margin>
+                                                   <children>
+                                                      <VBox spacing="20.0" HBox.hgrow="ALWAYS">
+                                                         <children>
+                                                            <HBox spacing="10.0" VBox.vgrow="ALWAYS">
+                                                               <children>
+                                                                  <HBox HBox.hgrow="ALWAYS">
+                                                                     <children>
+                                                                        <VBox alignment="CENTER_LEFT" spacing="5.0">
+                                                                           <children>
+                                                                              <CheckBox fx:id="pingLineManageCheckBox" mnemonicParsing="false" onAction="#refreshAllPingSeries" selected="true" text="%catView.pingChartView.manage" />
+                                                                              <Separator />
+                                                                              <CheckBox fx:id="pingLineWanFilterCheckBox" mnemonicParsing="false" onAction="#refreshAllPingSeries" selected="true" text="%catView.pingChartView.wan" />
+                                                                              <CheckBox fx:id="pingLineLanFilterCheckBox" mnemonicParsing="false" onAction="#refreshAllPingSeries" selected="true" text="%catView.pingChartView.lan" />
+                                                                              <Separator />
+                                                                              <CheckBox fx:id="pingLineInterface1FilterCheckBox" mnemonicParsing="false" onAction="#refreshAllPingSeries" selected="true" text="Interface filter 1" />
+                                                                              <CheckBox fx:id="pingLineInterface2FilterCheckBox" mnemonicParsing="false" onAction="#refreshAllPingSeries" selected="true" text="Interface filter 2" />
+                                                                           </children>
+                                                                        </VBox>
+                                                                     </children>
+                                                                  </HBox>
+                                                                  <VBox alignment="BOTTOM_RIGHT">
+                                                                     <HBox.margin>
+                                                                        <Insets />
+                                                                     </HBox.margin>
+                                                                     <children>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                           <image>
+                                                                              <Image url="@../../../resources/images/Magnifying_glass.png" />
+                                                                           </image>
+                                                                        </ImageView>
+                                                                     </children>
+                                                                  </VBox>
+                                                                  <Slider fx:id="pingLineChartVerticalZoomSlider" majorTickUnit="20.0" minorTickCount="1" nodeOrientation="LEFT_TO_RIGHT" orientation="VERTICAL" showTickMarks="true" value="100.0" HBox.hgrow="ALWAYS" />
+                                                               </children>
+                                                               <VBox.margin>
+                                                                  <Insets />
+                                                               </VBox.margin>
+                                                               <padding>
+                                                                  <Insets top="10.0" />
+                                                               </padding>
+                                                            </HBox>
+                                                            <VBox spacing="10.0" VBox.vgrow="NEVER">
+                                                               <children>
+                                                                  <HBox spacing="10.0">
+                                                                     <children>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                           <image>
+                                                                              <Image url="@../../../resources/images/horizontal_move.png" />
+                                                                           </image>
+                                                                        </ImageView>
+                                                                        <Slider fx:id="pingLineChartHorizontalMoveSlider" majorTickUnit="20.0" minorTickCount="1" showTickMarks="true" value="100.0" HBox.hgrow="ALWAYS">
+                                                                           <padding>
+                                                                              <Insets right="15.0" />
+                                                                           </padding>
+                                                                        </Slider>
+                                                                     </children>
+                                                                  </HBox>
+                                                                  <HBox spacing="10.0">
+                                                                     <children>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                           <image>
+                                                                              <Image url="@../../../resources/images/Magnifying_glass.png" />
+                                                                           </image>
+                                                                        </ImageView>
+                                                                        <Slider fx:id="pingLineChartHorizontalZoomSlider" majorTickUnit="20.0" minorTickCount="1" nodeOrientation="LEFT_TO_RIGHT" showTickMarks="true" value="100.0" HBox.hgrow="ALWAYS">
+                                                                           <padding>
+                                                                              <Insets right="15.0" />
+                                                                           </padding>
+                                                                        </Slider>
+                                                                     </children>
+                                                                  </HBox>
+                                                               </children>
+                                                            </VBox>
+                                                         </children>
+                                                      </VBox>
+                                                   </children>
+                                                </HBox>
+                                                <HBox fx:id="pingLineChartContainer" HBox.hgrow="ALWAYS">
+                                                   <HBox.margin>
+                                                      <Insets bottom="10.0" left="10.0" right="30.0" top="10.0" />
+                                                   </HBox.margin>
+                                                </HBox>
+                                             </children>
+                                          </HBox>
+                                       </content>
+                                    </Tab>
+                                    <Tab closable="false" text="%catView.charts.speedTest">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                      </content>
+                                    </Tab>
+                                 </tabs>
+                              </TabPane>
+                           </content>
+                        </Tab>
+                        <Tab fx:id="consoleTab" closable="false" text="%catView.console">
+                           <content>
+                              <ScrollPane fx:id="consoleScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                 <content>
+                                    <TextFlow fx:id="consoleTextFlow" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                                 </content>
+                              </ScrollPane>
+                           </content>
+                        </Tab>
+                     </tabs>
+                  </TabPane>
+               </children></AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</GridPane>

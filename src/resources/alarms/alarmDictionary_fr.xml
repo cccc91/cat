@@ -1,0 +1,123 @@
+<alarms>
+
+    <alarm id="1">
+        <name>Ping perdu</name>
+        <severity>warning</severity>
+        <objectType>interface</objectType>
+        <type>siteUnreachable</type>
+        <probableCause>Site injoignable temporairement</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Attendre que le site réponde</remedialAction>
+    </alarm>
+
+    <alarm id="2">
+        <name>Connexion site perdue</name>
+        <severity>minor</severity>
+        <objectType>interface</objectType>
+        <type>siteUnreachable</type>
+        <probableCause>Site coupé ou problème réseau</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Choisir un autre site ou contacter l'administrateur du site</remedialAction>
+    </alarm>
+
+    <alarm id="3">
+        <name>Ethernet coupé</name>
+        <severity>critical</severity>
+        <objectType>interface</objectType>
+        <type>interfaceDown</type>
+        <probableCause>Un élément du réseau Ethernet ne fonctionne plus correctement (switch, CPL, ...)</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Vérifier l'état des éléments du réseau Ethernet et redémarrer les éléments plantés</remedialAction>
+    </alarm>
+
+    <alarm id="4">
+        <name>Wifi coupé</name>
+        <severity>critical</severity>
+        <objectType>interface</objectType>
+        <type>interfaceDown</type>
+        <probableCause>Le Wifi ne fonctionne plus sur le routeur ou l'ordinateur, ou perturbations externes</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Redémarrer le routeur, changer de bande Wifi</remedialAction>
+    </alarm>
+
+    <alarm id="5">
+        <name>Internet coupé</name>
+        <severity>critical</severity>
+        <objectType>network</objectType>
+        <type>networkDown</type>
+        <probableCause>Le routeur ne fonctionne plus correctement, ou plus de signal sur l'entrée WAN du routeur, ou problème chez l'opérateur</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Redémarrer le routeur, contacter le support de l'opérateur</remedialAction>
+    </alarm>
+
+    <alarm id="6">
+        <name>Réseau local coupé</name>
+        <severity>critical</severity>
+        <objectType>network</objectType>
+        <type>networkDown</type>
+        <probableCause>Le routeur ne fonctionne plus correctement, ou un switch ne fonctionne plus correctement, ou un équipement perturbe sur le réseau</probableCause>
+        <additionalInfo>Ne devrait pas se produire si le routeur est dans la liste de équipements surveillés</additionalInfo>
+        <remedialAction>Redémarrer le routeur, vérifier les composants du réseau, vérifier si un équipement connecté perturbe</remedialAction>
+    </alarm>
+
+    <alarm id="7">
+        <name>Réseau coupé</name>
+        <severity>critical</severity>
+        <objectType>network</objectType>
+        <type>networkDown</type>
+        <probableCause>Un équipement perturbe le réseau, ou le routeur ne fonctionne plus correctement</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Vérifier si un équipement connecté perturbe, redémarrer le routeur</remedialAction>
+    </alarm>
+
+    <alarm id="8">
+        <name>Ethernet instable</name>
+        <severity>warning</severity>
+        <objectType>interface</objectType>
+        <type>interfaceUnstable</type>
+        <probableCause>Un élément du réseau Ethernet ne fonctionne plus correctement (switch, CPL, ...)</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Vérifier l'état des éléments du réseau Ethernet et redémarrer ceux qui ne fonctionnent pas correctement</remedialAction>
+    </alarm>
+
+    <alarm id="9">
+        <name>Wifi instable</name>
+        <severity>warning</severity>
+        <objectType>interface</objectType>
+        <type>interfaceUnstable</type>
+        <probableCause>Perturbations externes, ou point d'accès trop éloigné, ou murs trop épais</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Changer d'emplacement, changer de bande Wifi</remedialAction>
+    </alarm>
+
+    <alarm id="10">
+        <name>Internet instable</name>
+        <severity>warning</severity>
+        <objectType>network</objectType>
+        <type>networkUnstable</type>
+        <probableCause>Le routeur ne fonctionne plus correctement, ou problème chez l'opérateur</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Redémarrer le routeur, contacter le support de l'opérateur</remedialAction>
+    </alarm>
+
+    <alarm id="11">
+        <name>Réseau local instable</name>
+        <severity>warning</severity>
+        <objectType>network</objectType>
+        <type>networkUnstable</type>
+        <probableCause>Le routeur ne fonctionne plus correctement, ou un switch ne fonctionne plus correctement, ou un équipement perturbe sur le réseau</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Redémarrer le routeur, vérifier les composants du réseau, vérifier si un équipement connecté perturbe</remedialAction>
+    </alarm>
+
+    <alarm id="12">
+        <name>Réseau instable</name>
+        <severity>warning</severity>
+        <objectType>network</objectType>
+        <type>networkUnstable</type>
+        <probableCause>Un équipement perturbe le réseau, ou le routeur ne fonctionne plus correctement</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Vérifier si un équipement connecté perturbe, redémarrer le routeur</remedialAction>
+    </alarm>
+
+</alarms>

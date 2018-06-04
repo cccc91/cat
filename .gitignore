@@ -1,0 +1,12 @@
+# IDE
+.idea/
+*.iml
+
+# User data
+config/
+
+# Generated
+classes/
+jar/
+out/
+*.log

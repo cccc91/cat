@@ -1,0 +1,307 @@
+<project name="Cat" default="distribute.and.package.all.cat" basedir=".">
+
+    <!-- MAIN CLASS -->
+    <property name="cat.main.class" value="cclerc.cat.Cat"/>
+
+    <!-- TIME -->
+    <!-- See http://www.dallaway.com/ant/ -->
+    <taskdef name="purge" classname="com.dallaway.ant.Purge"/>
+
+    <tstamp>
+        <format property="TODAY" pattern="yyyyMMdd-HHmmss" />
+    </tstamp>
+
+    <!-- DIRECTORIES -->
+    <property name="project.dir" location="${basedir}/.."/>
+    <property name="project.parent.dir" location="${project.dir}/.."/>
+    <property name="project.package.dir" value="cclerc/cat"/>
+    <property name="project.cat.dir" value="${project.dir}"/>
+    <property name="project.classes.dir" value="${project.cat.dir}/classes"/>
+    <property name="project.config.dir" value="${project.cat.dir}/config"/>
+    <property name="project.scripts.dir" value="${project.cat.dir}/scripts"/>
+    <property name="project.classes.config.dir" value="${project.classes.dir}/config"/>
+    <property name="project.classes.resources.dir" value="${project.classes.dir}/resources"/>
+    <property name="project.classes.resources.images.dir" value="${project.classes.resources.dir}/images"/>
+    <property name="project.classes.fxml.dir" value="${project.classes.dir}/${project.package.dir}/view"/>
+    <property name="project.jar.dir" value="${project.cat.dir}/jar"/>
+    <property name="project.src.dir" value="${project.cat.dir}/src"/>
+    <property name="project.src.resources.dir" value="${project.src.dir}/resources"/>
+    <property name="project.src.resources.images.dir" value="${project.src.resources.dir}/images"/>
+    <property name="project.src.resources.about.dir" value="${project.src.resources.dir}/about"/>
+    <property name="project.src.resources.properties.dir" value="${project.src.resources.dir}/properties"/>
+    <property name="thirdparty.dir" value="${project.parent.dir}/thirdparty"/>
+    <property name="dest.jar.dir" location="${project.parent.dir}/jar"/>
+    <property name="project.src.project.package.dir" value="${project.src.dir}/${project.package.dir}/view"/>
+
+    <!-- FILES -->
+    <property name="log4j2.xml.file" value="log4j2.xml"/>
+    <property name="cat.jar.file" value="cat.jar"/>
+    <property name="cat.source.bat.file" value="cat.bat"/>
+    <property name="cat.source.bash.file" value="cat.bash"/>
+    <property name="cat.dest.bat.file" value="cat.bat"/>
+    <property name="cat.dest.bash.file" value="cat.bash"/>
+    <property name="cat.png.file" value="cat.png"/>
+    <property name="about.file" value="about.properties"/>
+
+    <!-- PATHS -->
+    <property name="cat.jar.path" value="${project.jar.dir}/${cat.jar.file}"/>
+    <property name="cat.source.bat.path" location="${project.scripts.dir}/${cat.source.bat.file}"/>
+    <property name="cat.dest.bat.path" location="${project.parent.dir}/${cat.dest.bat.file}"/>
+    <property name="cat.source.bash.path" location="${project.scripts.dir}/${cat.source.bash.file}"/>
+    <property name="cat.dest.bash.path" location="${project.parent.dir}/${cat.dest.bash.file}"/>
+
+    <!-- PACKAGES -->
+    <property name="cat.run.zip" value="cat.runtime.${TODAY}.zip"/>
+    <property name="cat.src.zip" value="cat.src.${TODAY}.zip"/>
+    <property name="cat.src.noconfig.zip" value="cat.src.${TODAY}.noconfig.zip"/>
+    <property name="cat.src.3rd.zip" value="cat.src.${TODAY}.3rd.zip"/>
+
+    <!-- CLASSPATH -->
+    <path id="log4j.classpath.ref">
+        <pathelement location="${thirdparty.dir}/apache-log4j-2.7-bin/log4j-api-2.7.jar"/>
+        <pathelement location="${thirdparty.dir}/apache-log4j-2.7-bin/log4j-core-2.7.jar"/>
+    </path>
+
+    <path id="cli.classpath.ref">
+        <pathelement location="${thirdparty.dir}/commons-cli-1.3.1/commons-cli-1.3.1.jar"/>
+    </path>
+
+    <path id="mail.classpath.ref">
+        <pathelement location="${thirdparty.dir}/java-mail-1.4.4/java-mail-1.4.4.jar"/>
+    </path>
+
+    <path id="jdom.classpath.ref">
+        <pathelement location="${thirdparty.dir}/jdom-2.0.6/jdom-2.0.6.jar"/>
+    </path>
+
+    <path id="jspeedtest.classpath.ref">
+        <pathelement location="${thirdparty.dir}/jspeedtest-1.25/jspeedtest-1.25.jar"/>
+    </path>
+
+    <path id="proxy-vole.classpath.ref">
+        <pathelement location="${thirdparty.dir}/proxy-vole-20131209/proxy-vole_20131209.jar"/>
+    </path>
+
+    <path id="cat.classpath.ref">
+        <path refid="log4j.classpath.ref"/>
+        <path refid="cli.classpath.ref"/>
+        <path refid="mail.classpath.ref"/>
+        <path refid="jdom.classpath.ref"/>
+        <path refid="jspeedtest.classpath.ref"/>
+        <path refid="proxy-vole.classpath.ref"/>
+    </path>
+
+    <!-- CLEAN TARGETS -->
+    <target name="clean.build.cat">
+        <delete dir="${project.classes.dir}" failonerror="yes"/>
+        <delete dir="${project.jar.dir}" failonerror="yes"/>
+        <delete file="${cat.dest.bat.path}"/>
+    </target>
+
+    <target name="clean.distribute.cat">
+        <delete dir="${project.classes.dir}" failonerror="yes"/>
+        <delete dir="${project.jar.dir}" failonerror="yes"/>
+        <delete file="${cat.dest.bat.path}"/>
+        <echo message="${cat.dest.bat.path}"/>
+    </target>
+
+    <target name="clean.all.cat" depends="clean.build.cat"/>
+
+    <!-- INIT TARGET (pre-conditions) -->
+    <target name="init.env">
+        <mkdir dir="${project.classes.dir}"/>
+        <mkdir dir="${project.classes.resources.dir}"/>
+        <mkdir dir="${project.jar.dir}"/>
+        <mkdir dir="${thirdparty.dir}"/>
+        <mkdir dir="${dest.jar.dir}"/>
+    </target>
+
+    <!-- NEW LOAD TARGET-->
+    <target name="new.load.cat">
+        <property name="header" value="## Generated file - do not modify!"/>
+        <propertyfile file="${project.src.resources.about.dir}/${about.file}" comment="${header}">
+            <entry key="product.name" type="string" value="CAT"/>
+            <entry key="product.description" type="string" value="Connection Analysis Tool"/>
+            <entry key="product.major" type="int" default="1"/>
+            <entry key="product.minor" type="int" default="0"/>
+            <entry key="product.build" type="int" operation="+" default="1"/>
+            <entry key="product.build.date" type="date" value="now" pattern="YYYY-MM-dd HH:mm"/>
+            <entry key="product.java.version" type="string" value="1.8.0_121"/>
+            <entry key="product.author" type="string" value="Christophe Clerc"/>
+            <entry key="product.copyright" type="string" default="2017-2018, C4"/>
+        </propertyfile>
+    </target>
+
+    <!-- BUILD TARGET -->
+    <target name="build.cat" depends="clean.build.cat,init.env">
+
+        <!-- Copy resources in classes/resources -->
+        <copy todir="${project.classes.resources.dir}">
+            <fileset dir="${project.src.resources.dir}"/>
+        </copy>
+
+        <!-- Copy cat.png in classes/resources/images -->
+        <copy todir="${project.classes.resources.images.dir}">
+            <fileset dir="${project.src.resources.images.dir}">
+                <include name="${cat.png.file}"/>
+            </fileset>
+        </copy>
+
+        <!-- Copy log4j2.xml in classes (needed by log4j2) -->
+        <copy todir="${project.classes.dir}">
+            <fileset dir="${project.src.dir}">
+                <include name="${log4j2.xml.file}"/>
+            </fileset>
+        </copy>
+
+        <!-- Compile sources of project package into classes -->
+        <javac srcdir="${project.src.dir}"
+               destdir="${project.classes.dir}"
+               includes="${project.package.dir}/**"
+               includeantruntime="false"
+               classpathref="cat.classpath.ref" debug="on"/>
+
+        <!-- Copy fxml files into classes project package view subdir so that FXML loader can find them-->
+        <copy todir="${project.classes.fxml.dir}">
+            <fileset dir="${project.src.project.package.dir}">
+                <include name="*.fxml"/>
+            </fileset>
+        </copy>
+
+        <!-- Build jar file -->
+        <jar basedir="${project.classes.dir}"
+             includes="**"
+             destfile="${cat.jar.path}">
+            <manifest>
+                <attribute name="Main-Class" value="${cat.main.class}"/>
+            </manifest>
+        </jar>
+
+    </target>
+
+    <!-- DISTRIBUTE TARGETS -->
+    <target name="distribute.cat" depends="clean.distribute.cat,build.cat">
+
+        <!-- Copy launch scripts to runtime dir-->
+        <copy file="${cat.source.bat.path}" tofile="${cat.dest.bat.path}"/>
+        <copy file="${cat.source.bash.path}" tofile="${cat.dest.bash.path}"/>
+
+        <!-- Copy jar file directory to runtime dir -->
+        <copy todir="${dest.jar.dir}">
+            <fileset dir="${project.jar.dir}">
+                <include name="${cat.jar.file}"/>
+            </fileset>
+        </copy>
+
+    </target>
+    <target name="distribute.new.load.cat" depends="new.load.cat,distribute.cat"/>
+
+    <!-- PACKAGE TARGETS -->
+    <target name="package.run.cat" depends="distribute.cat">
+        <!-- Runtime for external delivery -->
+        <zip basedir="${project.parent.dir}" destfile="${project.parent.dir}/${cat.run.zip}"
+             includes="thirdparty/**,jar/**,cat.bat,cat.bash"/>
+    </target>
+    <target name="package.run.new.load.cat" depends="new.load.cat,package.run.cat"/>
+
+    <target name="package.src.cat">
+        <!-- Sources without thirdparties -->
+        <zip basedir="${project.parent.dir}" destfile="${project.parent.dir}/${cat.src.zip}"
+             includes="Cat/**" excludes="Cat/classes/**,Cat/jar/**,Cat/logs/**,Cat/out/**"/>
+    </target>
+    <target name="package.src.new.load.cat" depends="new.load.cat,package.src.cat"/>
+
+    <target name="package.src.noconfig.cat">
+        <!-- Sources without thirdparties and idea and home config files -->
+        <zip basedir="${project.parent.dir}" destfile="${project.parent.dir}/${cat.src.noconfig.zip}"
+             includes="Cat/**" excludes="Cat/classes/**,Cat/jar/**,Cat/logs/**,Cat/out/**,Cat/Cat.iml,Cat/config/**,Cat/.idea/**"/>
+    </target>
+    <target name="package.src.noconfig.new.load.cat" depends="new.load.cat,package.src.noconfig.cat"/>
+
+    <target name="package.src.3rd.cat">
+        <!-- Sources with thirdparties -->
+        <zip basedir="${project.parent.dir}" destfile="${project.parent.dir}/${cat.src.3rd.zip}"
+             includes="thirdparty/**,Cat/**" excludes="Cat/classes/**,Cat/jar/**,Cat/logs/**,Cat/out/**"/>
+    </target>
+    <target name="package.src.3rd.new.load.cat" depends="new.load.cat,package.src.3rd.cat"/>
+
+    <!-- SAVE TARGETS -->
+    <target name="save.input.destination.cat">
+        <property file="build.properties"/>
+        <macrodef name="build.property">
+            <attribute name="name"/>
+            <attribute name="from"/>
+            <sequential>
+                <property name="@{name}" value="${@{from}}"/>
+            </sequential>
+        </macrodef>
+        <build.property name="default.destination.dir" from="default.destination.dir"/>
+        <input message="" addproperty="destination.dir" defaultvalue="${default.destination.dir}"/>
+        <condition property="destination.dir.not.exists">
+            <not>
+                <available file="${destination.dir}" type="dir"/>
+            </not>
+        </condition>
+        <fail if="destination.dir.not.exists" message="Destination directory ${destination.dir} does not exist"/>
+        <propertyfile file="build.properties">
+            <entry key="default.destination.dir" value="${destination.dir}"/>
+        </propertyfile>
+        <copy todir="${destination.dir}">
+            <fileset dir="${project.parent.dir}">
+                <include name="${cat.run.zip}"/>
+                <include name="${cat.src.3rd.zip}"/>
+                <include name="${cat.src.zip}"/>
+                <include name="${cat.src.noconfig.zip}"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="save.no.input.destination.cat">
+        <property file="build.properties"/>
+        <macrodef name="build.property">
+            <attribute name="name"/>
+            <attribute name="from"/>
+            <sequential>
+                <property name="@{name}" value="${@{from}}"/>
+            </sequential>
+        </macrodef>
+        <build.property name="default.destination.dir" from="default.destination.dir"/>
+        <condition property="destination.dir.not.exists">
+            <not>
+                <available file="${default.destination.dir}" type="dir"/>
+            </not>
+        </condition>
+        <fail if="destination.dir.not.exists" message="Destination directory ${default.destination.dir} does not exist"/>
+        <copy todir="${default.destination.dir}/run">
+            <fileset dir="${project.parent.dir}">
+                <include name="${cat.run.zip}"/>
+            </fileset>
+        </copy>
+        <copy todir="${default.destination.dir}/full">
+            <fileset dir="${project.parent.dir}">
+                <include name="${cat.src.3rd.zip}"/>
+            </fileset>
+        </copy>
+        <copy todir="${default.destination.dir}/src">
+            <fileset dir="${project.parent.dir}">
+                <include name="${cat.src.zip}"/>
+            </fileset>
+        </copy>
+        <copy todir="${default.destination.dir}/noconfig">
+            <fileset dir="${project.parent.dir}">
+                <include name="${cat.src.noconfig.zip}"/>
+            </fileset>
+        </copy>
+        <purge test="false" keep="5">
+            <fileset dir="${default.destination.dir}/run" />
+            <fileset dir="${default.destination.dir}/full" />
+            <fileset dir="${default.destination.dir}/src" />
+            <fileset dir="${default.destination.dir}/noconfig" />
+        </purge>
+    </target>
+
+    <!-- DISTRIBUTE AND PACKAGE ALL TARGET -->
+    <target name="distribute.and.package.all.cat" depends="distribute.new.load.cat,package.run.cat,package.src.3rd.cat,package.src.cat,package.src.noconfig.cat,save.no.input.destination.cat">
+    </target>
+
+</project>

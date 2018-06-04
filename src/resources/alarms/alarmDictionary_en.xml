@@ -1,0 +1,123 @@
+<alarms>
+
+    <alarm id="1">
+        <name>Ping lost</name>
+        <severity>warning</severity>
+        <objectType>interface</objectType>
+        <type>siteUnreachable</type>
+        <probableCause>Site temporarily unreachable</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Wait for site to reply</remedialAction>
+    </alarm>
+
+    <alarm id="2">
+        <name>Connection with site lost</name>
+        <severity>minor</severity>
+        <objectType>interface</objectType>
+        <type>siteUnreachable</type>
+        <probableCause>Site down or network problem</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Choose another site or contact site administrator</remedialAction>
+    </alarm>
+
+    <alarm id="3">
+        <name>Ethernet down</name>
+        <severity>critical</severity>
+        <objectType>interface</objectType>
+        <type>interfaceDown</type>
+        <probableCause>A network element is down (switch, CPL, ...)</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Check Ethernet network elements state and restart those which are down</remedialAction>
+    </alarm>
+
+    <alarm id="4">
+        <name>Wifi down</name>
+        <severity>critical</severity>
+        <objectType>interface</objectType>
+        <type>interfaceDown</type>
+        <probableCause>Wifi down on the router or on the computer, or external jamming</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Restart router, change Wifi bandwidth</remedialAction>
+    </alarm>
+
+    <alarm id="5">
+        <name>Internet down</name>
+        <severity>critical</severity>
+        <objectType>network</objectType>
+        <type>networkDown</type>
+        <probableCause>Router down, or no more signal on the WAN connection on the router, or provider issue</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Restart router, contact provider hot-line</remedialAction>
+    </alarm>
+
+    <alarm id="6">
+        <name>Local area network down</name>
+        <severity>critical</severity>
+        <objectType>network</objectType>
+        <type>networkDown</type>
+        <probableCause>Router down, or switch is down, or a device jams the network</probableCause>
+        <additionalInfo>Should not occur when the router is in the monitored equipments list</additionalInfo>
+        <remedialAction>Restart router, check network components, check if a connected device is jamming</remedialAction>
+    </alarm>
+
+    <alarm id="7">
+        <name>Network down</name>
+        <severity>critical</severity>
+        <objectType>network</objectType>
+        <type>networkDown</type>
+        <probableCause>A device jams the network, or router down</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Check if a connected device is jamming, restart router</remedialAction>
+    </alarm>
+
+    <alarm id="8">
+        <name>Ethernet unstable</name>
+        <severity>minor</severity>
+        <objectType>interface</objectType>
+        <type>interfaceUnstable</type>
+        <probableCause>A network element is not working properly (switch, CPL, ...)</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Check Ethernet network elements state and restart those which are not wrking properly</remedialAction>
+    </alarm>
+
+    <alarm id="9">
+        <name>Wifi unstable</name>
+        <severity>minor</severity>
+        <objectType>interface</objectType>
+        <type>interfaceUnstable</type>
+        <probableCause>External jamming, or access point too far, or walls too thick</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Change location, change Wifi bandwidth</remedialAction>
+    </alarm>
+
+    <alarm id="10">
+        <name>Internet unstable</name>
+        <severity>minor</severity>
+        <objectType>network</objectType>
+        <type>networkUnstable</type>
+        <probableCause>Router not working properly, or provider issue</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Restart router, contact provider hot-line</remedialAction>
+    </alarm>
+
+    <alarm id="11">
+        <name>Local area network unstable</name>
+        <severity>minor</severity>
+        <objectType>network</objectType>
+        <type>networkUnstable</type>
+        <probableCause>Router down, or switch is down, or a device jams the network</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Restart router, check network components, check if a connected device is jamming</remedialAction>
+    </alarm>
+
+    <alarm id="12">
+        <name>Network unstable</name>
+        <severity>minor</severity>
+        <objectType>network</objectType>
+        <type>networkUnstable</type>
+        <probableCause>A device jams the network, or router down</probableCause>
+        <additionalInfo></additionalInfo>
+        <remedialAction>Check if a connected device is jamming, restart router</remedialAction>
+    </alarm>
+
+</alarms>

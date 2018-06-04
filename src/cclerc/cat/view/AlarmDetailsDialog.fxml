@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cclerc.cat.view.AlarmDetailsDialog">
+   <children>
+  <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
+         <children>
+            <BorderPane minWidth="100.0" prefHeight="371.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <center>
+                  <GridPane hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="100.0" styleClass="valueListGrid">
+                    <columnConstraints>
+                      <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="200.0" prefWidth="200.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" valignment="CENTER" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" valignment="TOP" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" valignment="TOP" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="35.0" valignment="TOP" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" valignment="TOP" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" valignment="TOP" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" valignment="TOP" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" valignment="TOP" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" valignment="TOP" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" valignment="TOP" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" valignment="TOP" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="35.0" valignment="TOP" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" valignment="TOP" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="20.0" prefHeight="40.0" valignment="TOP" vgrow="ALWAYS" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="40.0" valignment="TOP" vgrow="ALWAYS" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="50.0" valignment="TOP" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" valignment="CENTER" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <BorderPane.margin>
+                        <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+                     </BorderPane.margin>
+                     <children>
+                        <Label styleClass="attributeName" text="%alarmDetailsDialog.idLabel" GridPane.rowIndex="4" />
+                        <Label fx:id="idLabel" styleClass="attributeValue" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label styleClass="attributeName" text="%alarmDetailsDialog.severityLabel" GridPane.rowIndex="1" />
+                        <Label fx:id="severityLabel" styleClass="attributeValue" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label styleClass="attributeName" text="%alarmDetailsDialog.occurrencesLabel" GridPane.rowIndex="2" />
+                        <Label fx:id="occurrencesLabel" styleClass="attributeValue" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label styleClass="attributeName" text="%alarmDetailsDialog.stateLabel" GridPane.rowIndex="3" />
+                        <Label fx:id="stateLabel" styleClass="attributeValue" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label styleClass="attributeName" text="%alarmDetailsDialog.nameLabel" GridPane.rowIndex="5" />
+                        <Label fx:id="nameLabel" styleClass="attributeValue" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Label styleClass="attributeName" text="%alarmDetailsDialog.siteLabel" GridPane.rowIndex="6" />
+                        <Label fx:id="siteLabel" styleClass="attributeValue" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <Label styleClass="attributeName" text="%alarmDetailsDialog.objectTypeLabel" GridPane.rowIndex="7" />
+                        <Label fx:id="objectTypeLabel" styleClass="attributeValue" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                        <Label styleClass="attributeName" text="%alarmDetailsDialog.objectNameLabel" GridPane.rowIndex="8" />
+                        <Label fx:id="objectNameLabel" styleClass="attributeValue" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                        <Label styleClass="attributeName" text="%alarmDetailsDialog.raiseDateLabel" GridPane.rowIndex="9" />
+                        <Label fx:id="raiseDateLabel" styleClass="attributeValue" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                        <Label styleClass="attributeName" text="%alarmDetailsDialog.modificationDateLabel" GridPane.rowIndex="10" />
+                        <Label fx:id="modificationDateLabel" styleClass="attributeValue" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                        <Label styleClass="attributeName" text="%alarmDetailsDialog.clearDateLabel" GridPane.rowIndex="11" />
+                        <Label fx:id="clearDateLabel" styleClass="attributeValue" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                        <Label fx:id="typeLabel" styleClass="attributeValue" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                        <Label styleClass="attributeName" text="%alarmDetailsDialog.typeLabel" GridPane.rowIndex="12" />
+                        <Label styleClass="attributeName" text="%alarmDetailsDialog.probableCauseLabel" GridPane.rowIndex="13" />
+                        <Label fx:id="probableCauseLabel" styleClass="attributeValue" text="Label" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                        <Label styleClass="attributeName" text="%alarmDetailsDialog.remedialActionLabel" GridPane.rowIndex="14" />
+                        <Label fx:id="remedialActionLabel" styleClass="attributeValue" text="Label" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                        <Label styleClass="attributeName" text="%alarmDetailsDialog.additionalInformationLabel" GridPane.rowIndex="15" />
+                        <ScrollPane styleClass="attributeValueScrolled" GridPane.columnIndex="1" GridPane.rowIndex="15">
+                           <content>
+                              <Label fx:id="additionalInformationLabel" styleClass="attributeValue" text="Label" />
+                           </content>
+                        </ScrollPane>
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </GridPane>
+               </center>
+               <bottom>
+                  <FlowPane alignment="CENTER_RIGHT" maxHeight="-Infinity" minWidth="100.0" prefHeight="50.0" styleClass="buttonsDisplayZone">
+                     <children>
+                        <Button fx:id="acknowledgeUnAcknowledgeButton" mnemonicParsing="false" onAction="#acknowledgeUnAcknowledge" text="%alarmDetailsDialog.acknowledge">
+                           <FlowPane.margin>
+                              <Insets right="10.0" />
+                           </FlowPane.margin>
+                        </Button>
+                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clear" onMouseClicked="#clear" text="%alarmDetailsDialog.clear">
+                           <FlowPane.margin>
+                              <Insets right="10.0" />
+                           </FlowPane.margin></Button>
+                        <Button mnemonicParsing="false" onAction="#delete" onMouseClicked="#delete" text="%alarmDetailsDialog.delete">
+                           <FlowPane.margin>
+                              <Insets />
+                           </FlowPane.margin></Button>
+                     </children>
+                     <BorderPane.margin>
+                        <Insets left="20.0" right="20.0" />
+                     </BorderPane.margin>
+                  </FlowPane>
+               </bottom>
+               <top>
+                  <FlowPane alignment="CENTER_LEFT" minWidth="100.0" prefHeight="50.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label fx:id="internalId" styleClass="attributeValueMain" text="Label" />
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <BorderPane.margin>
+                        <Insets left="20.0" right="20.0" />
+                     </BorderPane.margin>
+                  </FlowPane>
+               </top>
+            </BorderPane>
+         </children>
+      </AnchorPane>
+      <FlowPane alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="50.0">
+         <children>
+            <Button fx:id="closeButton" mnemonicParsing="false" onAction="#close" onMouseClicked="#close" text="%alarmDetailsDialog.close">
+               <FlowPane.margin>
+                  <Insets right="20.0" />
+               </FlowPane.margin>
+            </Button>
+         </children>
+      </FlowPane>
+   </children>
+</VBox>
