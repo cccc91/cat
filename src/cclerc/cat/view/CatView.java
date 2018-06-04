@@ -313,7 +313,6 @@ public class CatView {
 
     @FXML private void initialize() {
 
-
         // Initialize monitoring tab panes hash map
         monitoringTabPanes.put(EnumTypes.AddressType.WAN, wanMonitoring);
         monitoringTabPanes.put(EnumTypes.AddressType.LAN, lanMonitoring);
@@ -714,7 +713,7 @@ public class CatView {
         aInAlarmsTable.setRowFactory(new Callback<TableView<Alarm>, TableRow<Alarm>>() {
 
             @Override
-            public synchronized TableRow<Alarm> call(TableView<Alarm> lTableView) {
+            public TableRow<Alarm> call(TableView<Alarm> lTableView) {
 
                 final TableRow<Alarm> lRow = new TableRow<Alarm>() {
                     @Override
