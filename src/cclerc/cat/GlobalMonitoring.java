@@ -999,20 +999,24 @@ public class GlobalMonitoring {
      */
     public void changeSeverity(Alarm aInAlarm, EnumTypes.AlarmSeverity aInNewSeverity) {
 
-        aInAlarm.changeSeverity(aInNewSeverity);
+        if (aInAlarm.getSeverity() != aInNewSeverity) {
 
-        String lMessage = String.format(
-                Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.raise.changeSeverity"),
-                aInAlarm.getName(),
-                (aInAlarm.getSite() == null) ?
-                Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.noSite") :
-                Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.site") + " " + aInAlarm.getSite(),
-                (aInAlarm.getObjectName() == null) ?
-                Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.noObject") :
-                Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.object") + " " + aInAlarm.getObjectName(),
-                aInAlarm.getSeverity().getDisplayedValue(), aInNewSeverity.getDisplayedValue());
-        Display.getLogger().info(lMessage);
-        cat.getController().printMessage(new Message(lMessage, aInNewSeverity.getMessageLevel()));
+            String lMessage = String.format(
+                    Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.raise.changeSeverity"),
+                    aInAlarm.getName(),
+                    (aInAlarm.getSite() == null) ?
+                    Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.noSite") :
+                    Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.site") + " " + aInAlarm.getSite(),
+                    (aInAlarm.getObjectName() == null) ?
+                    Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.noObject") :
+                    Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.object") + " " + aInAlarm.getObjectName(),
+                    aInAlarm.getSeverity().getDisplayedValue(), aInNewSeverity.getDisplayedValue());
+            Display.getLogger().info(lMessage);
+            cat.getController().printMessage(new Message(lMessage, aInNewSeverity.getMessageLevel()));
+
+            aInAlarm.changeSeverity(aInNewSeverity);
+
+        }
 
     }
 

@@ -242,8 +242,8 @@ public class EnumTypes {
                     return MessageLevel.INFO;
                 case WARNING:
                 case MINOR:
-                    return MessageLevel.WARNING;
                 case MAJOR:
+                    return MessageLevel.WARNING;
                 case CRITICAL:
                     return MessageLevel.ERROR;
                 default:
