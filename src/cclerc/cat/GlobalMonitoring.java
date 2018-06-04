@@ -307,19 +307,19 @@ public class GlobalMonitoring {
                             connectionTypeUnstableAlarm.computeIfAbsent(lConnectionType, t -> raiseAlarm(connectionTypeAlarmId.get(t)));
                             if (lStatsPerAddressType.get(lAddressType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold3()) {
                                 if (!connectionTypeUnstableAlarm.get(lConnectionType).getSeverity().equals(EnumTypes.AlarmSeverity.MAJOR)) {
-                                    connectionTypeUnstableAlarm.get(lConnectionType).changeSeverity(EnumTypes.AlarmSeverity.MAJOR);
+                                    changeSeverity(connectionTypeUnstableAlarm.get(lConnectionType), EnumTypes.AlarmSeverity.MAJOR);
                                     if (displayGraphicalInterface) cat.getController().refreshActiveAlarmsListAndRemoveSelection();
                                     sendMail(lConnectionType, connectionTypeUnstableAlarm.get(lConnectionType), true);
                                 }
                             } else if (lStatsPerAddressType.get(lAddressType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold2()) {
                                 if (!connectionTypeUnstableAlarm.get(lConnectionType).getSeverity().equals(EnumTypes.AlarmSeverity.MINOR)) {
-                                    connectionTypeUnstableAlarm.get(lConnectionType).changeSeverity(EnumTypes.AlarmSeverity.MINOR);
+                                    changeSeverity(connectionTypeUnstableAlarm.get(lConnectionType), EnumTypes.AlarmSeverity.MINOR);
                                     if (displayGraphicalInterface) cat.getController().refreshActiveAlarmsListAndRemoveSelection();
                                     sendMail(lConnectionType, connectionTypeUnstableAlarm.get(lConnectionType), true);
                                 }
                             } else if (lStatsPerAddressType.get(lAddressType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold1()) {
                                 if (!connectionTypeUnstableAlarm.get(lConnectionType).getSeverity().equals(EnumTypes.AlarmSeverity.WARNING)) {
-                                    connectionTypeUnstableAlarm.get(lConnectionType).changeSeverity(EnumTypes.AlarmSeverity.WARNING);
+                                    changeSeverity(connectionTypeUnstableAlarm.get(lConnectionType), EnumTypes.AlarmSeverity.WARNING);
                                     if (displayGraphicalInterface) cat.getController().refreshActiveAlarmsListAndRemoveSelection();
                                     sendMail(lConnectionType, connectionTypeUnstableAlarm.get(lConnectionType), true);
                                 }
@@ -351,19 +351,19 @@ public class GlobalMonitoring {
                             connectionTypeUnstableAlarm.computeIfAbsent(lConnectionType, t -> raiseAlarm(connectionTypeAlarmId.get(t)));
                             if (lStatsPerInterfaceType.get(lInterfaceType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold3()) {
                                 if (!connectionTypeUnstableAlarm.get(lConnectionType).getSeverity().equals(EnumTypes.AlarmSeverity.MAJOR)) {
-                                    connectionTypeUnstableAlarm.get(lConnectionType).changeSeverity(EnumTypes.AlarmSeverity.MAJOR);
+                                    changeSeverity(connectionTypeUnstableAlarm.get(lConnectionType), EnumTypes.AlarmSeverity.MAJOR);
                                     if (displayGraphicalInterface) cat.getController().refreshActiveAlarmsListAndRemoveSelection();
                                     sendMail(lConnectionType, connectionTypeUnstableAlarm.get(lConnectionType), true);
                                 }
                             } else if (lStatsPerInterfaceType.get(lInterfaceType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold2()) {
                                 if (!connectionTypeUnstableAlarm.get(lConnectionType).getSeverity().equals(EnumTypes.AlarmSeverity.MINOR)) {
-                                    connectionTypeUnstableAlarm.get(lConnectionType).changeSeverity(EnumTypes.AlarmSeverity.MINOR);
+                                    changeSeverity(connectionTypeUnstableAlarm.get(lConnectionType), EnumTypes.AlarmSeverity.MINOR);
                                     if (displayGraphicalInterface) cat.getController().refreshActiveAlarmsListAndRemoveSelection();
                                     sendMail(lConnectionType, connectionTypeUnstableAlarm.get(lConnectionType), true);
                                 }
                             } else if (lStatsPerInterfaceType.get(lInterfaceType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold1()) {
                                 if (!connectionTypeUnstableAlarm.get(lConnectionType).getSeverity().equals(EnumTypes.AlarmSeverity.WARNING)) {
-                                    connectionTypeUnstableAlarm.get(lConnectionType).changeSeverity(EnumTypes.AlarmSeverity.WARNING);
+                                    changeSeverity(connectionTypeUnstableAlarm.get(lConnectionType), EnumTypes.AlarmSeverity.WARNING);
                                     if (displayGraphicalInterface) cat.getController().refreshActiveAlarmsListAndRemoveSelection();
                                     sendMail(lConnectionType, connectionTypeUnstableAlarm.get(lConnectionType), true);
                                 }
@@ -799,17 +799,19 @@ public class GlobalMonitoring {
                     ((aInSite == null && lAlarm.getSite() == null) || (aInSite != null && aInSite.equals(lAlarm.getSite()))) &&
                     ((aInObjectName == null && lAlarm.getObjectName() == null) || (aInObjectName != null && aInObjectName.equals(lAlarm.getObjectName())))) {
                 lAlarm.incrementOccurrences();
-                Display.getLogger().info(String.format(
+                String lMessage = String.format(
                         Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.raise.incrementOccurrences"),
                         lAlarm.getOccurrences(),
+                        lAlarm.getSeverity().getDisplayedValue(),
                         lAlarm.getName(),
                         (aInSite == null) ?
                         Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.noSite") :
                         Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.site") + " " + lAlarm.getSite(),
                         (aInObjectName == null) ?
                         Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.noObject") :
-                        Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.object") + " " + lAlarm.getObjectName())
-                                        );
+                        Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.object") + " " + lAlarm.getObjectName());
+                Display.getLogger().info(lMessage);
+                cat.getController().printMessage(new Message(lMessage, lAlarm.getSeverity().getMessageLevel()));
                 return lAlarm;
             }
         }
@@ -823,16 +825,18 @@ public class GlobalMonitoring {
         if (!lAlarm.isFiltered()) {
 
             activeAlarmsList.add(lAlarm);
-            Display.getLogger().info(String.format(
+            String lMessage = String.format(
                     Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.raise.newAlarm"),
+                    lAlarm.getSeverity().getDisplayedValue(),
                     lAlarm.getName(),
                     (aInSite == null) ?
                     Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.noSite") :
                     Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.site") + " " + lAlarm.getSite(),
                     (aInObjectName == null) ?
                     Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.noObject") :
-                    Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.object") + " " + lAlarm.getObjectName())
-                                    );
+                    Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.object") + " " + lAlarm.getObjectName());
+            Display.getLogger().info(lMessage);
+            cat.getController().printMessage(new Message(lMessage, lAlarm.getSeverity().getMessageLevel()));
 
         }
 
@@ -917,7 +921,7 @@ public class GlobalMonitoring {
                 // Clear alarm and log
                 lAlarm.clear();
                 if (!lAlarm.isFiltered()) {
-                    Display.getLogger().info(String.format(
+                    String lMessage = String.format(
                             Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.clear"),
                             lAlarm.getName(),
                             (lAlarm.getSite() == null) ?
@@ -925,8 +929,9 @@ public class GlobalMonitoring {
                             Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.site") + " " + lAlarm.getSite(),
                             (lAlarm.getObjectName() == null) ?
                             Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.noObject") :
-                            Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.object") + " " + lAlarm.getObjectName())
-                                            );
+                            Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.object") + " " + lAlarm.getObjectName());
+                    Display.getLogger().info(lMessage);
+                    cat.getController().printMessage(new Message(lMessage, EnumTypes.MessageLevel.OK));
                 }
 
             }
@@ -946,7 +951,7 @@ public class GlobalMonitoring {
                     LocaleUtilities.getInstance().getDateFormat().format(lDate),
                     LocaleUtilities.getInstance().getTimeFormat().format(lDate.getTime())));
             lAlarm.acknowledge();
-            Display.getLogger().info(String.format(
+            String lMessage = String.format(
                     Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.acknowledge"),
                     lAlarm.getName(),
                     (lAlarm.getSite() == null) ?
@@ -954,8 +959,9 @@ public class GlobalMonitoring {
                     Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.site") + " " + lAlarm.getSite(),
                     (lAlarm.getObjectName() == null) ?
                     Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.noObject") :
-                    Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.object") + " " + lAlarm.getObjectName())
-                                    );
+                    Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.object") + " " + lAlarm.getObjectName());
+            Display.getLogger().info(lMessage);
+            cat.getController().printMessage(new Message(lMessage, EnumTypes.MessageLevel.INFO));
         }
     }
 
@@ -972,7 +978,7 @@ public class GlobalMonitoring {
                     LocaleUtilities.getInstance().getDateFormat().format(lDate),
                     LocaleUtilities.getInstance().getTimeFormat().format(lDate.getTime())));
             lAlarm.unAcknowledge();
-            Display.getLogger().info(String.format(
+            String lMessage = String.format(
                     Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.unAcknowledge"),
                     lAlarm.getName(),
                     (lAlarm.getSite() == null) ?
@@ -980,9 +986,34 @@ public class GlobalMonitoring {
                     Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.site") + " " + lAlarm.getSite(),
                     (lAlarm.getObjectName() == null) ?
                     Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.noObject") :
-                    Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.object") + " " + lAlarm.getObjectName())
-                                    );
+                    Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.object") + " " + lAlarm.getObjectName());
+            Display.getLogger().info(lMessage);
+            cat.getController().printMessage(new Message(lMessage, EnumTypes.MessageLevel.INFO));
         }
+    }
+
+    /**
+     * Changes the severity of an alarm
+     * @param aInAlarm        Alarm which severity needs to be changed
+     * @param aInNewSeverity  New alarm severity
+     */
+    public void changeSeverity(Alarm aInAlarm, EnumTypes.AlarmSeverity aInNewSeverity) {
+
+        aInAlarm.changeSeverity(aInNewSeverity);
+
+        String lMessage = String.format(
+                Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.raise.changeSeverity"),
+                aInAlarm.getName(),
+                (aInAlarm.getSite() == null) ?
+                Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.noSite") :
+                Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.site") + " " + aInAlarm.getSite(),
+                (aInAlarm.getObjectName() == null) ?
+                Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.noObject") :
+                Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.object") + " " + aInAlarm.getObjectName(),
+                aInAlarm.getSeverity().getDisplayedValue(), aInNewSeverity.getDisplayedValue());
+        Display.getLogger().info(lMessage);
+        cat.getController().printMessage(new Message(lMessage, aInNewSeverity.getMessageLevel()));
+
     }
 
 }

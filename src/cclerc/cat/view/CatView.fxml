@@ -531,8 +531,11 @@
                            <content>
                               <ScrollPane fx:id="consoleScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                  <content>
-                                    <TextFlow fx:id="consoleTextFlow" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                                    <TextFlow fx:id="consoleTextFlow" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="textFlowWithBorder" />
                                  </content>
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
                               </ScrollPane>
                            </content>
                         </Tab>

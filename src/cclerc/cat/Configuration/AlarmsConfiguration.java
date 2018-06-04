@@ -82,7 +82,7 @@ public class AlarmsConfiguration extends AbstractConfiguration {
             }
 
             // Sort alarms by id
-            Collections.sort(alarmConfigurations, new Comparator<AlarmConfiguration>() {
+            alarmConfigurations.sort(new Comparator<AlarmConfiguration>() {
                 @Override
                 public int compare(AlarmConfiguration o1, AlarmConfiguration o2) {
                     return o1.getId().compareTo(o2.getId());

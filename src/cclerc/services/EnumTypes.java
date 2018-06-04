@@ -236,6 +236,20 @@ public class EnumTypes {
             return Display.getViewResourceBundle().getString("catView.alarmView.severity." + this.toString());
 
         }
+        public MessageLevel getMessageLevel() {
+            switch (this) {
+                case INFO:
+                    return MessageLevel.INFO;
+                case WARNING:
+                case MINOR:
+                    return MessageLevel.WARNING;
+                case MAJOR:
+                case CRITICAL:
+                    return MessageLevel.ERROR;
+                default:
+                    return MessageLevel.INFO;
+            }
+        }
     }
     public enum AlarmType {SITE_UNREACHABLE, INTERFACE_DOWN, NETWORK_DOWN, INTERFACE_UNSTABLE, NETWORK_UNSTABLE}
     public enum AlarmObjectType {INTERFACE, NETWORK}

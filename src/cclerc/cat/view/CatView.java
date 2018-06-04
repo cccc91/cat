@@ -60,6 +60,9 @@ public class CatView {
     private List<CheckBox> pingLineFilterCheckBoxes = new ArrayList<>();
     private List<String> networkInterfacesNames = new ArrayList<>();
 
+    // Console management
+    private volatile List<Message> messages = new ArrayList<>();
+
     // Jobs management
     private int jobsCount = 0;
     private long pingsCount = 0;
@@ -310,6 +313,7 @@ public class CatView {
 
     @FXML private void initialize() {
 
+
         // Initialize monitoring tab panes hash map
         monitoringTabPanes.put(EnumTypes.AddressType.WAN, wanMonitoring);
         monitoringTabPanes.put(EnumTypes.AddressType.LAN, lanMonitoring);
@@ -334,16 +338,16 @@ public class CatView {
         lanMonitoringGridPanes.add(lan2MonitoringGridPane);
         monitoringGridPanes.put(EnumTypes.AddressType.LAN, lanMonitoringGridPanes);
 
-        // Reset style of the tabs title when it is selected
+        // Reset style of monitoring job tabs title when it is selected
         for (EnumTypes.AddressType lAddressType : EnumTypes.AddressType.values()) {
-                monitoringTabPanes.get(lAddressType).getSelectionModel().selectedItemProperty().addListener(
-                        new ChangeListener<Tab>() {
-                            @Override
-                            public void changed(ObservableValue<? extends Tab> ov, Tab oldTab, Tab newTab) {
-                                newTab.setStyle("-fx-font-style: normal;");
-                                newTab.setText(newTab.getText().replaceAll(" \\(-*[0-9]+\\)$", ""));
-                            }
-                        });
+            monitoringTabPanes.get(lAddressType).getSelectionModel().selectedItemProperty().addListener(
+                    new ChangeListener<Tab>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Tab> ov, Tab oldTab, Tab newTab) {
+                            newTab.setStyle("-fx-font-style: normal;");
+                            newTab.setText(newTab.getText().replaceAll(" \\(-*[0-9]+\\)$", ""));
+                        }
+                    });
         }
 
         // Tabs
@@ -372,6 +376,20 @@ public class CatView {
                     }
                 }
                                                       );
+
+        // Reset style of the console tab title when it is selected
+        consoleTab.getTabPane().getSelectionModel().selectedItemProperty().addListener(
+                new ChangeListener<Tab>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Tab> ov, Tab oldTab, Tab newTab) {
+                        if (newTab.equals(consoleTab)) {
+                            newTab.setStyle("-fx-font-style: normal;");
+                            newTab.setText(newTab.getText().replaceAll(" \\(-*[0-9]+\\)$", ""));
+                        }
+                    }
+                });
+
+        printMessage(new Message(Display.getViewResourceBundle().getString("catView.console.startApplication"), EnumTypes.MessageLevel.INFO));
 
         // Initialize ping chart
         pingLineFilterCheckBoxes.add(pingLineInterface1FilterCheckBox);
@@ -696,7 +714,7 @@ public class CatView {
         aInAlarmsTable.setRowFactory(new Callback<TableView<Alarm>, TableRow<Alarm>>() {
 
             @Override
-            public TableRow<Alarm> call(TableView<Alarm> lTableView) {
+            public synchronized TableRow<Alarm> call(TableView<Alarm> lTableView) {
 
                 final TableRow<Alarm> lRow = new TableRow<Alarm>() {
                     @Override
@@ -969,7 +987,8 @@ public class CatView {
                     String lSeverity = (Display.getViewResourceBundle().containsKey(lKey)) ? Display.getViewResourceBundle().getString(lKey) :
                                        Display.getViewResourceBundle().getString("catView.alarmView.severity.unknown");
                     setText(lSeverity);
-                    for (String lStyleClass: this.getStyleClass()) {
+                    for (int i = 0; i < this.getStyleClass().size(); i++) {
+                        String lStyleClass = this.getStyleClass().get(i);
                         if (lStyleClass.contains("alarm")) this.getStyleClass().remove(lStyleClass);
                     }
                     this.getStyleClass().add("alarm-" + aInItem);
@@ -1377,9 +1396,11 @@ public class CatView {
         Image lNewImage;
         Tooltip lTooltip;
         if (isButtonPauseDisplayed) {
+            printMessage(new Message(Display.getViewResourceBundle().getString("catView.console.resume"), EnumTypes.MessageLevel.INFO));
             lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_PAUSE).toString());
             lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.pause"));
         } else {
+            printMessage(new Message(Display.getViewResourceBundle().getString("catView.console.pause"), EnumTypes.MessageLevel.INFO));
             lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_PLAY).toString());
             lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.play"));
         }
@@ -1589,6 +1610,10 @@ public class CatView {
 
         // OK is pressed
         if (lResponse.isPresent() && lResponse.get().equals(ButtonType.YES)) {
+
+            clearAllMessages();
+            consoleTab.setText(consoleTab.getText().replaceAll(" \\(-*[0-9]+\\)$", ""));
+            printMessage(new Message(Display.getViewResourceBundle().getString("catView.console.resetStatistics"), EnumTypes.MessageLevel.INFO));
 
             // Reset current statistics
             pingsCount = 0;
@@ -2093,20 +2118,23 @@ public class CatView {
      * @param aInMessage      Message to display
      */
     public void printMessage(Message aInMessage) {
-        aInMessage.println(consoleTextFlow);
+        Platform.runLater(() -> {
+            aInMessage.println(consoleTextFlow);
+            changeConsoleTabModificationIndicator(1);
+        });
     }
 
-    /**
+    /** TODO: remove
      * Replaces console job text flow content with current list of messages
      * @param aInMessages Messages
      */
-    public void replaceMessages(List<Message> aInMessages) {
-        cat.getController().changeConsoleTabModificationIndicator(aInMessages.size() - consoleTextFlow.getChildren().size());
-        clearAllMessages();
-        for (Message lMessage: aInMessages) {
-            printMessage(lMessage);
-        }
-    }
+//    public void replaceMessages(List<Message> aInMessages) {
+//        cat.getController().changeConsoleTabModificationIndicator(aInMessages.size() - consoleTextFlow.getChildren().size());
+//        clearAllMessages();
+//        for (Message lMessage: aInMessages) {
+//            printMessage(lMessage);
+//        }
+//    }
 
     /**
      * Clears all messages from the console text flow

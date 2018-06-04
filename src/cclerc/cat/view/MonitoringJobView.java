@@ -459,8 +459,10 @@ public class MonitoringJobView {
         for (MonitoringJob lMonitoringJob: monitoringJobs) {
             // Pause or resume current job
             if (!isButtonPauseDisplayed) {
+                lMonitoringJob.displayMessage(Display.getViewResourceBundle().getString("monitoringJob.console.pause"), EnumTypes.MessageLevel.INFO);
                 lMonitoringJob.pause();
             } else {
+                lMonitoringJob.displayMessage(Display.getViewResourceBundle().getString("monitoringJob.console.resume"), EnumTypes.MessageLevel.INFO);
                 lMonitoringJob.resume();
             }
         }

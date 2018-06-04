@@ -696,6 +696,16 @@ public class MonitoringJob implements Runnable {
         forceNotifyCurrentJobState = true;
     }
 
+    /**
+     * Displays a message
+     * @param aInMessage       Message to be displayed
+     * @param aInMessageLevel  Message level
+     */
+    public void displayMessage(String aInMessage, EnumTypes.MessageLevel aInMessageLevel) {
+        messages.add(new Message(aInMessage, aInMessageLevel));
+        refreshDisplay();
+    }
+
     // PRIVATE METHODS
 
     /**
