@@ -4,6 +4,7 @@ import cclerc.cat.Configuration.Configuration;
 import cclerc.cat.Configuration.GlobalMonitoringConfiguration;
 import cclerc.cat.model.Alarm;
 import cclerc.services.*;
+import fr.bmartel.speedtest.SpeedTestReport;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -245,6 +246,10 @@ public class GlobalMonitoring {
                 Utilities.sleep(1000);
             }
 
+//            InitializeSpeedTest();
+//            speedTest.startHttpDownload("http://ipv4.ikoula.testdebit.info/1M.iso");
+//            speedTest.startHttpUpload("http://ipv4.ikoula.testdebit.info/");
+
             // Run the thread
             while (running) {
 
@@ -443,6 +448,9 @@ public class GlobalMonitoring {
 
     private volatile ObservableList<Alarm> activeAlarmsList = FXCollections.observableArrayList();
     private volatile ObservableList<Alarm> historicalAlarmsList = FXCollections.observableArrayList();
+
+    // Speed test
+    SpeedTest speedTest;
 
     // SINGLETON
 
@@ -1018,6 +1026,35 @@ public class GlobalMonitoring {
 
         }
 
+    }
+
+    public void InitializeSpeedTest() {
+        speedTest = new SpeedTest(new SpeedTestInterface() {
+            @Override
+            public void printMessage(String aInMessage) {
+                if (cat.getController().getLastMessage().contains("%")) {
+                    cat.getController().replaceLastMessage(new Message(aInMessage, EnumTypes.MessageLevel.INFO));
+                } else {
+                    cat.getController().printMessage(new Message(aInMessage, EnumTypes.MessageLevel.INFO));
+                }
+            }
+
+            @Override
+            public void printError(String aInError) {
+                cat.getController().printMessage(new Message(aInError, EnumTypes.MessageLevel.ERROR));
+            }
+
+            @Override
+            public void storeResult(SpeedTestReport report) {
+
+            }
+
+            @Override
+            // TODO: compute
+            public String getType() {
+                return "periodic";
+            }
+        });
     }
 
 }
