@@ -12,8 +12,6 @@ import java.net.InetAddress;
 import java.util.*;
 import java.util.List;
 
-import static java.lang.System.exit;
-
 /**
  * Singleton class implementing global monitoring
  */
@@ -246,8 +244,8 @@ public class GlobalMonitoring {
                 Utilities.sleep(1000);
             }
 
-//            InitializeSpeedTest();
-//            speedTest.startHttpDownload("http://ipv4.ikoula.testdebit.info/1M.iso");
+//            speedTest = buildSpeedTest();
+//            speedTest.startHttpDownload("http://ipv4.ikoula.testdebit.info/100M.iso");
 //            speedTest.startHttpUpload("http://ipv4.ikoula.testdebit.info/");
 
             // Run the thread
@@ -1028,11 +1026,11 @@ public class GlobalMonitoring {
 
     }
 
-    public void InitializeSpeedTest() {
-        speedTest = new SpeedTest(new SpeedTestInterface() {
+    public SpeedTest buildSpeedTest() {
+        return new SpeedTest(new SpeedTestInterface() {
             @Override
             public void printMessage(String aInMessage) {
-                if (cat.getController().getLastMessage().contains("%")) {
+                if (!speedTest.isFirstReport()) {
                     cat.getController().replaceLastMessage(new Message(aInMessage, EnumTypes.MessageLevel.INFO));
                 } else {
                     cat.getController().printMessage(new Message(aInMessage, EnumTypes.MessageLevel.INFO));
