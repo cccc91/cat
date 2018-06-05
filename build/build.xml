@@ -75,7 +75,7 @@
     </path>
 
     <path id="jspeedtest.classpath.ref">
-        <pathelement location="${thirdparty.dir}/jspeedtest-1.25/jspeedtest-1.25.jar"/>
+        <pathelement location="${thirdparty.dir}/jspeedtest-1.31.3/jspeedtest-1.31.3.jar"/>
     </path>
 
     <path id="proxy-vole.classpath.ref">
