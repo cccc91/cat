@@ -59,6 +59,7 @@ public class CatView {
     private Map<EnumTypes.AddressType, List<GridPane>> monitoringGridPanes = new HashMap<>();
     private List<CheckBox> pingLineFilterCheckBoxes = new ArrayList<>();
     private List<String> networkInterfacesNames = new ArrayList<>();
+    private boolean firstDisplay = true;
 
     // Console management
     private volatile List<Message> messages = new ArrayList<>();
@@ -431,19 +432,20 @@ public class CatView {
             }
         });
 
-        Tooltip lManageCheckBoxTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.manage"));
-        pingLineManageCheckBox.setTooltip(lManageCheckBoxTooltip);
-        Tooltip lWanFilterCheckBoxTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.WAN"));
-        pingLineWanFilterCheckBox.setTooltip(lWanFilterCheckBoxTooltip);
-        Tooltip lLanFilterCheckBoxTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.LAN"));
-        pingLineLanFilterCheckBox.setTooltip(lLanFilterCheckBoxTooltip);
-        Tooltip lHorizontalMoveSliderTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.horizontalMoveSlider"));
-        pingLineChartHorizontalMoveSlider.setTooltip(lHorizontalMoveSliderTooltip);
-        Tooltip lHorizontalZoomSliderTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.horizontalZoomSlider"));
-        pingLineChartHorizontalZoomSlider.setTooltip(lHorizontalZoomSliderTooltip);
-        Tooltip lVerticalZoomSliderTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.verticalZoomSlider"));
-        pingLineChartVerticalZoomSlider.setTooltip(lVerticalZoomSliderTooltip);
-
+        if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) {
+            Tooltip lManageCheckBoxTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.manage"));
+            pingLineManageCheckBox.setTooltip(lManageCheckBoxTooltip);
+            Tooltip lWanFilterCheckBoxTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.WAN"));
+            pingLineWanFilterCheckBox.setTooltip(lWanFilterCheckBoxTooltip);
+            Tooltip lLanFilterCheckBoxTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.LAN"));
+            pingLineLanFilterCheckBox.setTooltip(lLanFilterCheckBoxTooltip);
+            Tooltip lHorizontalMoveSliderTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.horizontalMoveSlider"));
+            pingLineChartHorizontalMoveSlider.setTooltip(lHorizontalMoveSliderTooltip);
+            Tooltip lHorizontalZoomSliderTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.horizontalZoomSlider"));
+            pingLineChartHorizontalZoomSlider.setTooltip(lHorizontalZoomSliderTooltip);
+            Tooltip lVerticalZoomSliderTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.verticalZoomSlider"));
+            pingLineChartVerticalZoomSlider.setTooltip(lVerticalZoomSliderTooltip);
+        }
         checkPingChartState();
 
     }
@@ -1610,6 +1612,8 @@ public class CatView {
         // OK is pressed
         if (lResponse.isPresent() && lResponse.get().equals(ButtonType.YES)) {
 
+            firstDisplay = true;
+
             clearAllMessages();
             consoleTab.setText(consoleTab.getText().replaceAll(" \\(-*[0-9]+\\)$", ""));
             printMessage(new Message(Display.getViewResourceBundle().getString("catView.console.resetStatistics"), EnumTypes.MessageLevel.INFO));
@@ -1797,7 +1801,7 @@ public class CatView {
         pingLineFilterCheckBoxes.get(aInPriority - 1).setText(Network.getInterfaceType(aInInterfaceName).toString() + " (" + aInInterfaceName + ")");
         Tooltip lTooltip = new Tooltip(String.format(Display.getViewResourceBundle().getString(
                 "catView.pingChartView.tooltip." +  EnumTypes.InterfaceType.valueOf(Network.getInterfaceType(aInInterfaceName))), aInInterfaceName));
-        pingLineFilterCheckBoxes.get(aInPriority - 1).setTooltip(lTooltip);
+        if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) pingLineFilterCheckBoxes.get(aInPriority - 1).setTooltip(lTooltip);
         networkInterfacesNames.add(aInPriority - 1, aInInterfaceName);
     }
 
@@ -2119,7 +2123,8 @@ public class CatView {
     public void printMessage(Message aInMessage) {
         Platform.runLater(() -> {
             aInMessage.println(consoleTextFlow);
-            changeConsoleTabModificationIndicator(1);
+            if (!firstDisplay) changeConsoleTabModificationIndicator(1);
+            firstDisplay = false;
         });
     }
 
