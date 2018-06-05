@@ -2128,6 +2128,13 @@ public class CatView {
         });
     }
 
+    public void replaceLastMessage(Message aInMessage) {
+        Platform.runLater(() -> {
+            if (consoleTextFlow.getChildren().size() > 0) consoleTextFlow.getChildren().remove(consoleTextFlow.getChildren().size() - 1);
+            aInMessage.println(consoleTextFlow);;
+        });
+    }
+
     /**
      * Clears all messages from the console text flow
      */
@@ -2135,6 +2142,13 @@ public class CatView {
         consoleTextFlow.getChildren().clear();
     }
 
+    /**
+     * Gets last console message
+     * @return Last console message
+     */
+    public String getLastMessage() {
+        return (consoleTextFlow.getChildren().size() == 0) ? "" : consoleTextFlow.getChildren().get(consoleTextFlow.getChildren().size() - 1).toString();
+    }
 
     /**
      * Changes the modification flag of the console tab
