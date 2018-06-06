@@ -244,9 +244,9 @@ public class GlobalMonitoring {
                 Utilities.sleep(1000);
             }
 
-//            speedTest = buildSpeedTest();
-//            speedTest.startHttpDownload("http://ipv4.ikoula.testdebit.info/100M.iso");
-//            speedTest.startHttpUpload("http://ipv4.ikoula.testdebit.info/");
+            speedTest = buildSpeedTest();
+            speedTest.startDownloadRepeat("http://st1.online.net/speedtest/speedtest/random4000x4000.jpg");
+            speedTest.startUploadRepeat("http://ipv4.ikoula.testdebit.info/");
 
             // Run the thread
             while (running) {
@@ -1052,7 +1052,8 @@ public class GlobalMonitoring {
             public String getType() {
                 return "periodic";
             }
-        });
+        },  (Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkConfiguration(EnumTypes.AddressType.WAN) == null) ? true :
+                Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkConfiguration(EnumTypes.AddressType.WAN).getUseProxy());
     }
 
 }
