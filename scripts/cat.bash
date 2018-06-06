@@ -9,6 +9,7 @@ CAT_CP=$CAT_CP:$THIRDPARTIES/jansi-1.11/jansi-1.11.jar
 CAT_CP=$CAT_CP:$THIRDPARTIES/java-mail-1.4.4/java-mail-1.4.4.jar
 CAT_CP=$CAT_CP:$THIRDPARTIES/jdom-2.0.6/jdom-2.0.6.jar
 CAT_CP=$CAT_CP:$THIRDPARTIES/jspeedtest-1.25/jspeedtest-1.25.jar
+CAT_CP=$CAT_CP:$THIRDPARTIES/http-endec-1.04/http-endec-1.04.jar
 CAT_CP=$CAT_CP:$THIRDPARTIES/proxy-vole-20131209/proxy-vole_20131209.jar
 
 $JAVA_HOME/java -Dlog4j.skipJansi=true -Dprism.forceGPU=true -Dprism.order=sw -cp $CAT_CP cclerc.cat.Cat $*
