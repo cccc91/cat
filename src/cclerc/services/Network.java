@@ -259,7 +259,6 @@ public class Network {
             }
 
         } catch (Exception e) {
-            Display.logUnexpectedError(e);
         }
 
         return lProxy;
@@ -302,7 +301,6 @@ public class Network {
             }
 
         } catch (Exception e) {
-            Display.logUnexpectedError(e);
         }
 
         return lProxy;

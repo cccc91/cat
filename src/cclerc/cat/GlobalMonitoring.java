@@ -245,8 +245,8 @@ public class GlobalMonitoring {
             }
 
             speedTest = buildSpeedTest();
-            speedTest.startDownloadRepeat("http://st1.online.net/speedtest/speedtest/random4000x4000.jpg");
-            speedTest.startUploadRepeat("http://ipv4.ikoula.testdebit.info/");
+            speedTest.startDownloadRepeat("http://intuxication.lafibre.info/speedtest/random4000x4000.jpg");
+            speedTest.startUploadRepeat("http://intuxication.lafibre.info/speedtest/upload.php");
 
             // Run the thread
             while (running) {
