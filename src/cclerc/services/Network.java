@@ -80,7 +80,6 @@ public class Network {
                 getNetworkInterfaceInet6Address(lNetworkInterface).getHostAddress();
                 return true;
             } catch (Exception e) {
-
             }
         }
         return false;
@@ -88,7 +87,7 @@ public class Network {
 
     /**
      * Checks if an ip address is ipv4
-     * @param aInIp
+     * @param aInIp IP adress to check
      * @return true if the address if ipv4, false otherwise
      */
     public static boolean isIPv4Address(String aInIp) {
@@ -106,7 +105,7 @@ public class Network {
 
     /**
      * Checks if an ip address is ipv6
-     * @param aInIp
+     * @param aInIp IP address to check
      * @return true if the address if ipv6, false otherwise
      */
     public static boolean isIPv6Address(String aInIp) {
@@ -239,7 +238,7 @@ public class Network {
         final int SIZE = 32;
         final int TTL = 1000 * 60 * 5;
 
-        Proxy lProxy = null;
+        Proxy lProxy = Proxy.NO_PROXY;
         try {
 
             System.setProperty("java.net.useSystemProxies", "true");
@@ -260,6 +259,50 @@ public class Network {
             }
 
         } catch (Exception e) {
+            Display.logUnexpectedError(e);
+        }
+
+        return lProxy;
+
+    }
+
+    /**
+     * Finds system HTTP/S proxy
+     * @param aInUrl Remote url to reach
+     * @return System proxy or null if no proxy is defined
+     */
+    public static Proxy findHttpProxy(String aInUrl) {
+
+        final int SIZE = 32;
+        final int TTL = 1000 * 60 * 5;
+
+        Proxy lProxy = Proxy.NO_PROXY;
+        try {
+
+            System.setProperty("java.net.useSystemProxies", "true");
+            URI lUri = new URI(aInUrl);
+
+            // Use proxy vole library to find the default proxy
+            ProxySearch lProxySearch = ProxySearch.getDefaultProxySearch();
+            lProxySearch.setPacCacheSettings(SIZE, TTL);
+            List<Proxy> lProxies = lProxySearch.getProxySelector().select(lUri);
+
+            // Find first proxy for HTTP/S. Any DIRECT proxy in the list returned is only second choice
+            if (lProxies != null) {
+                loop: for (Proxy p : lProxies) {
+                    switch (p.type()) {
+                        case HTTP:
+                            lProxy = p;
+                            break loop;
+                        case DIRECT:
+                            lProxy = p;
+                            break;
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            Display.logUnexpectedError(e);
         }
 
         return lProxy;
