@@ -170,7 +170,7 @@ public class SpeedTest {
         if (waitForOnGoingTestCompletion()) {
             repeat = true;
             testOnGoing = true;
-            speedTestSocket.startDownloadRepeat(aInUrl, 10000, 1000, new IRepeatListener() { // TODO: use configuration
+            speedTestSocket.startDownloadRepeat(aInUrl, 30000, 1000, new IRepeatListener() { // TODO: use configuration
                 @Override
                 public void onCompletion(SpeedTestReport report) {
                     Map<Integer, BigDecimal> lBitRate = convertToBestUnit(report.getTransferRateBit());
@@ -184,6 +184,7 @@ public class SpeedTest {
                     firstReport = true;
                     testOnGoing = false;
                     repeat = false;
+                    speedTestInterface.storeResult(report);
                 }
 
                 @Override
@@ -211,7 +212,7 @@ public class SpeedTest {
         if (waitForOnGoingTestCompletion()) {
             repeat = true;
             testOnGoing = true;
-            speedTestSocket.startUploadRepeat(aInUrl, 10000, 1000, 100000000, new IRepeatListener() { // TODO: use configuration
+            speedTestSocket.startUploadRepeat(aInUrl, 30000, 1000, 100000000, new IRepeatListener() { // TODO: use configuration
                 @Override
                 public void onCompletion(SpeedTestReport report) {
                     Map<Integer, BigDecimal> lBitRate = convertToBestUnit(report.getTransferRateBit());
@@ -225,6 +226,7 @@ public class SpeedTest {
                     firstReport = true;
                     testOnGoing = false;
                     repeat = false;
+                    speedTestInterface.storeResult(report);
                 }
 
                 @Override
