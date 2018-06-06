@@ -1,15 +1,19 @@
 package cclerc.services;
 
-import cclerc.cat.model.Interface;
 import fr.bmartel.speedtest.SpeedTestReport;
 import fr.bmartel.speedtest.SpeedTestSocket;
 import fr.bmartel.speedtest.inter.IRepeatListener;
 import fr.bmartel.speedtest.inter.ISpeedTestListener;
 import fr.bmartel.speedtest.model.SpeedTestError;
 
-import javax.rmi.CORBA.Util;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.Proxy;
+import java.net.URL;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +34,7 @@ public class SpeedTest {
      */
     public SpeedTest(SpeedTestInterface aInSpeedTestInterface, boolean aInUseProxy) {
 
+        // TODO test();
         speedTestInterface = aInSpeedTestInterface;
 
         // TODO: proxy
@@ -246,4 +251,39 @@ public class SpeedTest {
         }
     }
 
+    public void test() {
+        try {
+
+            URL url = new URL("http://www.speedtest.net/speedtest-servers.php");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/json");
+
+            if (conn.getResponseCode() != 200) {
+                throw new RuntimeException("Failed : HTTP error code : "
+                                           + conn.getResponseCode());
+            }
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+
+            String output;
+            System.out.println("Output from Server .... \n");
+            while ((output = br.readLine()) != null) {
+                System.out.println(output);
+            }
+
+            conn.disconnect();
+
+        } catch (MalformedURLException e) {
+
+            e.printStackTrace();
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+        }
+
+    }
 }
