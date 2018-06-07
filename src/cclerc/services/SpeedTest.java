@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
 import java.time.Instant;
@@ -26,6 +25,7 @@ public class SpeedTest {
     private boolean testOnGoing = false;
     private boolean firstReport = true;
     private long timeout;
+    private Proxy proxy = Proxy.NO_PROXY;
 
     /**
      * Speed test constructor
@@ -34,14 +34,15 @@ public class SpeedTest {
      */
     public SpeedTest(SpeedTestInterface aInSpeedTestInterface, boolean aInUseProxy) {
 
-        // TODO test();
         speedTestInterface = aInSpeedTestInterface;
 
         // TODO: proxy
         if (aInUseProxy) {
-            Proxy lProxy = Network.findHttpProxy("http://st1.online.net/speedtest/speedtest");
-            speedTestSocket.setProxyServer(lProxy.toString().replace(" @ ", "://"));
+            proxy = Network.findHttpProxy("http://st1.online.net/speedtest/speedtest");
+            speedTestSocket.setProxyServer(proxy.toString().replace(" @ ", "://"));
         }
+
+        test();
 
         // TODO: use configuration
         speedTestSocket.setSocketTimeout(10000);
@@ -254,14 +255,13 @@ public class SpeedTest {
     public void test() {
         try {
 
-            URL url = new URL("http://www.speedtest.net/speedtest-servers.php");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            URL url = new URL("http://c.speedtest.net/speedtest-servers-static.php");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/json");
 
             if (conn.getResponseCode() != 200) {
-                throw new RuntimeException("Failed : HTTP error code : "
-                                           + conn.getResponseCode());
+                throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
             }
 
             BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -270,20 +270,15 @@ public class SpeedTest {
             String output;
             System.out.println("Output from Server .... \n");
             while ((output = br.readLine()) != null) {
-                System.out.println(output);
+                if (output.contains("FR")) System.out.println(output);
             }
 
             conn.disconnect();
 
-        } catch (MalformedURLException e) {
-
-            e.printStackTrace();
-
         } catch (IOException e) {
-
-            e.printStackTrace();
-
+            Display.logUnexpectedError(e);
         }
 
     }
+
 }

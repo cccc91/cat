@@ -1,14 +1,11 @@
 package cclerc.cat.Configuration;
 
 import cclerc.services.EnumTypes;
-import cclerc.services.Network;
-import org.apache.logging.log4j.Logger;
 import org.jdom2.Element;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.NetworkInterface;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Internal class for monitoring configuration
