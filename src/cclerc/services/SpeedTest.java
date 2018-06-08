@@ -1,15 +1,19 @@
 package cclerc.services;
 
+import com.sun.xml.internal.ws.api.message.ExceptionHasMessage;
 import fr.bmartel.speedtest.SpeedTestReport;
 import fr.bmartel.speedtest.SpeedTestSocket;
 import fr.bmartel.speedtest.inter.IRepeatListener;
 import fr.bmartel.speedtest.inter.ISpeedTestListener;
 import fr.bmartel.speedtest.model.SpeedTestError;
+import org.jdom2.Document;
+import org.jdom2.input.SAXBuilder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
@@ -18,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SpeedTest {
+
+    private final String URL = "http://c.speedtest.net/speedtest-servers-static.php";
 
     private SpeedTestSocket speedTestSocket = new SpeedTestSocket();
     private SpeedTestInterface speedTestInterface;
@@ -42,7 +48,7 @@ public class SpeedTest {
             speedTestSocket.setProxyServer(proxy.toString().replace(" @ ", "://"));
         }
 
-        test();
+        buildServersList();
 
         // TODO: use configuration
         speedTestSocket.setSocketTimeout(10000);
@@ -252,20 +258,26 @@ public class SpeedTest {
         }
     }
 
-    public void test() {
+    public void buildServersList() {
+
         try {
 
-            URL url = new URL("http://c.speedtest.net/speedtest-servers-static.php");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept", "application/json");
+            // Build HTTP GET request to retrieve servers list from speedtest.net
+            URL lUrl = new URL(URL);
+            HttpURLConnection lConnection = (HttpURLConnection) lUrl.openConnection(proxy);
+            lConnection.setRequestMethod("GET");
+            lConnection.setRequestProperty("Accept", "application/json");
 
-            if (conn.getResponseCode() != 200) {
-                throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
+            if (lConnection.getResponseCode() != 200) {
+                throw new ConnectException(lConnection.getResponseCode() + ": " + lConnection.getResponseMessage());
             }
 
+            SAXBuilder lBuilder = new SAXBuilder();
+//            Document lDocument = (Document) lBuilder.build(lConnection.getInputStream());
+
+            // TODO: construire classe speedTestServer + GUI pour lancer et configurer le serveur
             BufferedReader br = new BufferedReader(new InputStreamReader(
-                    (conn.getInputStream())));
+                    (lConnection.getInputStream())));
 
             String output;
             System.out.println("Output from Server .... \n");
@@ -273,9 +285,9 @@ public class SpeedTest {
                 if (output.contains("FR")) System.out.println(output);
             }
 
-            conn.disconnect();
+            lConnection.disconnect();
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             Display.logUnexpectedError(e);
         }
 

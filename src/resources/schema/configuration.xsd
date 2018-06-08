@@ -83,6 +83,14 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <!-- 15 min to 1 week -->
+    <xs:simpleType name="speedtestPeriodType">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="15"/>
+            <xs:maxInclusive value="604800"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <!-- Root element -->
 
     <xs:element name="configuration" type="configurationType"/>
@@ -225,16 +233,25 @@
 
     <!-- Global Monitoring element and children -->
 
-    <xs:complexType name="globalMonitoringConfigurationType">
+    <xs:complexType name="speedtestType">
         <xs:simpleContent>
             <xs:extension base="xs:string">
+                <xs:attribute type="xs:boolean" name="periodic"/>
+                <xs:attribute type="timeType" name="startTime"/>
+                <xs:attribute type="speedtestPeriodType" name="period"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="globalMonitoringConfigurationType">
+        <xs:sequence>
+            <xs:element type="speedtestType" name="speedtest" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
                 <xs:attribute type="pollingPeriodType" name="pollingPeriod"/>
                 <xs:attribute type="xs:integer" name="meanTimeBetweenTwoConnectionsLostThreshold1"/>
                 <xs:attribute type="xs:integer" name="meanTimeBetweenTwoConnectionsLostThreshold2"/>
                 <xs:attribute type="xs:integer" name="meanTimeBetweenTwoConnectionsLostThreshold3"/>
                 <xs:attribute type="xs:integer" name="connectionsLostForgetTime"/>
-            </xs:extension>
-        </xs:simpleContent>
     </xs:complexType>
 
 </xs:schema>
