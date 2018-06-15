@@ -48,9 +48,9 @@ public class Constants {
 
     // Global statistics
     public final static int DEFAULT_GLOBAL_MONITORING_POLLING_PERIOD = 3000;
-    public final static long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD1 = 1 * 60 * 60 * 1000; // 1 loss every 1 hours max (warning)
-    public final static long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD2 = 10 * 60 * 1000;     // 1 loss every 10 min max (minor)
-    public final static long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD3 = 1 * 60 * 1000;      // 1 loss every 1 min max (major)
+    public final static long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD1 = 15 * 60 * 1000;     // 1 loss every 15 min max (warning)
+    public final static long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD2 = 1 * 60 * 1000;      // 1 loss every 1 min max  (minor)
+    public final static long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD3 = 10 * 1000;          // 1 loss every 10 sec max (major)
     public final static long DEFAULT_CONNECTIONS_LOST_FORGET_TIME = 2 * 60 * 60 * 1000;                      // Consider there were no losses after 2 hours w/o loss
 
     // States
