@@ -326,6 +326,7 @@ public class Network {
                 Socket lSocket = (lProxy != null && aInUseProxy) ? new Socket(lProxy) : new Socket();
                 lSocket.bind(new InetSocketAddress(lSourceInetAddress, 0));
                 lSocket.connect(new InetSocketAddress(aInIp, lPort), aInTimeout);
+                lSocket.close();
                 return lPort;
             } catch (Exception e) {
             }
@@ -361,6 +362,7 @@ public class Network {
                 lSocket.bind(new InetSocketAddress(lInetAddress, 0));
                 lSocket.connect(new InetSocketAddress(aInIp, aInPort), aInTimeout);
                 lIsReachable = true;
+                lSocket.close();
             } catch (Exception e) {
                 lRetries++;
                 Utilities.sleep(500);
