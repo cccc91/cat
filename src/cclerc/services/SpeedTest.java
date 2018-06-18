@@ -1,16 +1,13 @@
 package cclerc.services;
 
-import com.sun.xml.internal.ws.api.message.ExceptionHasMessage;
 import fr.bmartel.speedtest.SpeedTestReport;
 import fr.bmartel.speedtest.SpeedTestSocket;
 import fr.bmartel.speedtest.inter.IRepeatListener;
 import fr.bmartel.speedtest.inter.ISpeedTestListener;
 import fr.bmartel.speedtest.model.SpeedTestError;
-import org.jdom2.Document;
 import org.jdom2.input.SAXBuilder;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.net.ConnectException;
@@ -31,6 +28,9 @@ public class SpeedTest {
     private boolean testOnGoing = false;
     private boolean firstReport = true;
     private long timeout;
+    private BigDecimal bitRate = new BigDecimal(0);
+    private BigDecimal octetRate = new BigDecimal(0);
+    private int count = 0;
     private Proxy proxy = Proxy.NO_PROXY;
 
     /**
@@ -60,21 +60,8 @@ public class SpeedTest {
         speedTestSocket.addSpeedTestListener(new ISpeedTestListener() {
 
             @Override
-            public void onCompletion(SpeedTestReport report) {
-                // Called when download/upload is complete
-                if (!repeat) {
-                    Map<Integer, BigDecimal> lBitRate = convertToBestUnit(report.getTransferRateBit());
-                    Map<Integer, BigDecimal> lOctetRate = convertToBestUnit(report.getTransferRateOctet());
-                    aInSpeedTestInterface.printMessage(
-                            String.format(Display.getViewResourceBundle().getString("speedTest.completed"),
-                                          Display.getViewResourceBundle().getString("speedtest.type." + aInSpeedTestInterface.getType()),
-                                          Display.getViewResourceBundle().getString("speedtest.mode." + report.getSpeedTestMode().toString().toLowerCase()),
-                                          lOctetRate.values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + lOctetRate.keySet().iterator().next()),
-                                          lBitRate.values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + lBitRate.keySet().iterator().next())));
-                    aInSpeedTestInterface.storeResult(report);
-                    testOnGoing = false;
-                    firstReport = true;
-                }
+            public void onCompletion(SpeedTestReport aInReport) {
+                if (!repeat) processCompletionReport(aInReport);
             }
 
             @Override
@@ -90,20 +77,8 @@ public class SpeedTest {
             }
 
             @Override
-            public void onProgress(float percent, SpeedTestReport report) {
-                // Called to notify download/upload progress
-                if (!repeat) {
-                    Map<Integer, BigDecimal> lBitRate = convertToBestUnit(report.getTransferRateBit());
-                    Map<Integer, BigDecimal> lOctetRate = convertToBestUnit(report.getTransferRateOctet());
-                    aInSpeedTestInterface.printMessage(
-                            String.format(Display.getViewResourceBundle().getString("speedTest.progress"),
-                                          Display.getViewResourceBundle().getString("speedtest.type." + aInSpeedTestInterface.getType()),
-                                          Display.getViewResourceBundle().getString("speedtest.mode." + report.getSpeedTestMode().toString().toLowerCase()),
-                                          report.getProgressPercent(),
-                                          lOctetRate.values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + lOctetRate.keySet().iterator().next()),
-                                          lBitRate.values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + lBitRate.keySet().iterator().next())));
-                    firstReport = false;
-                }
+            public void onProgress(float percent, SpeedTestReport aInReport) {
+                if (!repeat) processProgressReport(aInReport);
             }
 
         });
@@ -126,9 +101,54 @@ public class SpeedTest {
     }
 
     /**
-     * Converts a 1024 based rate to the best unit
+     * Displays current transfer rate and stores values for average computation on completion
+     * @param aInReport Progress report
+     */
+    private void processProgressReport(SpeedTestReport aInReport) {
+
+        Map<Integer, BigDecimal> lBitRate = convertToBestUnit(aInReport.getTransferRateBit());
+        Map<Integer, BigDecimal> lOctetRate = convertToBestUnit(aInReport.getTransferRateOctet());
+        count++;
+        bitRate = bitRate.add(aInReport.getTransferRateBit());
+        octetRate = octetRate.add(aInReport.getTransferRateOctet());
+        speedTestInterface.printMessage(
+                String.format(Display.getViewResourceBundle().getString("speedTest.progress"),
+                              Display.getViewResourceBundle().getString("speedtest.type." + speedTestInterface.getType()),
+                              Display.getViewResourceBundle().getString("speedtest.mode." + aInReport.getSpeedTestMode().toString().toLowerCase()),
+                              aInReport.getProgressPercent(),
+                              lOctetRate.values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + lOctetRate.keySet().iterator().next()),
+                              lBitRate.values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + lBitRate.keySet().iterator().next())));
+        firstReport = false;
+
+    }
+
+    /**
+     * Displays final transfer rate by computing it from average of the different progresses
+     * @param aInReport Final progress report
+     */
+    private void processCompletionReport(SpeedTestReport aInReport) {
+
+        count++;
+        bitRate = bitRate.add(aInReport.getTransferRateBit()).divide(new BigDecimal(count), 2);
+        octetRate = octetRate.add(aInReport.getTransferRateOctet()).divide(new BigDecimal(count), 2);
+        Map<Integer, BigDecimal> lBitRate = convertToBestUnit(bitRate);
+        Map<Integer, BigDecimal> lOctetRate = convertToBestUnit(octetRate);
+        speedTestInterface.printMessage(
+                String.format(Display.getViewResourceBundle().getString("speedTest.completed"),
+                              Display.getViewResourceBundle().getString("speedtest.type." + speedTestInterface.getType()),
+                              Display.getViewResourceBundle().getString("speedtest.mode." + aInReport.getSpeedTestMode().toString().toLowerCase()),
+                              lOctetRate.values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + lOctetRate.keySet().iterator().next()),
+                              lBitRate.values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + lBitRate.keySet().iterator().next())));
+        speedTestInterface.storeResult(aInReport);
+        testOnGoing = false;
+        firstReport = true;
+
+    }
+
+    /**
+     * Converts a 1024 based octetRate to the best unit
      * @param aInRate Rate to convert
-     * @return Map with key = power of 1024 used to divide the rate so that result is lower than 1024, and value is result of this division
+     * @return Map with key = power of 1024 used to divide the octetRate so that result is lower than 1024, and value is result of this division
      */
     private Map<Integer, BigDecimal> convertToBestUnit(BigDecimal aInRate) {
 
@@ -158,6 +178,9 @@ public class SpeedTest {
      */
     public void startDownload(String aInUrl) {
         if (waitForOnGoingTestCompletion()) {
+            bitRate = BigDecimal.ZERO;
+            octetRate = BigDecimal.ZERO;
+            count = 0;
             testOnGoing = true;
             speedTestSocket.startDownload(aInUrl);
         }
@@ -169,6 +192,9 @@ public class SpeedTest {
      */
     public void startUpload(String aInUrl) {
         if (waitForOnGoingTestCompletion()) {
+            bitRate = BigDecimal.ZERO;
+            octetRate = BigDecimal.ZERO;
+            count = 0;
             testOnGoing = true;
             speedTestSocket.startUpload(aInUrl, 100000000);
         }
@@ -180,37 +206,20 @@ public class SpeedTest {
      */
     public void startDownloadRepeat(String aInUrl) {
         if (waitForOnGoingTestCompletion()) {
+            bitRate = BigDecimal.ZERO;
+            octetRate = BigDecimal.ZERO;
+            count = 0;
             repeat = true;
             testOnGoing = true;
             speedTestSocket.startDownloadRepeat(aInUrl, 30000, 1000, new IRepeatListener() { // TODO: use configuration
                 @Override
-                public void onCompletion(SpeedTestReport report) {
-                    Map<Integer, BigDecimal> lBitRate = convertToBestUnit(report.getTransferRateBit());
-                    Map<Integer, BigDecimal> lOctetRate = convertToBestUnit(report.getTransferRateOctet());
-                    speedTestInterface.printMessage(
-                            String.format(Display.getViewResourceBundle().getString("speedTest.completed"),
-                                          Display.getViewResourceBundle().getString("speedtest.type." + speedTestInterface.getType()),
-                                          Display.getViewResourceBundle().getString("speedtest.mode." + report.getSpeedTestMode().toString().toLowerCase()),
-                                          lOctetRate.values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + lOctetRate.keySet().iterator().next()),
-                                          lBitRate.values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + lBitRate.keySet().iterator().next())));
-                    firstReport = true;
-                    testOnGoing = false;
-                    repeat = false;
-                    speedTestInterface.storeResult(report);
+                public void onReport(SpeedTestReport aInReport) {
+                    processProgressReport(aInReport);
                 }
-
                 @Override
-                public void onReport(SpeedTestReport report) {
-                    Map<Integer, BigDecimal> lBitRate = convertToBestUnit(report.getTransferRateBit());
-                    Map<Integer, BigDecimal> lOctetRate = convertToBestUnit(report.getTransferRateOctet());
-                    speedTestInterface.printMessage(
-                            String.format(Display.getViewResourceBundle().getString("speedTest.progress"),
-                                          Display.getViewResourceBundle().getString("speedtest.type." + speedTestInterface.getType()),
-                                          Display.getViewResourceBundle().getString("speedtest.mode." + report.getSpeedTestMode().toString().toLowerCase()),
-                                          report.getProgressPercent(),
-                                          lOctetRate.values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + lOctetRate.keySet().iterator().next()),
-                                          lBitRate.values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + lBitRate.keySet().iterator().next())));
-                    firstReport = false;
+                public void onCompletion(SpeedTestReport aInReport) {
+                    processCompletionReport(aInReport);
+                    repeat = false;
                 }
             });
         }
@@ -222,37 +231,20 @@ public class SpeedTest {
      */
     public void startUploadRepeat(String aInUrl) {
         if (waitForOnGoingTestCompletion()) {
+            bitRate = BigDecimal.ZERO;
+            octetRate = BigDecimal.ZERO;
+            count = 0;
             repeat = true;
             testOnGoing = true;
             speedTestSocket.startUploadRepeat(aInUrl, 30000, 1000, 100000000, new IRepeatListener() { // TODO: use configuration
                 @Override
-                public void onCompletion(SpeedTestReport report) {
-                    Map<Integer, BigDecimal> lBitRate = convertToBestUnit(report.getTransferRateBit());
-                    Map<Integer, BigDecimal> lOctetRate = convertToBestUnit(report.getTransferRateOctet());
-                    speedTestInterface.printMessage(
-                            String.format(Display.getViewResourceBundle().getString("speedTest.completed"),
-                                          Display.getViewResourceBundle().getString("speedtest.type." + speedTestInterface.getType()),
-                                          Display.getViewResourceBundle().getString("speedtest.mode." + report.getSpeedTestMode().toString().toLowerCase()),
-                                          lOctetRate.values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + lOctetRate.keySet().iterator().next()),
-                                          lBitRate.values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + lBitRate.keySet().iterator().next())));
-                    firstReport = true;
-                    testOnGoing = false;
-                    repeat = false;
-                    speedTestInterface.storeResult(report);
+                public void onReport(SpeedTestReport aInReport) {
+                    processProgressReport(aInReport);
                 }
-
                 @Override
-                public void onReport(SpeedTestReport report) {
-                    Map<Integer, BigDecimal> lBitRate = convertToBestUnit(report.getTransferRateBit());
-                    Map<Integer, BigDecimal> lOctetRate = convertToBestUnit(report.getTransferRateOctet());
-                    speedTestInterface.printMessage(
-                            String.format(Display.getViewResourceBundle().getString("speedTest.progress"),
-                                          Display.getViewResourceBundle().getString("speedtest.type." + speedTestInterface.getType()),
-                                          Display.getViewResourceBundle().getString("speedtest.mode." + report.getSpeedTestMode().toString().toLowerCase()),
-                                          report.getProgressPercent(),
-                                          lOctetRate.values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + lOctetRate.keySet().iterator().next()),
-                                          lBitRate.values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + lBitRate.keySet().iterator().next())));
-                    firstReport = false;
+                public void onCompletion(SpeedTestReport aInReport) {
+                    processCompletionReport(aInReport);
+                    repeat = false;
                 }
             });
         }
