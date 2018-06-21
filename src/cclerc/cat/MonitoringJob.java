@@ -300,6 +300,9 @@ public class MonitoringJob implements Runnable {
         // Launch job only if parameters of at least one server are correct
         if (serverParameters.keySet().size() == 0) return;
 
+        // Initialize charts
+        if (displayGraphicalInterface) Platform.runLater(() -> {catController.addPingSeries(addressType, networkInterface);});
+
         // Wait for cat end of initialization
         while (cat == null || cat.isInitializationInProgress()) {
             Utilities.sleep(1000);
@@ -340,9 +343,6 @@ public class MonitoringJob implements Runnable {
                                      EnumTypes.MessageLevel.INFO, new Date()));
 
         }
-
-        // Initialize charts
-        if (displayGraphicalInterface) Platform.runLater(() -> {catController.addPingSeries(addressType, networkInterface);});
 
         changeActiveServer(activeServer, "startup");
 
