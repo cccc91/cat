@@ -358,6 +358,13 @@ public class Network {
 
             try {
                 Proxy lProxy = aInUseProxy ? findSocksProxy(aInIp, aInPort) : Proxy.NO_PROXY;
+
+                // In case of proxy, check first if proxy is reachable
+//                if (!lProxy.equals(Proxy.NO_PROXY)) {
+//                    Socket lSocket = new Socket();
+//                    lSocket.bind(new InetSocketAddress(lInetAddress, 0));
+//                    lSocket.connect(lProxy.address(), aInTimeout);
+//                }
                 Socket lSocket = new Socket(lProxy);
                 lSocket.bind(new InetSocketAddress(lInetAddress, 0));
                 lSocket.connect(new InetSocketAddress(aInIp, aInPort), aInTimeout);
