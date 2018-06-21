@@ -1923,8 +1923,14 @@ public class CatView {
                 if ((Long) lPoint.getYValue() < lPingLine.getMinY().longValue()) lPingLine.setMinY((Long) lPoint.getYValue());
                 if ((Long) lPoint.getYValue() > lPingLine.getMaxY().longValue()) lPingLine.setMaxY((Long) lPoint.getYValue());
             }
+            for (XYChart.Data lPoint : pingMarkers.get(aInKey)) {
+                if ((Long) lPoint.getXValue() < lPingLine.getMinX().longValue()) lPingLine.setMinX((Long) lPoint.getXValue());
+                if ((Long) lPoint.getXValue() > lPingLine.getMaxX().longValue()) lPingLine.setMaxX((Long) lPoint.getXValue());
+            }
 
-        }
+
+
+            }
 
         refreshPingAxisBounds();
 
@@ -2034,7 +2040,7 @@ public class CatView {
         for (PingLine lPingLine : pingLines.values()) {
             if (isPingLineDisplayedAllowed(lPingLine) && pingLineManageCheckBox.isSelected()) {
                 if (lPingLine.getMinX().longValue() < lMinX) lMinX = lPingLine.getMinX().longValue();
-                if (lMaxMinX < lPingLine.getMinX().longValue()) lMaxMinX = lPingLine.getMinX().longValue();
+                if ((lMaxMinX < lPingLine.getMinX().longValue()) && (lPingLine.getMinX().longValue() != Long.MAX_VALUE)) lMaxMinX = lPingLine.getMinX().longValue();
                 lMaxX = lMaxMinX + lDuration;
                 if (lPingLine.getMinY().longValue() < lMinY) lMinY = lPingLine.getMinY().longValue();
                 if (lPingLine.getMaxY().longValue() > lMaxY) lMaxY = lPingLine.getMaxY().longValue();
