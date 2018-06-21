@@ -255,11 +255,11 @@ public class GlobalMonitoring {
                 long lNow = System.currentTimeMillis();
                 GlobalMonitoringConfiguration lConfiguration = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration();
 
-                HashMap<EnumTypes.AddressType, Double> lStatsPerAddressType = new HashMap<>();
-                HashMap<EnumTypes.InterfaceType, Double> lStatsPerInterfaceType = new HashMap<>();
+                HashMap<EnumTypes.ConnectionType, Double> lStatsPerConnectionType = new HashMap<>();
                 Double lNetworkStats = 0.0;
 
                 // Parse all monitoring jobs
+                lStatsPerConnectionType.clear();
                 for (MonitoringJob lMonitoringJob: monitoringJobStates.keySet()) {
 
                     // Check job details
@@ -277,14 +277,14 @@ public class GlobalMonitoring {
                             ? (lNow - lJobDetails.startMonitoringDate) / lJobDetails.pingsLostCount
                             : Double.MAX_VALUE;
 
-                    // For each connection type, store the max mean time (the most favorable case is considered)
-                    if (!lStatsPerAddressType.containsKey(lMonitoringJob.getAddressType()) ||
-                        lMeanTimeBetweenTwoConnectionsLost > lStatsPerAddressType.get(lMonitoringJob.getAddressType())) {
-                        lStatsPerAddressType.put(lMonitoringJob.getAddressType(), lMeanTimeBetweenTwoConnectionsLost);
+                    // For each connection type, store the max mean time (the most favorable case among the same connection type jobs is considered)
+                    EnumTypes.ConnectionType lAddressType = EnumTypes.ConnectionType.valueOf(lMonitoringJob.getAddressType());
+                    if (!lStatsPerConnectionType.containsKey(lAddressType) || lMeanTimeBetweenTwoConnectionsLost > lStatsPerConnectionType.get(lAddressType)) {
+                        lStatsPerConnectionType.put(lAddressType, lMeanTimeBetweenTwoConnectionsLost);;
                     }
-                    if (!lStatsPerInterfaceType.containsKey(lMonitoringJob.getInterfaceType()) ||
-                        lMeanTimeBetweenTwoConnectionsLost > lStatsPerInterfaceType.get(lMonitoringJob.getInterfaceType())) {
-                        lStatsPerInterfaceType.put(lMonitoringJob.getInterfaceType(), lMeanTimeBetweenTwoConnectionsLost);
+                    EnumTypes.ConnectionType lInterfaceType = EnumTypes.ConnectionType.valueOf(lMonitoringJob.getInterfaceType());
+                    if (!lStatsPerConnectionType.containsKey(lInterfaceType) || lMeanTimeBetweenTwoConnectionsLost > lStatsPerConnectionType.get(lInterfaceType)) {
+                        lStatsPerConnectionType.put(lInterfaceType, lMeanTimeBetweenTwoConnectionsLost);
                     }
                     if (lMeanTimeBetweenTwoConnectionsLost > lNetworkStats) {
                         lNetworkStats = lMeanTimeBetweenTwoConnectionsLost;
@@ -293,11 +293,10 @@ public class GlobalMonitoring {
                 }
                 lNetworkStats = (lNetworkStats == 0.0) ? Double.MAX_VALUE : lNetworkStats;
 
-                // Check unstable address types
-                for (EnumTypes.AddressType lAddressType: lStatsPerAddressType.keySet()) {
+                // Check unstable connection types
+                for (EnumTypes.ConnectionType lConnectionType: lStatsPerConnectionType.keySet()) {
 
-                    EnumTypes.ConnectionType lConnectionType = EnumTypes.ConnectionType.valueOf(lAddressType);
-                    if ((lStatsPerAddressType.get(lAddressType) == Double.MAX_VALUE && connectionTypeUnstableAlarm.get(lConnectionType) != null) ||
+                    if ((lStatsPerConnectionType.get(lConnectionType) == Double.MAX_VALUE && connectionTypeUnstableAlarm.get(lConnectionType) != null) ||
                         lNetworkStats != Double.MAX_VALUE) {
                         clearAlarm(connectionTypeUnstableAlarm.get(lConnectionType),
                                    Display.getViewResourceBundle().getString("globalMonitoring.alarms.autoClear.unstableAlarm"));
@@ -305,22 +304,22 @@ public class GlobalMonitoring {
                     } else {
                         // Raise unstable alarm for current connection type only if the whole network is not declared unstable
                         if (lNetworkStats == Double.MAX_VALUE &&
-                            lStatsPerAddressType.get(lAddressType) != Double.MAX_VALUE &&
-                            lStatsPerAddressType.get(lAddressType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold1()) {
+                            lStatsPerConnectionType.get(lConnectionType) != Double.MAX_VALUE &&
+                            lStatsPerConnectionType.get(lConnectionType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold1()) {
                             connectionTypeUnstableAlarm.computeIfAbsent(lConnectionType, t -> raiseAlarm(connectionTypeAlarmId.get(t)));
-                            if (lStatsPerAddressType.get(lAddressType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold3()) {
+                            if (lStatsPerConnectionType.get(lConnectionType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold3()) {
                                 if (!connectionTypeUnstableAlarm.get(lConnectionType).getSeverity().equals(EnumTypes.AlarmSeverity.MAJOR)) {
                                     changeSeverity(connectionTypeUnstableAlarm.get(lConnectionType), EnumTypes.AlarmSeverity.MAJOR);
                                     if (displayGraphicalInterface) cat.getController().refreshActiveAlarmsListAndRemoveSelection();
                                     sendMail(lConnectionType, connectionTypeUnstableAlarm.get(lConnectionType), true);
                                 }
-                            } else if (lStatsPerAddressType.get(lAddressType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold2()) {
+                            } else if (lStatsPerConnectionType.get(lConnectionType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold2()) {
                                 if (!connectionTypeUnstableAlarm.get(lConnectionType).getSeverity().equals(EnumTypes.AlarmSeverity.MINOR)) {
                                     changeSeverity(connectionTypeUnstableAlarm.get(lConnectionType), EnumTypes.AlarmSeverity.MINOR);
                                     if (displayGraphicalInterface) cat.getController().refreshActiveAlarmsListAndRemoveSelection();
                                     sendMail(lConnectionType, connectionTypeUnstableAlarm.get(lConnectionType), true);
                                 }
-                            } else if (lStatsPerAddressType.get(lAddressType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold1()) {
+                            } else if (lStatsPerConnectionType.get(lConnectionType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold1()) {
                                 if (!connectionTypeUnstableAlarm.get(lConnectionType).getSeverity().equals(EnumTypes.AlarmSeverity.WARNING)) {
                                     changeSeverity(connectionTypeUnstableAlarm.get(lConnectionType), EnumTypes.AlarmSeverity.WARNING);
                                     if (displayGraphicalInterface) cat.getController().refreshActiveAlarmsListAndRemoveSelection();
@@ -331,51 +330,6 @@ public class GlobalMonitoring {
                             if (connectionTypeUnstableAlarm.get(lConnectionType) != null) {
                                 sendMail(lConnectionType, connectionTypeUnstableAlarm.get(lConnectionType), false);
                                 clearAlarm(connectionTypeUnstableAlarm.get(lConnectionType), Display.getViewResourceBundle().getString("globalMonitoring.alarms.autoClear.unstableAlarm"));
-                                connectionTypeUnstableAlarm.put(lConnectionType, null);
-                            }
-                        }
-                    }
-
-                }
-
-                // Check unstable interface types
-                for (EnumTypes.InterfaceType lInterfaceType: lStatsPerInterfaceType.keySet()) {
-
-                    EnumTypes.ConnectionType lConnectionType = EnumTypes.ConnectionType.valueOf(lInterfaceType);
-                    if ((lStatsPerInterfaceType.get(lInterfaceType) == Double.MAX_VALUE && connectionTypeUnstableAlarm.get(lConnectionType) != null) ||
-                        lNetworkStats != Double.MAX_VALUE ) {
-                        clearAlarm(connectionTypeUnstableAlarm.get(lConnectionType),  Display.getViewResourceBundle().getString("globalMonitoring.alarms.autoClear.unstableAlarm"));
-                        connectionTypeUnstableAlarm.put(lConnectionType, null);
-                    } else {
-                        // Raise unstable alarm for current connection type only if the whole network is not declared unstable
-                        if (lNetworkStats == Double.MAX_VALUE &&
-                            lStatsPerInterfaceType.get(lInterfaceType) != Double.MAX_VALUE &&
-                            lStatsPerInterfaceType.get(lInterfaceType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold1()) {
-                            connectionTypeUnstableAlarm.computeIfAbsent(lConnectionType, t -> raiseAlarm(connectionTypeAlarmId.get(t)));
-                            if (lStatsPerInterfaceType.get(lInterfaceType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold3()) {
-                                if (!connectionTypeUnstableAlarm.get(lConnectionType).getSeverity().equals(EnumTypes.AlarmSeverity.MAJOR)) {
-                                    changeSeverity(connectionTypeUnstableAlarm.get(lConnectionType), EnumTypes.AlarmSeverity.MAJOR);
-                                    if (displayGraphicalInterface) cat.getController().refreshActiveAlarmsListAndRemoveSelection();
-                                    sendMail(lConnectionType, connectionTypeUnstableAlarm.get(lConnectionType), true);
-                                }
-                            } else if (lStatsPerInterfaceType.get(lInterfaceType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold2()) {
-                                if (!connectionTypeUnstableAlarm.get(lConnectionType).getSeverity().equals(EnumTypes.AlarmSeverity.MINOR)) {
-                                    changeSeverity(connectionTypeUnstableAlarm.get(lConnectionType), EnumTypes.AlarmSeverity.MINOR);
-                                    if (displayGraphicalInterface) cat.getController().refreshActiveAlarmsListAndRemoveSelection();
-                                    sendMail(lConnectionType, connectionTypeUnstableAlarm.get(lConnectionType), true);
-                                }
-                            } else if (lStatsPerInterfaceType.get(lInterfaceType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold1()) {
-                                if (!connectionTypeUnstableAlarm.get(lConnectionType).getSeverity().equals(EnumTypes.AlarmSeverity.WARNING)) {
-                                    changeSeverity(connectionTypeUnstableAlarm.get(lConnectionType), EnumTypes.AlarmSeverity.WARNING);
-                                    if (displayGraphicalInterface) cat.getController().refreshActiveAlarmsListAndRemoveSelection();
-                                    sendMail(lConnectionType, connectionTypeUnstableAlarm.get(lConnectionType), true);
-                                }
-                            }
-                        } else {
-                            if (connectionTypeUnstableAlarm.get(lConnectionType) != null) {
-                                sendMail(lConnectionType, connectionTypeUnstableAlarm.get(lConnectionType), false);
-                                clearAlarm(connectionTypeUnstableAlarm.get(lConnectionType),
-                                           Display.getViewResourceBundle().getString("globalMonitoring.alarms.autoClear.unstableAlarm"));
                                 connectionTypeUnstableAlarm.put(lConnectionType, null);
                             }
                         }

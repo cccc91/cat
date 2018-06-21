@@ -56,6 +56,7 @@ public class MonitoringJob implements Runnable {
 
     // Class variables
     private static boolean displayGraphicalInterface;
+    private static Cat cat;
 
     // Semaphore
     private final Object lock = new Object();
@@ -299,6 +300,11 @@ public class MonitoringJob implements Runnable {
         // Launch job only if parameters of at least one server are correct
         if (serverParameters.keySet().size() == 0) return;
 
+        // Wait for cat end of initialization
+        while (cat == null || cat.isInitializationInProgress()) {
+            Utilities.sleep(1000);
+        }
+
         ServerParameters lActiveServerParameters = serverParameters.get(activeServer);
 
         // Name thread
@@ -336,7 +342,7 @@ public class MonitoringJob implements Runnable {
         }
 
         // Initialize charts
-        if (displayGraphicalInterface) catController.addPingSeries(addressType, networkInterface);
+        if (displayGraphicalInterface) Platform.runLater(() -> {catController.addPingSeries(addressType, networkInterface);});
 
         changeActiveServer(activeServer, "startup");
 
@@ -854,6 +860,16 @@ public class MonitoringJob implements Runnable {
      */
     private String BuildStatePropertyName(String aInState) {
         return addressType.name() + '.' + interfaceType.name() + '.' + aInState;
+    }
+
+    // PUBLIC STATIC METHODS
+
+    /**
+     * Sets reference to Cat
+     * @param aInCat Cat object
+     */
+    public static void setCat(Cat aInCat) {
+        cat = aInCat;
     }
 
     // PUBLIC METHODS

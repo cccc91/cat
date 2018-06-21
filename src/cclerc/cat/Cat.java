@@ -496,6 +496,7 @@ public class Cat extends Application {
 
         // Set back-reference to this
         rootController.setCat(this);
+        MonitoringJob.setCat(this);
         GlobalMonitoring.setCat(this);
 
         // Build network interfaces list
