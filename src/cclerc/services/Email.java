@@ -47,7 +47,6 @@ public class Email {
         if ((aInPreferredSmtpServer != null) && smtpServers.containsKey(aInPreferredSmtpServer)) {
             preferredSmtpServer = aInPreferredSmtpServer;
         } else {
-            Display.getLogger().warn(String.format(Display.getMessagesResourceBundle().getString("log.email.invalidPreferredSmtpServer"), aInPreferredSmtpServer));
             preferredSmtpServer = null;
         }
     }
