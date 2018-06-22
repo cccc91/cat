@@ -359,17 +359,22 @@ public class Network {
             try {
                 Proxy lProxy = aInUseProxy ? findSocksProxy(aInIp, aInPort) : Proxy.NO_PROXY;
 
-                // In case of proxy, check first if proxy is reachable
-//                if (!lProxy.equals(Proxy.NO_PROXY)) {
-//                    Socket lSocket = new Socket();
-//                    lSocket.bind(new InetSocketAddress(lInetAddress, 0));
-//                    lSocket.connect(lProxy.address(), aInTimeout);
-//                }
+                // In case of proxy, check first if proxy is reachable: open a direct connection to the proxy ip/port through current interface
+                if (!lProxy.equals(Proxy.NO_PROXY)) {
+                    Socket lSocket = new Socket();
+                    lSocket.bind(new InetSocketAddress(lInetAddress, 0));
+                    String lProxyIp = lProxy.address().toString().replaceAll(":.*", "");
+                    int lProxyPort = Integer.valueOf(lProxy.address().toString().replaceAll(".*:", ""));
+                    lSocket.connect(new InetSocketAddress(lProxyIp, lProxyPort), aInTimeout);
+                }
+
+                // Then check connection with remote address through current interface (direct connection in case of no proxy, or connection between proxy and remote otherwise)
                 Socket lSocket = new Socket(lProxy);
                 lSocket.bind(new InetSocketAddress(lInetAddress, 0));
                 lSocket.connect(new InetSocketAddress(aInIp, aInPort), aInTimeout);
                 lIsReachable = true;
                 lSocket.close();
+
             } catch (Exception e) {
                 lRetries++;
                 Utilities.sleep(500);
