@@ -38,6 +38,7 @@ public class Cat extends Application {
     private static String[] applicationArguments;
     private static boolean displayGraphicalInterface = true;
     private static boolean initializationInProgress = true;
+    private static Cat cat;
 
     // Configuration
     private static String configurationFilePath;
@@ -57,6 +58,16 @@ public class Cat extends Application {
 
     // Network interfaces
     private static HashMap<String, NetworkInterface> networkInterfaceList;
+
+    // STATIC
+
+    /**
+     * Gets cat instance
+     * @return cat instance
+     */
+    public static Cat getInstance() {
+        return cat;
+    }
 
     // PRIVATE
 
@@ -470,6 +481,9 @@ public class Cat extends Application {
     @Override
     public void start(Stage aInMainStage) throws Exception {
 
+        // Back reference to this, must not be moved
+        cat = this;
+
         // Memorize and set title to the main stage
         mainStage = aInMainStage;
         mainStage.setTitle(Display.getAboutResourceBundle().getString("product.name"));
@@ -493,11 +507,6 @@ public class Cat extends Application {
             createDialogs();
 
         }
-
-        // Set back-reference to this
-        rootController.setCat(this);
-        MonitoringJob.setCat(this);
-        GlobalMonitoring.setCat(this);
 
         // Build network interfaces list
         networkInterfaceList = Network.buildNetworkInterfaceList();
