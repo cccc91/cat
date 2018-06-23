@@ -56,7 +56,6 @@ public class MonitoringJob implements Runnable {
 
     // Class variables
     private static boolean displayGraphicalInterface;
-    private static Cat cat;
 
     // Semaphore
     private final Object lock = new Object();
@@ -304,7 +303,7 @@ public class MonitoringJob implements Runnable {
         if (displayGraphicalInterface) Platform.runLater(() -> {catController.addPingSeries(addressType, networkInterface);});
 
         // Wait for cat end of initialization
-        while (cat == null || cat.isInitializationInProgress()) {
+        while (Cat.getInstance() == null || Cat.getInstance().isInitializationInProgress()) {
             Utilities.sleep(1000);
         }
 
@@ -867,16 +866,6 @@ public class MonitoringJob implements Runnable {
      */
     private String BuildStatePropertyName(String aInState) {
         return addressType.name() + '.' + interfaceType.name() + '.' + aInState;
-    }
-
-    // PUBLIC STATIC METHODS
-
-    /**
-     * Sets reference to Cat
-     * @param aInCat Cat object
-     */
-    public static void setCat(Cat aInCat) {
-        cat = aInCat;
     }
 
     // PUBLIC METHODS
