@@ -29,8 +29,9 @@
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="250.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="250.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="250.0" />
-            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" />
-            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="30.0" />
+            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
+            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="27.0" />
+            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="30.0" />
             <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0" />
         </columnConstraints>
         <rowConstraints>
@@ -82,12 +83,17 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
               </rowConstraints>
             </GridPane>
-            <ImageView fx:id="emailButtonImageView" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#switchEmail" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="7" GridPane.halignment="LEFT">
+            <ImageView fx:id="clearConsoleButtonImageView" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#clearConsole" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="7" GridPane.halignment="LEFT">
+               <image>
+                  <Image url="@../../../resources/images/clear_console.PNG" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="emailButtonImageView" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#switchEmail" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="8" GridPane.halignment="LEFT">
                <image>
                   <Image url="@../../../resources/images/email.png" />
                </image>
             </ImageView>
-            <ImageView fx:id="pauseButtonImageView" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#playPause" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="8">
+            <ImageView fx:id="pauseButtonImageView" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#playPause" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="9">
                <image>
                   <Image url="@../../../resources/images/pause.png" />
                </image>
