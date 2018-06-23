@@ -771,7 +771,7 @@ public class GlobalMonitoring {
                         Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.noObject") :
                         Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.object") + " " + lAlarm.getObjectName());
                 Display.getLogger().info(lMessage);
-                cat.getController().printMessage(new Message(lMessage, lAlarm.getSeverity().getMessageLevel()));
+                cat.getController().printConsole(new Message(lMessage, lAlarm.getSeverity().getMessageLevel()));
                 return lAlarm;
             }
         }
@@ -796,7 +796,7 @@ public class GlobalMonitoring {
                     Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.noObject") :
                     Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.object") + " " + lAlarm.getObjectName());
             Display.getLogger().info(lMessage);
-            cat.getController().printMessage(new Message(lMessage, lAlarm.getSeverity().getMessageLevel()));
+            cat.getController().printConsole(new Message(lMessage, lAlarm.getSeverity().getMessageLevel()));
 
         }
 
@@ -891,7 +891,7 @@ public class GlobalMonitoring {
                             Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.noObject") :
                             Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.object") + " " + lAlarm.getObjectName());
                     Display.getLogger().info(lMessage);
-                    cat.getController().printMessage(new Message(lMessage, EnumTypes.MessageLevel.OK));
+                    cat.getController().printConsole(new Message(lMessage, EnumTypes.MessageLevel.OK));
                 }
 
             }
@@ -921,7 +921,7 @@ public class GlobalMonitoring {
                     Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.noObject") :
                     Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.object") + " " + lAlarm.getObjectName());
             Display.getLogger().info(lMessage);
-            cat.getController().printMessage(new Message(lMessage, EnumTypes.MessageLevel.INFO));
+            cat.getController().printConsole(new Message(lMessage, EnumTypes.MessageLevel.INFO));
         }
     }
 
@@ -948,7 +948,7 @@ public class GlobalMonitoring {
                     Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.noObject") :
                     Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.object") + " " + lAlarm.getObjectName());
             Display.getLogger().info(lMessage);
-            cat.getController().printMessage(new Message(lMessage, EnumTypes.MessageLevel.INFO));
+            cat.getController().printConsole(new Message(lMessage, EnumTypes.MessageLevel.INFO));
         }
     }
 
@@ -972,7 +972,7 @@ public class GlobalMonitoring {
                     Display.getMessagesResourceBundle().getString("log.globalMonitoring.alarms.object") + " " + aInAlarm.getObjectName(),
                     aInAlarm.getSeverity().getDisplayedValue(), aInNewSeverity.getDisplayedValue());
             Display.getLogger().info(lMessage);
-            cat.getController().printMessage(new Message(lMessage, aInNewSeverity.getMessageLevel()));
+            cat.getController().printConsole(new Message(lMessage, aInNewSeverity.getMessageLevel()));
 
             aInAlarm.changeSeverity(aInNewSeverity);
 
@@ -983,17 +983,26 @@ public class GlobalMonitoring {
     public SpeedTest buildSpeedTest() {
         return new SpeedTest(new SpeedTestInterface() {
             @Override
-            public void printMessage(String aInMessage) {
+            public void printProgress(String aInMessage) {
                 if (!speedTest.isFirstReport()) {
-                    cat.getController().replaceLastMessage(new Message(aInMessage, EnumTypes.MessageLevel.INFO));
+                    cat.getController().replaceLastSpeedTestMessage(new Message(aInMessage, EnumTypes.MessageLevel.INFO));
                 } else {
-                    cat.getController().printMessage(new Message(aInMessage, EnumTypes.MessageLevel.INFO));
+                    cat.getController().printSpeedTest(new Message(aInMessage, EnumTypes.MessageLevel.INFO));
                 }
             }
 
             @Override
-            public void printError(String aInError) {
-                cat.getController().printMessage(new Message(aInError, EnumTypes.MessageLevel.ERROR));
+            public void printResult(String aInMessage) {
+                Message lMessage = new Message(aInMessage, EnumTypes.MessageLevel.INFO);
+                cat.getController().printConsole(lMessage);
+                cat.getController().replaceLastSpeedTestMessage(lMessage);
+            }
+
+            @Override
+            public void printError(String aInMessage) {
+                Message lMessage = new Message(aInMessage, EnumTypes.MessageLevel.ERROR);
+                cat.getController().printConsole(lMessage);
+                cat.getController().printSpeedTest(lMessage);
             }
 
             @Override
