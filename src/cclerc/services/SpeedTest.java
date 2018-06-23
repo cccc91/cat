@@ -111,7 +111,7 @@ public class SpeedTest {
         count++;
         bitRate = bitRate.add(aInReport.getTransferRateBit());
         octetRate = octetRate.add(aInReport.getTransferRateOctet());
-        speedTestInterface.printMessage(
+        speedTestInterface.printProgress(
                 String.format(Display.getViewResourceBundle().getString("speedTest.progress"),
                               Display.getViewResourceBundle().getString("speedtest.type." + speedTestInterface.getType()),
                               Display.getViewResourceBundle().getString("speedtest.mode." + aInReport.getSpeedTestMode().toString().toLowerCase()),
@@ -133,7 +133,7 @@ public class SpeedTest {
         octetRate = octetRate.add(aInReport.getTransferRateOctet()).divide(new BigDecimal(count), 2);
         Map<Integer, BigDecimal> lBitRate = convertToBestUnit(bitRate);
         Map<Integer, BigDecimal> lOctetRate = convertToBestUnit(octetRate);
-        speedTestInterface.printMessage(
+        speedTestInterface.printResult(
                 String.format(Display.getViewResourceBundle().getString("speedTest.completed"),
                               Display.getViewResourceBundle().getString("speedtest.type." + speedTestInterface.getType()),
                               Display.getViewResourceBundle().getString("speedtest.mode." + aInReport.getSpeedTestMode().toString().toLowerCase()),

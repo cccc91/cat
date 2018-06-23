@@ -59,7 +59,8 @@ public class CatView {
     private Map<EnumTypes.AddressType, List<GridPane>> monitoringGridPanes = new HashMap<>();
     private List<CheckBox> pingLineFilterCheckBoxes = new ArrayList<>();
     private List<String> networkInterfacesNames = new ArrayList<>();
-    private boolean firstDisplay = true;
+    private Map<TextFlow, Boolean> firstDisplay = new HashMap<>();
+    private Map<TextFlow, Tab> tabs = new HashMap<>();
 
     // Console management
     private volatile List<Message> messages = new ArrayList<>();
@@ -298,6 +299,10 @@ public class CatView {
     @FXML private TextFlow consoleTextFlow;
     @FXML private Tab consoleTab;
 
+    @FXML private ScrollPane speedTestScrollPane;
+    @FXML private TextFlow speedTestTextFlow;
+    @FXML private Tab speedTestTab;
+
     @FXML private HBox pingLineChartContainer;
     @FXML private CheckBox pingLineManageCheckBox;
     @FXML private CheckBox pingLineLanFilterCheckBox;
@@ -358,7 +363,9 @@ public class CatView {
         generalTabPane.getSelectionModel().select(States.getInstance().getIntegerValue("general.selectedTab", 0));
         chartTabPane.getSelectionModel().select(States.getInstance().getIntegerValue("charts.selectedTab", 0));
 
-        // Console
+        // Consoles
+        firstDisplay.put(consoleTextFlow, true);
+        tabs.put(consoleTextFlow, consoleTab);
 
         // Add listener to detail text flow so that it auto scrolls by default to bottom each time the text changes
         consoleTextFlow.getChildren().addListener(consoleScrollPaneChangeListener);
@@ -389,7 +396,40 @@ public class CatView {
                     }
                 });
 
-        printMessage(new Message(Display.getViewResourceBundle().getString("catView.console.startApplication"), EnumTypes.MessageLevel.INFO));
+        printConsole(new Message(Display.getViewResourceBundle().getString("catView.console.startApplication"), EnumTypes.MessageLevel.INFO));
+
+        firstDisplay.put(speedTestTextFlow, true);
+        tabs.put(speedTestTextFlow, speedTestTab);
+
+        // Add listener to detail text flow so that it auto scrolls by default to bottom each time the text changes
+        speedTestTextFlow.getChildren().addListener(speedTestScrollPaneChangeListener);
+
+        // Add listener to console scroll pane so that auto scroll is enabled or disabled depending on user action
+        speedTestScrollPane.vvalueProperty().addListener(
+                (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+                    if(oldValue.doubleValue() == 1.0d){
+                        // If user scrolls to bottom, enable auto scroll to bottom
+                        consoleTextFlow.getChildren().removeListener(speedTestScrollPaneChangeListener);
+                        consoleTextFlow.getChildren().addListener(speedTestScrollPaneChangeListener);
+                    } else {
+                        // If user scrolls up, disable auto scroll to bottom
+                        consoleTextFlow.getChildren().removeListener(speedTestScrollPaneChangeListener);
+                    }
+                }
+                                                      );
+
+        // Reset style of the speedTest tab title when it is selected
+        speedTestTab.getTabPane().getSelectionModel().selectedItemProperty().addListener(
+                new ChangeListener<Tab>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Tab> ov, Tab oldTab, Tab newTab) {
+                        if (newTab.equals(speedTestTab)) {
+                            newTab.setStyle("-fx-font-style: normal;");
+                            newTab.setText(newTab.getText().replaceAll(" \\(-*[0-9]+\\)$", ""));
+                        }
+                    }
+                });
+
 
         // Initialize ping chart
         pingLineFilterCheckBoxes.add(pingLineInterface1FilterCheckBox);
@@ -1026,6 +1066,7 @@ public class CatView {
     // LISTENERS
 
     private ListChangeListener consoleScrollPaneChangeListener = (change) -> consoleScrollPane.setVvalue(1.0d);
+    private ListChangeListener speedTestScrollPaneChangeListener = (change) -> speedTestScrollPane.setVvalue(1.0d);
 
     /**
      * Listener on changes on alarm filter text field
@@ -1397,11 +1438,11 @@ public class CatView {
         Image lNewImage;
         Tooltip lTooltip;
         if (isButtonPauseDisplayed) {
-            printMessage(new Message(Display.getViewResourceBundle().getString("catView.console.resume"), EnumTypes.MessageLevel.INFO));
+            printConsole(new Message(Display.getViewResourceBundle().getString("catView.console.resume"), EnumTypes.MessageLevel.INFO));
             lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_PAUSE).toString());
             lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.pause"));
         } else {
-            printMessage(new Message(Display.getViewResourceBundle().getString("catView.console.pause"), EnumTypes.MessageLevel.INFO));
+            printConsole(new Message(Display.getViewResourceBundle().getString("catView.console.pause"), EnumTypes.MessageLevel.INFO));
             lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_PLAY).toString());
             lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.play"));
         }
@@ -1612,11 +1653,12 @@ public class CatView {
         // OK is pressed
         if (lResponse.isPresent() && lResponse.get().equals(ButtonType.YES)) {
 
-            firstDisplay = true;
+            firstDisplay.put(consoleTextFlow, true);
+            firstDisplay.put(speedTestTextFlow, true);
 
             clearAllMessages();
             consoleTab.setText(consoleTab.getText().replaceAll(" \\(-*[0-9]+\\)$", ""));
-            printMessage(new Message(Display.getViewResourceBundle().getString("catView.console.resetStatistics"), EnumTypes.MessageLevel.INFO));
+            printConsole(new Message(Display.getViewResourceBundle().getString("catView.console.resetStatistics"), EnumTypes.MessageLevel.INFO));
 
             // Reset current statistics
             pingsCount = 0;
@@ -2123,29 +2165,69 @@ public class CatView {
     // MESSAGES
 
     /**
-     * Prints a message with the required level in the console text flow
-     * @param aInMessage      Message to display
+     * Prints a message with the required level in the required text flow
+     * @param aInMessage  Message to display
+     * @param aInTextFlow Text flow the message must be printed into
      */
-    public void printMessage(Message aInMessage) {
+    public void printMessage(Message aInMessage, TextFlow aInTextFlow) {
         Platform.runLater(() -> {
-            aInMessage.println(consoleTextFlow);
-            if (!firstDisplay) changeConsoleTabModificationIndicator(1);
-            firstDisplay = false;
+            aInMessage.println(aInTextFlow);
+            if (!firstDisplay.get(aInTextFlow)) changeConsoleTabModificationIndicator(1, tabs.get(aInTextFlow));
+            firstDisplay.put(aInTextFlow, false);
         });
     }
 
-    public void replaceLastMessage(Message aInMessage) {
+
+    /**
+     * Prints a message with the required level in the console text flow
+     * @param aInMessage      Message to display
+     */
+    public void printConsole(Message aInMessage) {
+        printMessage(aInMessage, consoleTextFlow);
+    }
+
+    /**
+     * Prints a message with the required level in the speed test text flow
+     * @param aInMessage      Message to display
+     */
+    public void printSpeedTest(Message aInMessage) {
+        printMessage(aInMessage, speedTestTextFlow);
+    }
+
+    /**
+     * Replaces last message with the required level in the required text flow
+     * @param aInMessage  Message to display in replacement of last displayed message
+     * @param aInTextFlow Text flow the message must be printed into
+     */
+    public void replaceLastMessage(Message aInMessage, TextFlow aInTextFlow) {
         Platform.runLater(() -> {
-            if (consoleTextFlow.getChildren().size() > 0) consoleTextFlow.getChildren().remove(consoleTextFlow.getChildren().size() - 1);
-            aInMessage.println(consoleTextFlow);;
+            if (aInTextFlow.getChildren().size() > 0) aInTextFlow.getChildren().remove(aInTextFlow.getChildren().size() - 1);
+            aInMessage.println(aInTextFlow);
         });
     }
 
     /**
-     * Clears all messages from the console text flow
+     * Replaces last message with the required level in the console text flow
+     * @param aInMessage  Message to display in replacement of last displayed message
+     */
+    public void replaceLastConsoleMessage(Message aInMessage) {
+        replaceLastMessage(aInMessage, consoleTextFlow);
+    }
+
+    /**
+     * Replaces last message with the required level in the speed test text flow
+     * @param aInMessage  Message to display in replacement of last displayed message
+     */
+    public void replaceLastSpeedTestMessage(Message aInMessage) {
+        replaceLastMessage(aInMessage, speedTestTextFlow);
+    }
+
+    /**
+     * Clears all messages from the text flows
      */
     public void clearAllMessages() {
         consoleTextFlow.getChildren().clear();
+        speedTestTextFlow.getChildren().clear();
     }
 
     /**
@@ -2157,21 +2239,22 @@ public class CatView {
     }
 
     /**
-     * Changes the modification flag of the console tab
+     * Changes the modification flag of the required text flow tab
      * @param aInIncrement  Flag increment
+     * @param aInTab        Tab the modification flag must be displayed
      */
-    public void changeConsoleTabModificationIndicator(int aInIncrement) {
+    public void changeConsoleTabModificationIndicator(int aInIncrement, Tab aInTab) {
 
         if (aInIncrement < 0) aInIncrement = 0;
-        if (!consoleTab.isSelected()) {
-            consoleTab.setStyle("-fx-font-style: italic");
+        if (!aInTab.isSelected()) {
+            aInTab.setStyle("-fx-font-style: italic");
             Pattern lPattern = Pattern.compile("\\((-*[0-9]+)\\)$");
-            Matcher lMatcher = lPattern.matcher(consoleTab.getText());
+            Matcher lMatcher = lPattern.matcher(aInTab.getText());
             if (!lMatcher.find()) {
-                consoleTab.setText(consoleTab.getText() + " (" + aInIncrement + ")");
+                aInTab.setText(aInTab.getText() + " (" + aInIncrement + ")");
             } else {
                 aInIncrement += Integer.valueOf(lMatcher.group(1));
-                consoleTab.setText(consoleTab.getText().replaceAll(" \\(-*[0-9]+\\)$", "") + " (" + aInIncrement + ")");
+                aInTab.setText(aInTab.getText().replaceAll(" \\(-*[0-9]+\\)$", "") + " (" + aInIncrement + ")");
             }
         }
     }
