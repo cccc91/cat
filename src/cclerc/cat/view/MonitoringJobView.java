@@ -16,10 +16,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextFlow;
+import javafx.stage.Modality;
 import javafx.util.StringConverter;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class MonitoringJobView {
 
@@ -27,7 +28,7 @@ public class MonitoringJobView {
     private static Cat cat;
 
     // Instance properties
-    private List<MonitoringJob> monitoringJobs = new ArrayList<>();
+    private MonitoringJob monitoringJob;
     private EnumTypes.AddressType addressType;
     private EnumTypes.InterfaceType interfaceType;
     private int priority;
@@ -57,6 +58,7 @@ public class MonitoringJobView {
     @FXML private Label lostPingsCountLabel;
     @FXML private Label roundTripLabel;
     @FXML private Label roundTripStatsLabel;
+    @FXML private ImageView clearConsoleButtonImageView;
     @FXML private ImageView pauseButtonImageView;
     @FXML private ImageView emailButtonImageView;
     @FXML private Label lostConnectionsCountLabel;
@@ -90,6 +92,11 @@ public class MonitoringJobView {
                 })
         );
         blinker.setCycleCount(Animation.INDEFINITE);
+
+        // Tooltips
+        Tooltip lClearConsoleTooltip = new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.clearConsole"));
+        if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE))
+            Tooltip.install(clearConsoleButtonImageView, lClearConsoleTooltip);
 
     }
 
@@ -125,6 +132,23 @@ public class MonitoringJobView {
 
     }
 
+    @FXML private void clearConsole() {
+
+        // Prepare confirmation dialog box
+        Alert lConfirmation = new Alert(Alert.AlertType.CONFIRMATION, Display.getViewResourceBundle().getString("confirm.clearConsole.question"), ButtonType.YES, ButtonType.NO);
+        lConfirmation.setHeaderText(Display.getViewResourceBundle().getString("confirm.clearConsole.title"));
+        lConfirmation.initModality(Modality.APPLICATION_MODAL);
+
+        // Display confirmation dialog box
+        Optional<ButtonType> lResponse = lConfirmation.showAndWait();
+
+        // OK is pressed
+        if (lResponse.isPresent() && lResponse.get().equals(ButtonType.YES)) {
+            monitoringJob.clearConsole();
+        }
+
+    }
+
     // GETTERS
 
     /**
@@ -148,8 +172,8 @@ public class MonitoringJobView {
      * Adds a monitoring job attached to current view
      * @param aInMonitoringJob Monitoring job
      */
-    public void addMonitoringJob(MonitoringJob aInMonitoringJob) {
-        monitoringJobs.add(aInMonitoringJob);
+    public void setMonitoringJob(MonitoringJob aInMonitoringJob) {
+        monitoringJob = aInMonitoringJob;
         cat.getController().addMonitoringJob();
     }
 
@@ -456,15 +480,13 @@ public class MonitoringJobView {
 
         isButtonPauseDisplayed = !isButtonPauseDisplayed;
 
-        for (MonitoringJob lMonitoringJob: monitoringJobs) {
-            // Pause or resume current job
-            if (!isButtonPauseDisplayed) {
-                lMonitoringJob.displayMessage(Display.getViewResourceBundle().getString("monitoringJob.console.pause"), EnumTypes.MessageLevel.INFO);
-                lMonitoringJob.pause();
-            } else {
-                lMonitoringJob.displayMessage(Display.getViewResourceBundle().getString("monitoringJob.console.resume"), EnumTypes.MessageLevel.INFO);
-                lMonitoringJob.resume();
-            }
+        // Pause or resume current job
+        if (!isButtonPauseDisplayed) {
+            monitoringJob.displayMessage(Display.getViewResourceBundle().getString("monitoringJob.console.pause"), EnumTypes.MessageLevel.INFO);
+            monitoringJob.pause();
+        } else {
+            monitoringJob.displayMessage(Display.getViewResourceBundle().getString("monitoringJob.console.resume"), EnumTypes.MessageLevel.INFO);
+            monitoringJob.resume();
         }
 
         // Check state of general pause button
@@ -506,13 +528,11 @@ public class MonitoringJobView {
 
         isButtonEmailEnabled = !isButtonEmailEnabled;
 
-        for (MonitoringJob lMonitoringJob: monitoringJobs) {
-            // Switches email
-            if (!isButtonEmailEnabled) {
-                lMonitoringJob.disableEmail();
-            } else {
-                lMonitoringJob.enableEmail();
-            }
+        // Switches email
+        if (!isButtonEmailEnabled) {
+            monitoringJob.disableEmail();
+        } else {
+            monitoringJob.enableEmail();
         }
 
         // Change state of general email button
