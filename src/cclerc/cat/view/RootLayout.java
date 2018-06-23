@@ -12,7 +12,6 @@ import java.io.File;
 
 public class RootLayout {
 
-    private static Cat cat;
     private static AboutDialog aboutDialog;
     private static ConfigurationDialog configurationDialogController;
 
@@ -21,14 +20,6 @@ public class RootLayout {
     @FXML private CheckMenuItem enableDetailTooltipPreference;
 
     // SETTERS
-
-    /**
-     * Sets a back reference to Cat main class
-     * @param aInCat Cat main class
-     */
-    public void setCat(Cat aInCat) {
-        cat = aInCat;
-    }
 
     /**
      * Sets a reference to AboutDialog controller
@@ -78,7 +69,7 @@ public class RootLayout {
         lFileChooser.setInitialDirectory(lInitialFilePath);
 
         // Show save file dialog
-        File lFile = lFileChooser.showSaveDialog(cat.getMainStage());
+        File lFile = lFileChooser.showSaveDialog(Cat.getInstance().getMainStage());
 
         if (lFile != null) {
 
@@ -105,11 +96,11 @@ public class RootLayout {
         // Check if configuration has been modified
         if (!Configuration.getCurrentConfiguration().isSameAs(Configuration.getInitialConfiguration())) {
             if (Cat.confirmSaveAndExit()) {
-                cat.end();
+                Cat.getInstance().end();
             }
         } else {
             if (Cat.confirmExit()) {
-                cat.end();
+                Cat.getInstance().end();
             }
         }
 
