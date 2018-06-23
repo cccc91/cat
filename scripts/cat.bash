@@ -8,7 +8,7 @@ CAT_CP=$CAT_CP:$THIRDPARTIES/commons-cli-1.3.1/commons-cli-1.3.1.jar      # Apac
 CAT_CP=$CAT_CP:$THIRDPARTIES/jansi-1.11/jansi-1.11.jar                    # GitHub (fuse) library allowing to use ANSI escape sequences to format console output
 CAT_CP=$CAT_CP:$THIRDPARTIES/java-mail-1.4.4/java-mail-1.4.4.jar          # Oracle library for sending mails
 CAT_CP=$CAT_CP:$THIRDPARTIES/jdom-2.0.6/jdom-2.0.6.jar                    # JDOM.org library for XML parsing
-CAT_CP=$CAT_CP:$THIRDPARTIES/jspeedtest-1.25/jspeedtest-1.31.3.jar        # GitHub library (Bertrand Martel) for running network speed tests
+CAT_CP=$CAT_CP:$THIRDPARTIES/jspeedtest-1.31.3/jspeedtest-1.31.3.jar        # GitHub library (Bertrand Martel) for running network speed tests
 CAT_CP=$CAT_CP:$THIRDPARTIES/http-endec-1.04/http-endec-1.04.jar          # GitHub library (Bertrand Martel) for encoding/decoding HTTP
 CAT_CP=$CAT_CP:$THIRDPARTIES/proxy-vole-20131209/proxy-vole_20131209.jar  # GitHub (Markus Bernhardt) Library for retrieving network proxies
 
