@@ -424,7 +424,7 @@
                            <content>
                               <TabPane fx:id="chartTabPane">
                                  <tabs>
-                                    <Tab closable="false" text="%catView.charts.ping">
+                                    <Tab closable="false" text="%catView.charts.pings">
                                        <content>
                                           <HBox>
                                              <children>
@@ -525,6 +525,19 @@
                                     </Tab>
                                  </tabs>
                               </TabPane>
+                           </content>
+                        </Tab>
+                        <Tab fx:id="speedTestTab" closable="false" text="%catView.speedTest">
+                           <content>
+                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                 <children>
+                                    <ScrollPane fx:id="speedTestScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                       <content>
+                                          <TextFlow fx:id="speedTestTextFlow" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                                       </content>
+                                    </ScrollPane>
+                                 </children>
+                              </VBox>
                            </content>
                         </Tab>
                         <Tab fx:id="consoleTab" closable="false" text="%catView.console">
