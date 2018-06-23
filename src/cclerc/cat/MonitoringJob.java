@@ -240,7 +240,7 @@ public class MonitoringJob implements Runnable {
 
                         // Attach current monitoring job to the monitoring job view for further back reference
                         controller = aInMonitoringJobController;
-                        controller.addMonitoringJob(this);
+                        controller.setMonitoringJob(this);
                         catController = aInCatController;
 
                         // Set scroll policy
@@ -321,7 +321,7 @@ public class MonitoringJob implements Runnable {
         String lLocalIp = Network.getNetworkInterfaceInetAddress(networkInterface, Network.isIPv4Address(lActiveServerParameters.remoteIp)).getHostAddress();
 
         if (serverParameters.keySet().size() == 2) {
-            Display.getLogger().trace(String.format(Display.getMessagesResourceBundle().getString("log.monitoringJob.start"), addressType, lInterfaceName, lLocalIp,
+            Display.getLogger().debug(String.format(Display.getMessagesResourceBundle().getString("log.monitoringJob.start"), addressType, lInterfaceName, lLocalIp,
                                                     serverParameters.get(0).remoteHostname, serverParameters.get(0).remoteIp, serverParameters.get(0).port,
                                                     serverParameters.get(1).remoteHostname, serverParameters.get(1).remoteIp, serverParameters.get(1).port));
             messages.add(new Message(String.format(Display.getViewResourceBundle().getString("monitoringJob.message.startJob"), lInterfaceName, lLocalIp,
@@ -334,7 +334,7 @@ public class MonitoringJob implements Runnable {
 
         } else {
             int lIndex = serverParameters.keySet().iterator().next();
-            Display.getLogger().trace(String.format(Display.getMessagesResourceBundle().getString("log.monitoringJob." + serverType.toString() + ".start"),
+            Display.getLogger().debug(String.format(Display.getMessagesResourceBundle().getString("log.monitoringJob." + serverType.toString() + ".start"),
                                                     addressType, lInterfaceName, lLocalIp,
                                                     serverParameters.get(lIndex).remoteHostname, serverParameters.get(lIndex).remoteIp, serverParameters.get(lIndex).port));
             messages.add(new Message(String.format(Display.getViewResourceBundle().getString("monitoringJob.message."+ serverType.toString() + ".startJob"),
@@ -385,8 +385,6 @@ public class MonitoringJob implements Runnable {
                     roundTrip = lPollingStartTime - lBeforeTime;
 
                     // Add statistics
-//                    if (addressType == EnumTypes.AddressType.WAN && interfaceType == EnumTypes.InterfaceType.ETH)
-//                    catController.addPingSeriesData(serverType, addressType, interfaceType, lPollingStartTime - lStartTime, 2L, lServerReachability.isReachable);
                     catController.addPingSeriesData(
                             serverType, addressType, networkInterface, lPollingStartTime, lPollingStartTime - lStartTime, roundTrip, lServerReachability.isReachable);
 
@@ -712,6 +710,15 @@ public class MonitoringJob implements Runnable {
         refreshDisplay();
     }
 
+    /**
+     * Resets all messages
+     */
+    public void clearConsole() {
+        messages.clear();
+        refreshDisplay();
+        Display.getLogger().debug(String.format(Display.getMessagesResourceBundle().getString("log.monitoringJob.clearConsole"), addressType, interfaceType));
+    }
+
     // PRIVATE METHODS
 
     /**
@@ -911,7 +918,7 @@ public class MonitoringJob implements Runnable {
         paused = true;
         controller.setPlayPauseButtonImageView(false);
         States.getInstance().saveValue(BuildStatePropertyName(Constants.PAUSE_STATE), paused);
-        Display.getLogger().trace(String.format(Display.getMessagesResourceBundle().getString("log.monitoringJob.pause"), addressType, interfaceType));
+        Display.getLogger().debug(String.format(Display.getMessagesResourceBundle().getString("log.monitoringJob.pause"), addressType, interfaceType));
     }
 
     /**
@@ -921,7 +928,7 @@ public class MonitoringJob implements Runnable {
         paused = false;
         controller.setPlayPauseButtonImageView(true);
         States.getInstance().saveValue(BuildStatePropertyName(Constants.PAUSE_STATE), paused);
-        Display.getLogger().trace(String.format(Display.getMessagesResourceBundle().getString("log.monitoringJob.resume"), addressType, interfaceType));
+        Display.getLogger().debug(String.format(Display.getMessagesResourceBundle().getString("log.monitoringJob.resume"), addressType, interfaceType));
     }
 
     /**
@@ -931,7 +938,7 @@ public class MonitoringJob implements Runnable {
         email.enable();
         States.getInstance().saveValue(BuildStatePropertyName(Constants.SEND_MAIL_STATE), true);
         controller.setEmailButtonImageView(email.isEnabled());
-        Display.getLogger().trace(String.format(Display.getMessagesResourceBundle().getString("log.monitoringJob.enableEmail"), addressType, interfaceType));
+        Display.getLogger().debug(String.format(Display.getMessagesResourceBundle().getString("log.monitoringJob.enableEmail"), addressType, interfaceType));
     }
 
     /**
@@ -941,7 +948,7 @@ public class MonitoringJob implements Runnable {
         email.disable();
         States.getInstance().saveValue(BuildStatePropertyName(Constants.SEND_MAIL_STATE), false);
         controller.setEmailButtonImageView(email.isEnabled());
-        Display.getLogger().trace(String.format(Display.getMessagesResourceBundle().getString("log.monitoringJob.disableEmail"), addressType, interfaceType));
+        Display.getLogger().debug(String.format(Display.getMessagesResourceBundle().getString("log.monitoringJob.disableEmail"), addressType, interfaceType));
     }
 
     /**
@@ -949,7 +956,7 @@ public class MonitoringJob implements Runnable {
      */
     public void resetStatistics() {
 
-        Display.getLogger().trace(String.format(Display.getMessagesResourceBundle().getString("log.monitoringJob.resetStatistics"), addressType));
+        Display.getLogger().info(String.format(Display.getMessagesResourceBundle().getString("log.monitoringJob.resetStatistics"), addressType, interfaceType));
         pingsCount = 0;
         lostPingsCount = 0;
         retriesCount = 0;
