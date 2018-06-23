@@ -34,7 +34,7 @@
             <appender-ref ref="fileLogger" level="FILE" />
         </Logger>
         <Root level="debug" additivity="false">
-            <appender-ref ref="console" level="trace" />
+            <appender-ref ref="console" level="info" />
         </Root>
     </Loggers>
 
