@@ -244,9 +244,12 @@ public class GlobalMonitoring {
                 Utilities.sleep(1000);
             }
 
-            speedTest = buildSpeedTest();
-            speedTest.startDownloadRepeat("http://intuxication.lafibre.info/speedtest/random4000x4000.jpg");
-            speedTest.startUploadRepeat("http://intuxication.lafibre.info/speedtest/upload.php");
+            // TODO: DO IT PERIODICALLLY
+            String lDownloadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_DOWNLOAD_URL_PREFERENCE);
+            String lUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_UPLOAD_URL_PREFERENCE);
+            if (lDownloadUrl != null && lUploadUrl != null) {
+                SpeedTestFactory.getInstance().getPeriodicSpeedTest().start(lDownloadUrl, lUploadUrl);
+            }
 
             // Run the thread
             while (running) {
@@ -399,9 +402,6 @@ public class GlobalMonitoring {
 
     private volatile ObservableList<Alarm> activeAlarmsList = FXCollections.observableArrayList();
     private volatile ObservableList<Alarm> historicalAlarmsList = FXCollections.observableArrayList();
-
-    // Speed test
-    SpeedTest speedTest;
 
     // SINGLETON
 
@@ -969,45 +969,6 @@ public class GlobalMonitoring {
 
         }
 
-    }
-
-    public SpeedTest buildSpeedTest() {
-        return new SpeedTest(new SpeedTestInterface() {
-            @Override
-            public void printProgress(String aInMessage) {
-                if (!speedTest.isFirstReport()) {
-                    Cat.getInstance().getController().replaceLastSpeedTestMessage(new Message(aInMessage, EnumTypes.MessageLevel.INFO));
-                } else {
-                    Cat.getInstance().getController().printSpeedTest(new Message(aInMessage, EnumTypes.MessageLevel.INFO));
-                }
-            }
-
-            @Override
-            public void printResult(String aInMessage) {
-                Message lMessage = new Message(aInMessage, EnumTypes.MessageLevel.INFO);
-                Cat.getInstance().getController().printConsole(lMessage);
-                Cat.getInstance().getController().replaceLastSpeedTestMessage(lMessage);
-            }
-
-            @Override
-            public void printError(String aInMessage) {
-                Message lMessage = new Message(aInMessage, EnumTypes.MessageLevel.ERROR);
-                Cat.getInstance().getController().printConsole(lMessage);
-                Cat.getInstance().getController().printSpeedTest(lMessage);
-            }
-
-            @Override
-            public void storeResult(SpeedTestReport report) {
-
-            }
-
-            @Override
-            // TODO: compute
-            public String getType() {
-                return "periodic";
-            }
-        },  (Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkConfiguration(EnumTypes.AddressType.WAN) == null) ? true :
-                Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkConfiguration(EnumTypes.AddressType.WAN).getUseProxy());
     }
 
 }

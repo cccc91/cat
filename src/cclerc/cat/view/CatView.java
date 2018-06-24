@@ -1,11 +1,13 @@
 package cclerc.cat.view;
 
 import cclerc.cat.Cat;
+import cclerc.cat.Configuration.Configuration;
 import cclerc.cat.GlobalMonitoring;
 import cclerc.cat.MonitoringJob;
 import cclerc.cat.model.Alarm;
 import cclerc.services.*;
 import com.sun.javafx.charts.Legend;
+import fr.bmartel.speedtest.SpeedTestReport;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -36,7 +38,6 @@ import javafx.stage.Modality;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 
-import javax.swing.text.TabSet;
 import java.net.NetworkInterface;
 import java.text.NumberFormat;
 import java.util.*;
@@ -221,6 +222,10 @@ public class CatView {
     private long pingLineMinTime = 0L;
     private long pingLineMaxTime = MAX_DISPLAYED_PING_DURATION;
 
+    // Speed test
+    private boolean speedTestStartState = false;
+
+
     // FXML
     @FXML private Label nameLabel;
     @FXML private Label nameCountLabel;
@@ -243,6 +248,7 @@ public class CatView {
     @FXML private ImageView pauseButtonImageView;
     @FXML private ImageView emailButtonImageView;
 
+    @FXML private ImageView clearConsoleButtonImageView;
     @FXML private ImageView generalEmailButtonImageView;
     @FXML private RadioButton activeAlarmsButton;
     @FXML private RadioButton historicalAlarmsButton;
@@ -302,6 +308,7 @@ public class CatView {
     @FXML private ScrollPane speedTestScrollPane;
     @FXML private TextFlow speedTestTextFlow;
     @FXML private Tab speedTestTab;
+    @FXML private Button speedTestStartStopButton;
 
     @FXML private HBox pingLineChartContainer;
     @FXML private CheckBox pingLineManageCheckBox;
@@ -431,7 +438,11 @@ public class CatView {
                 });
 
 
-        // Initialize ping chart
+        Tooltip lClearConsoleTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.clearConsole"));
+        if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE))
+            Tooltip.install(clearConsoleButtonImageView, lClearConsoleTooltip);
+
+       // Initialize ping chart
         pingLineFilterCheckBoxes.add(pingLineInterface1FilterCheckBox);
         pingLineInterface1FilterCheckBox.setVisible(false);
         pingLineFilterCheckBoxes.add(pingLineInterface2FilterCheckBox);
@@ -488,6 +499,49 @@ public class CatView {
         }
         checkPingChartState();
 
+        switchStopStartSpeedTestButton();
+
+    }
+
+    /**
+     * Clears all consoles
+     */
+    @FXML private void clearConsoles() {
+
+        // Prepare confirmation dialog box
+        Alert lConfirmation = new Alert(Alert.AlertType.CONFIRMATION, Display.getViewResourceBundle().getString("confirm.clearConsole.question"), ButtonType.YES, ButtonType.NO);
+        lConfirmation.setHeaderText(Display.getViewResourceBundle().getString("confirm.clearConsole.title"));
+        lConfirmation.initModality(Modality.APPLICATION_MODAL);
+
+        // Display confirmation dialog box
+        Optional<ButtonType> lResponse = lConfirmation.showAndWait();
+
+        // OK is pressed
+        if (lResponse.isPresent() && lResponse.get().equals(ButtonType.YES)) {
+            clearAllMessages();
+            firstDisplay.put(consoleTextFlow, true);
+            tabs.put(consoleTextFlow, consoleTab);
+        }
+
+    }
+
+    /**
+     * Starts a new speed test if no speed test is currently running otherwise stops the running speed test
+     */
+    @FXML private void startStopSpeedTest() {
+
+        if (speedTestStartState) {
+            String lDownloadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_DOWNLOAD_URL_PREFERENCE);
+            String lUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_UPLOAD_URL_PREFERENCE);
+            if (lDownloadUrl != null && lUploadUrl != null) {
+                SpeedTestFactory.getInstance().getOnRequestSpeedTest().start(lDownloadUrl, lUploadUrl);
+            }
+
+        } else {
+            // Stops current speed test (only one is potentially on-going, nothing is done if trying to stop a not on-going test)
+            SpeedTestFactory.getInstance().getPeriodicSpeedTest().stop();
+            SpeedTestFactory.getInstance().getOnRequestSpeedTest().stop();
+        }
     }
 
     /**
@@ -2257,6 +2311,26 @@ public class CatView {
                 aInTab.setText(aInTab.getText().replaceAll(" \\(-*[0-9]+\\)$", "") + " (" + aInIncrement + ")");
             }
         }
+    }
+
+    public void switchStopStartSpeedTestButton() {
+
+        Platform.runLater(() -> {
+            if (speedTestStartState) {
+                speedTestStartStopButton.setText(Display.getViewResourceBundle().getString("catView.speedTest.stop"));
+                speedTestStartStopButton.getStyleClass().add("buttonWarning");
+                speedTestStartStopButton.setDisable(false);
+            } else {
+                speedTestStartStopButton.setText(Display.getViewResourceBundle().getString("catView.speedTest.start"));
+                if (speedTestStartStopButton.getStyleClass().contains("buttonWarning")) {
+                    speedTestStartStopButton.getStyleClass().removeAll("buttonWarning");
+                }
+                speedTestStartStopButton.setDisable(
+                        Preferences.getInstance().getValue(Constants.SPEED_TEST_DOWNLOAD_URL_PREFERENCE) == null ||
+                        Preferences.getInstance().getValue(Constants.SPEED_TEST_UPLOAD_URL_PREFERENCE) == null);
+            }
+            speedTestStartState = !speedTestStartState;
+        });
     }
 
 }

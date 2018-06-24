@@ -98,4 +98,10 @@ public class Constants {
     public static final boolean DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE = true;
     public static final boolean DEFAULT_ENABLE_DETAIL_TOOLTIP_PREFERENCE = true;
 
+    public static final String SPEED_TEST_DOWNLOAD_URL_PREFERENCE = "speedTest.url.download";
+    public static final String SPEED_TEST_UPLOAD_URL_PREFERENCE = "speedTest.url.upload";
+    public static final String SPEED_TEST_SOCKET_TIMEOUT_PREFERENCE = "speedTest.socketTimeout";
+    public static final String SPEED_TEST_DOWNLOAD_SETUP_TIME_PREFERENCE = "speedTest.setupTime.download";
+    public static final String SPEED_TEST_UPLOAD_SETUP_TIME_PREFERENCE = "speedTest.setupTime.upload";
+
 }

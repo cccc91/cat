@@ -4,6 +4,9 @@ import fr.bmartel.speedtest.SpeedTestReport;
 
 public interface SpeedTestInterface {
 
+    public void startTest();
+    public void stopTest();
+    public void interruptTest(String aInMessage);
     public void printProgress(String aInMessage);
     public void printResult(String aInMessage);
     public void printError(String aInMessage);

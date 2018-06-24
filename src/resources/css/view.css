@@ -488,6 +488,12 @@
      -fx-border-color: lightgrey;
 }
 
+// BUTTONS
+
+.buttonWarning {
+    -fx-text-fill: DarkRed;
+}
+
 // PSEUDO CLASSES
 
 // Used within a Timeline for making the text blink

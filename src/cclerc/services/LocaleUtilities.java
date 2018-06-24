@@ -20,7 +20,7 @@ public class LocaleUtilities {
     // Locale instance
     private static LocaleUtilities localeUtilitiesInstance = new LocaleUtilities();
 
-    /**
+     /**
      * Current locale constructor
      */
     private LocaleUtilities() {

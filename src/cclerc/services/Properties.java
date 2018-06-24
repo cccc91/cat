@@ -109,6 +109,20 @@ public class Properties {
     }
 
     /**
+     * Gets a property long value
+     * @param aInKey Property key
+     * @param aInDefaultValue Property default value if not found
+     * @return long value if found and valid, default value otherwise
+     */
+    public Long getLongValue(String aInKey, Long aInDefaultValue) {
+        try {
+            return Long.valueOf(getValue(aInKey, String.valueOf(aInDefaultValue)));
+        } catch (Exception e) {
+            return aInDefaultValue;
+        }
+    }
+
+    /**
      * Gets a property double value
      * @param aInKey Property key
      * @param aInDefaultValue Property default value if not found
