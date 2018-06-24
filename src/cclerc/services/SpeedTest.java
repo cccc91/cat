@@ -186,27 +186,7 @@ public class SpeedTest {
                 aInDownloadUrl,
                 Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPEAT_DURATION_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPEAT_DURATION),
                 Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPORT_INTERVAL_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPORT_INTERVAL),
-                new IRepeatListener() { // TODO: use preferences
-
-            @Override
-            public void onReport(SpeedTestReport aInReport) {
-                processProgressReport(aInReport);
-            }
-
-            @Override
-            public void onCompletion(SpeedTestReport aInReport) {
-
-                processCompletionReport(aInReport);
-
-                // Start upload
-                bitRate = BigDecimal.ZERO; octetRate = BigDecimal.ZERO; count = 0;
-                testRunning = true;
-
-                speedTestSocket.startUploadRepeat(
-                        aInUploadUrl,
-                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPEAT_DURATION_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPEAT_DURATION),
-                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPORT_INTERVAL_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPORT_INTERVAL),
-                        Constants.DEFAULT_SPEED_TEST_UPLOAD_FILE_SIZE, new IRepeatListener() { // TODO: use configuration
+                new IRepeatListener() {
 
                     @Override
                     public void onReport(SpeedTestReport aInReport) {
@@ -215,14 +195,34 @@ public class SpeedTest {
 
                     @Override
                     public void onCompletion(SpeedTestReport aInReport) {
+
                         processCompletionReport(aInReport);
-                        speedTestInterface.stopTest();
+
+                        // Start upload
+                        bitRate = BigDecimal.ZERO; octetRate = BigDecimal.ZERO; count = 0;
+                        testRunning = true;
+
+                        speedTestSocket.startUploadRepeat(
+                                aInUploadUrl,
+                                Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPEAT_DURATION_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPEAT_DURATION),
+                                Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPORT_INTERVAL_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPORT_INTERVAL),
+                                Constants.DEFAULT_SPEED_TEST_UPLOAD_FILE_SIZE,
+                                new IRepeatListener() {
+                                    @Override
+                                    public void onReport(SpeedTestReport aInReport) {
+                                        processProgressReport(aInReport);
+                                    }
+                                    @Override
+                                    public void onCompletion(SpeedTestReport aInReport) {
+                                        processCompletionReport(aInReport);
+                                        speedTestInterface.stopTest();
+                                    }
+
+                                });
+
                     }
 
                 });
-
-            }
-        });
 
     }
 

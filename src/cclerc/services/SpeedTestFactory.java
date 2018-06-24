@@ -40,17 +40,29 @@ public class SpeedTestFactory {
             @Override
             public void startTest() {
                 Cat.getInstance().getController().switchStopStartSpeedTestButton();
+                Cat.getInstance().getController().printSpeedTest(
+                        new Message(
+                                String.format(Display.getViewResourceBundle().getString("speedTest.start"),
+                                              Display.getViewResourceBundle().getString("speedtest.type.periodic").toUpperCase()), EnumTypes.MessageLevel.INFO));
             }
 
             @Override
             public void stopTest() {
                 Cat.getInstance().getController().switchStopStartSpeedTestButton();
+                Cat.getInstance().getController().printSpeedTest(
+                        new Message(
+                                String.format(Display.getViewResourceBundle().getString("speedTest.end"),
+                                              Display.getViewResourceBundle().getString("speedtest.type.periodic").toUpperCase()), EnumTypes.MessageLevel.INFO));
             }
 
             @Override
             public void interruptTest(String aInMessage) {
                 Cat.getInstance().getController().switchStopStartSpeedTestButton();
                 Cat.getInstance().getController().printSpeedTest(new Message(aInMessage, EnumTypes.MessageLevel.WARNING));
+                Cat.getInstance().getController().printSpeedTest(
+                        new Message(
+                                String.format(Display.getViewResourceBundle().getString("speedTest.end"),
+                                              Display.getViewResourceBundle().getString("speedtest.type.periodic").toUpperCase()), EnumTypes.MessageLevel.INFO));
                 buildPeriodicSpeedTest();
             }
 
@@ -100,17 +112,29 @@ public class SpeedTestFactory {
             @Override
             public void startTest() {
                 Cat.getInstance().getController().switchStopStartSpeedTestButton();
+                Cat.getInstance().getController().printSpeedTest(
+                        new Message(
+                                String.format(Display.getViewResourceBundle().getString("speedTest.start"),
+                                              Display.getViewResourceBundle().getString("speedtest.type.onRequest").toUpperCase()), EnumTypes.MessageLevel.INFO));
             }
 
             @Override
             public void stopTest() {
                 Cat.getInstance().getController().switchStopStartSpeedTestButton();
+                Cat.getInstance().getController().printSpeedTest(
+                        new Message(
+                                String.format(Display.getViewResourceBundle().getString("speedTest.end"),
+                                              Display.getViewResourceBundle().getString("speedtest.type.onRequest").toUpperCase()), EnumTypes.MessageLevel.INFO));
             }
 
             @Override
             public void interruptTest(String aInMessage) {
                 Cat.getInstance().getController().switchStopStartSpeedTestButton();
                 Cat.getInstance().getController().printSpeedTest(new Message(aInMessage, EnumTypes.MessageLevel.WARNING));
+                Cat.getInstance().getController().printSpeedTest(
+                        new Message(
+                                String.format(Display.getViewResourceBundle().getString("speedTest.end"),
+                                              Display.getViewResourceBundle().getString("speedtest.type.onRequest").toUpperCase()), EnumTypes.MessageLevel.INFO));
                 buildOnRequestSpeedTest();
             }
 
