@@ -12,4 +12,4 @@ CAT_CP=$CAT_CP:$THIRDPARTIES/jspeedtest-1.31.3/jspeedtest-1.31.3.jar        # Gi
 CAT_CP=$CAT_CP:$THIRDPARTIES/http-endec-1.04/http-endec-1.04.jar          # GitHub library (Bertrand Martel) for encoding/decoding HTTP
 CAT_CP=$CAT_CP:$THIRDPARTIES/proxy-vole-20131209/proxy-vole_20131209.jar  # GitHub (Markus Bernhardt) Library for retrieving network proxies
 
-$JAVA_HOME/java -Dlog4j.skipJansi=true -Dprism.forceGPU=true -Dprism.order=sw -cp $CAT_CP cclerc.cat.Cat $*
+$JAVA_HOME/java -Dlog4j.skipJansi=true -Dprism.forceGPU=true -Dprism.order=sw -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -cp $CAT_CP cclerc.cat.Cat $*
