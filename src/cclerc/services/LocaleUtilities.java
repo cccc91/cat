@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Locale;
 
@@ -95,8 +96,22 @@ public class LocaleUtilities {
     }
 
 
+    /**
+     * Converts an epoch to a local date
+     * @param aInEpoch Epoch in ms
+     * @return Local date
+     */
     public LocalDate getLocalDate(long aInEpoch) {
         return Instant.ofEpochMilli(aInEpoch).atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    /**
+     * Converts a local date time to an epoch
+     * @param aInLocalDateTime Local date time
+     * @return Epoch in ms
+     */
+    public long getLocalDate(LocalDateTime aInLocalDateTime) {
+        return aInLocalDateTime.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000;
     }
 
 }

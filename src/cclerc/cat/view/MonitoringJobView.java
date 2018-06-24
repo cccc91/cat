@@ -407,7 +407,7 @@ public class MonitoringJobView {
     }
 
     /**
-     * Sets listeners on detail scroll text and detaioled scroll pane so that text auto scrolls to bottom
+     * Sets listeners on detail scroll text and detailed scroll pane so that text auto scrolls to bottom
      * except if user scrolls to another place than bottom
      */
     public void setDetailsScrollPolicy() {

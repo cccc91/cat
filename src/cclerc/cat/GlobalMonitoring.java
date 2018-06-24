@@ -7,6 +7,7 @@ import cclerc.services.*;
 import fr.bmartel.speedtest.SpeedTestReport;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.apache.commons.net.io.Util;
 
 import java.net.InetAddress;
 import java.util.*;
@@ -245,11 +246,17 @@ public class GlobalMonitoring {
             }
 
             // TODO: DO IT PERIODICALLLY
+            // Get periodic speed test period
+            int lSpeedTestPeriod = Preferences.getInstance().getIntegerValue(
+                    Constants.SPEED_TEST_PERIODIC_TEST_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD);
+            boolean lSpeedTestEnabled = Preferences.getInstance().getBooleanValue(
+                    Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED);
+
             String lDownloadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_DOWNLOAD_URL_PREFERENCE);
             String lUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_UPLOAD_URL_PREFERENCE);
-            if (lDownloadUrl != null && lUploadUrl != null) {
-                SpeedTestFactory.getInstance().getPeriodicSpeedTest().start(lDownloadUrl, lUploadUrl);
-            }
+
+            Long lNextSpeedTestExecutionTime = null;
+            lNextSpeedTestExecutionTime = Utilities.nextExecutionTime(lNextSpeedTestExecutionTime, lSpeedTestPeriod);
 
             // Run the thread
             while (running) {
@@ -260,6 +267,21 @@ public class GlobalMonitoring {
 
                 HashMap<EnumTypes.ConnectionType, Double> lStatsPerConnectionType = new HashMap<>();
                 Double lNetworkStats = 0.0;
+
+                // Run speed test if needed
+                if (lSpeedTestEnabled && lDownloadUrl != null && lUploadUrl != null && lNow >= lNextSpeedTestExecutionTime) {
+                    lNextSpeedTestExecutionTime = Utilities.nextExecutionTime(lNextSpeedTestExecutionTime, lSpeedTestPeriod);
+                    if (SpeedTestFactory.getInstance().getOnRequestSpeedTest().isTestRunning() || SpeedTestFactory.getInstance().getPeriodicSpeedTest().isTestRunning()) {
+                        Cat.getInstance().getController().replaceLastSpeedTestMessage(
+                                new Message(String.format(
+                                        Display.getViewResourceBundle().getString("speedTest.running"),
+                                        LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(new Date(lNextSpeedTestExecutionTime))), EnumTypes.MessageLevel.WARNING));
+                        SpeedTestFactory.getInstance().getOnRequestSpeedTest().resetFirstReport();
+                        SpeedTestFactory.getInstance().getPeriodicSpeedTest().resetFirstReport();
+                    } else {
+                        SpeedTestFactory.getInstance().getPeriodicSpeedTest().start(lDownloadUrl, lUploadUrl);
+                    }
+                }
 
                 // Parse all monitoring jobs
                 lStatsPerConnectionType.clear();

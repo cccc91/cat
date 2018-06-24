@@ -14,7 +14,6 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +21,7 @@ public class SpeedTest {
 
     private final String URL = "http://c.speedtest.net/speedtest-servers-static.php";
 
-    private boolean testOnGoing = false;
+    private boolean testRunning = false;
 
     private SpeedTestSocket speedTestSocket = new SpeedTestSocket();
     private SpeedTestInterface speedTestInterface;
@@ -53,9 +52,12 @@ public class SpeedTest {
         // buildServersList();
 
         // Initialise speed test socket
-        speedTestSocket.setSocketTimeout(Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_SOCKET_TIMEOUT_PREFERENCE, 10000));
-        speedTestSocket.setDownloadSetupTime(Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DOWNLOAD_SETUP_TIME_PREFERENCE, 100L));
-        speedTestSocket.setUploadSetupTime(Preferences.getInstance().getLongValue(Constants.SPEED_TEST_UPLOAD_SETUP_TIME_PREFERENCE, 100L));
+        speedTestSocket.setSocketTimeout(
+                Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_SOCKET_TIMEOUT_PREFERENCE, Constants.DEFAULT_SPEED_TEST_SOCKET_TIMEOUT));
+        speedTestSocket.setDownloadSetupTime(
+                Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DOWNLOAD_SETUP_TIME_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DOWNLOAD_SETUP_TIME));
+        speedTestSocket.setUploadSetupTime(
+                Preferences.getInstance().getLongValue(Constants.SPEED_TEST_UPLOAD_SETUP_TIME_PREFERENCE, Constants.DEFAULT_SPEED_TEST_UPLOAD_SETUP_TIME));
 
         // Add a listener to wait for speed test completion and progress
         speedTestSocket.addSpeedTestListener(new ISpeedTestListener() {
@@ -72,7 +74,7 @@ public class SpeedTest {
                                           Display.getViewResourceBundle().getString("speedtest.type." + aInSpeedTestInterface.getType()),
                                           Display.getViewResourceBundle().getString("speedtest.mode." + speedTestSocket.getSpeedTestMode().toString().toLowerCase()),
                                           speedTestError + " - " + errorMessage));
-                    testOnGoing = false;
+                    testRunning = false;
                     firstReport = true;
                     speedTestInterface.stopTest();
                 }
@@ -128,7 +130,7 @@ public class SpeedTest {
                               lOctetRate.values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + lOctetRate.keySet().iterator().next()),
                               lBitRate.values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + lBitRate.keySet().iterator().next())));
         speedTestInterface.storeResult(aInReport);
-        testOnGoing = false;
+        testRunning = false;
         firstReport = true;
 
     }
@@ -161,6 +163,13 @@ public class SpeedTest {
     // PUBLIC METHODS
 
     /**
+     * Resets first report
+     */
+    public void resetFirstReport() {
+        firstReport = true;
+    }
+
+    /**
      * Start a speed test task, first download then upload speed test
      * NB: Must not be launched if another test is on-going
      * @param aInDownloadUrl Download URL
@@ -169,11 +178,15 @@ public class SpeedTest {
     public void start(String aInDownloadUrl, String aInUploadUrl) {
 
         speedTestInterface.startTest();
-        testOnGoing = true;
+        testRunning = true;
 
         // Start download
         bitRate = BigDecimal.ZERO; octetRate = BigDecimal.ZERO; count = 0;
-        speedTestSocket.startDownloadRepeat(aInDownloadUrl, 30000, 1000, new IRepeatListener() { // TODO: use preferences
+        speedTestSocket.startDownloadRepeat(
+                aInDownloadUrl,
+                Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPEAT_DURATION_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPEAT_DURATION),
+                Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPORT_INTERVAL_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPORT_INTERVAL),
+                new IRepeatListener() { // TODO: use preferences
 
             @Override
             public void onReport(SpeedTestReport aInReport) {
@@ -187,18 +200,25 @@ public class SpeedTest {
 
                 // Start upload
                 bitRate = BigDecimal.ZERO; octetRate = BigDecimal.ZERO; count = 0;
-                testOnGoing = true;
+                testRunning = true;
 
-                speedTestSocket.startUploadRepeat(aInUploadUrl, 30000, 1000, 100000000, new IRepeatListener() { // TODO: use configuration
+                speedTestSocket.startUploadRepeat(
+                        aInUploadUrl,
+                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPEAT_DURATION_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPEAT_DURATION),
+                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPORT_INTERVAL_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPORT_INTERVAL),
+                        Constants.DEFAULT_SPEED_TEST_UPLOAD_FILE_SIZE, new IRepeatListener() { // TODO: use configuration
+
                     @Override
                     public void onReport(SpeedTestReport aInReport) {
                         processProgressReport(aInReport);
                     }
+
                     @Override
                     public void onCompletion(SpeedTestReport aInReport) {
                         processCompletionReport(aInReport);
                         speedTestInterface.stopTest();
                     }
+
                 });
 
             }
@@ -210,15 +230,23 @@ public class SpeedTest {
      * Stops current task
      */
     public void stop() {
-        if (testOnGoing) {
+        if (testRunning) {
             interrupted = true; // Must not be moved as onError callback is called after socked is closed and this flag is tested in this callback
             speedTestSocket.forceStopTask();
             speedTestSocket.closeSocket(); // Socket needs to be closed otherwise transfer goes on forever although no callback is no more called
             speedTestInterface.interruptTest(
                     String.format(Display.getViewResourceBundle().getString("speedTest.interrupted"),
                                   Display.getViewResourceBundle().getString("speedtest.type." + speedTestInterface.getType())));
-            testOnGoing = false;
+            testRunning = false;
         }
+    }
+
+    /**
+     * Indicates if a test is running
+     * @return true if a test is running, false otherwise
+     */
+    public boolean isTestRunning() {
+        return testRunning;
     }
 
     public void buildServersList() {

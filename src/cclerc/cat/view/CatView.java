@@ -416,11 +416,11 @@ public class CatView {
                 (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
                     if(oldValue.doubleValue() == 1.0d){
                         // If user scrolls to bottom, enable auto scroll to bottom
-                        consoleTextFlow.getChildren().removeListener(speedTestScrollPaneChangeListener);
-                        consoleTextFlow.getChildren().addListener(speedTestScrollPaneChangeListener);
+                        speedTestTextFlow.getChildren().removeListener(speedTestScrollPaneChangeListener);
+                        speedTestTextFlow.getChildren().addListener(speedTestScrollPaneChangeListener);
                     } else {
                         // If user scrolls up, disable auto scroll to bottom
-                        consoleTextFlow.getChildren().removeListener(speedTestScrollPaneChangeListener);
+                        speedTestTextFlow.getChildren().removeListener(speedTestScrollPaneChangeListener);
                     }
                 }
                                                       );

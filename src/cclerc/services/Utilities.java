@@ -3,6 +3,7 @@ package cclerc.services;
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.time.*;
 import java.util.*;
 
 import cclerc.cat.Cat;
@@ -238,5 +239,35 @@ public class Utilities {
         else return 0L;
     }
 
+    /**
+     * Retrives the next time an event must be executed depending on its last execution time and period
+     * The first time, last execution time is null, next execution time is computed so that it starts at an exact hour/minute if possible
+     * @param aInLastExecutionTime Last execution time in epoch ms
+     * @param aInPeriod            Period in min
+     * @return                     Next execution time in epoch ms
+     */
+    public static Long nextExecutionTime(Long aInLastExecutionTime, int aInPeriod) {
+
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();
+        int month = now.getMonthValue();
+        int day = now.getDayOfMonth();
+        int hour = now.getHour();
+        int minute = now.getMinute();
+
+        if (aInLastExecutionTime == null) {
+            if (aInPeriod < 60) {
+                return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, hour, minute)) + (aInPeriod - (minute % aInPeriod)) * 60_000;
+            } else if (aInPeriod < 60 * 60 * 24) {
+                return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, hour, minute)) + (aInPeriod - (hour % aInPeriod)) * 60_000 * 60;
+            } else {
+                return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, 0, 0)) + 60_000 * 60 * 24;
+            }
+        } else {
+            return aInLastExecutionTime + aInPeriod * 60_000;
+        }
+
+
+    }
 
 }
