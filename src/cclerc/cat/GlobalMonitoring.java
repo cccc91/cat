@@ -4,14 +4,11 @@ import cclerc.cat.Configuration.Configuration;
 import cclerc.cat.Configuration.GlobalMonitoringConfiguration;
 import cclerc.cat.model.Alarm;
 import cclerc.services.*;
-import fr.bmartel.speedtest.SpeedTestReport;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.apache.commons.net.io.Util;
 
 import java.net.InetAddress;
 import java.util.*;
-import java.util.List;
 
 /**
  * Singleton class implementing global monitoring
