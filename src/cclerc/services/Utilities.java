@@ -244,9 +244,10 @@ public class Utilities {
      * The first time, last execution time is null, next execution time is computed so that it starts at an exact hour/minute if possible
      * @param aInLastExecutionTime Last execution time in epoch ms
      * @param aInPeriod            Period in min
+     * @param aInOffset            Offset in min to be added to the first execution time
      * @return                     Next execution time in epoch ms
      */
-    public static Long nextExecutionTime(Long aInLastExecutionTime, int aInPeriod) {
+    public static Long nextExecutionTime(Long aInLastExecutionTime, int aInPeriod, int aInOffset) {
 
         LocalDateTime now = LocalDateTime.now();
         int year = now.getYear();
@@ -257,11 +258,13 @@ public class Utilities {
 
         if (aInLastExecutionTime == null) {
             if (aInPeriod < 60) {
-                return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, hour, minute)) + (aInPeriod - (minute % aInPeriod)) * 60_000;
+                return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, hour, minute))
+                       + (aInPeriod - (minute % aInPeriod) + aInOffset) * 60_000;
             } else if (aInPeriod < 60 * 60 * 24) {
-                return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, hour, minute)) + (aInPeriod - (hour % aInPeriod)) * 60_000 * 60;
+                return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, hour, minute))
+                       + (aInPeriod/60 - (hour % (aInPeriod/60))) * 60_000 * 60 + aInOffset * 60_000;
             } else {
-                return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, 0, 0)) + 60_000 * 60 * 24;
+                return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, 0, aInOffset)) + 60_000 * 60 * 24;
             }
         } else {
             return aInLastExecutionTime + aInPeriod * 60_000;

@@ -246,6 +246,8 @@ public class GlobalMonitoring {
             // Get periodic speed test period
             int lSpeedTestPeriod = Preferences.getInstance().getIntegerValue(
                     Constants.SPEED_TEST_PERIODIC_TEST_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD);
+            int lSpeedTestOffset = Preferences.getInstance().getIntegerValue(
+                    Constants.SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET);
             boolean lSpeedTestEnabled = Preferences.getInstance().getBooleanValue(
                     Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED);
 
@@ -253,7 +255,7 @@ public class GlobalMonitoring {
             String lUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_UPLOAD_URL_PREFERENCE);
 
             Long lNextSpeedTestExecutionTime = null;
-            lNextSpeedTestExecutionTime = Utilities.nextExecutionTime(lNextSpeedTestExecutionTime, lSpeedTestPeriod);
+            lNextSpeedTestExecutionTime = Utilities.nextExecutionTime(lNextSpeedTestExecutionTime, lSpeedTestPeriod, lSpeedTestOffset);
 
             // Run the thread
             while (running) {
@@ -267,7 +269,7 @@ public class GlobalMonitoring {
 
                 // Run speed test if needed
                 if (lSpeedTestEnabled && lDownloadUrl != null && lUploadUrl != null && lNow >= lNextSpeedTestExecutionTime) {
-                    lNextSpeedTestExecutionTime = Utilities.nextExecutionTime(lNextSpeedTestExecutionTime, lSpeedTestPeriod);
+                    lNextSpeedTestExecutionTime = Utilities.nextExecutionTime(lNextSpeedTestExecutionTime, lSpeedTestPeriod, lSpeedTestOffset);
                     if (SpeedTestFactory.getInstance().getOnRequestSpeedTest().isTestRunning() || SpeedTestFactory.getInstance().getPeriodicSpeedTest().isTestRunning()) {
                         Cat.getInstance().getController().replaceLastSpeedTestMessage(
                                 new Message(String.format(
