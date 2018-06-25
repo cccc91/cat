@@ -46,10 +46,13 @@ import java.util.regex.Pattern;
 
 public class CatView {
 
-    // CONSTANTS
-    private final long MAX_STORED_PING_DURATION = 3 * 24 * 60 * 60 * 1000; // 3 days TODO: replace with general configuration parameter
-    private final long MAX_DISPLAYED_PING_DURATION = 60 * 60 * 1000;       // 1 hour
-    private final long MIN_DISPLAYED_PING_DURATION = 15 * 1000;            // 15 seconds
+    // CONSTANTS TODO: customize in GUI
+    private final long MAX_STORED_PING_DURATION = Preferences.getInstance().getIntegerValue(
+                    Constants.PING_CHART_MAX_STORED_PING_DURATION_PREFERENCE, Constants.DEFAULT_CHART_MAX_STORED_PING_DURATION);
+    private final long MAX_DISPLAYED_PING_DURATION = Preferences.getInstance().getIntegerValue(
+        Constants.PING_CHART_MAX_DISPLAYED_PING_DURATION_PREFERENCE, Constants.DEFAULT_CHART_MAX_DISPLAYED_PING_DURATION);
+    private final long MIN_DISPLAYED_PING_DURATION = Preferences.getInstance().getIntegerValue(
+            Constants.PING_CHART_MIN_DISPLAYED_PING_DURATION_PREFERENCE, Constants.DEFAULT_CHART_MIN_DISPLAYED_PING_DURATION);
 
     // Class properties
     private static Cat cat;
@@ -2203,6 +2206,12 @@ public class CatView {
                 XYChart.Data lPoint = lPingPoint.getPoint();
                 if (aInX - Utilities.convertXY(lPoint.getXValue()) > MAX_STORED_PING_DURATION) {
                     pingPoints.get(lKey).remove(lPingPoint);
+                } else break;
+            }
+            for (int lIndex = 0; lIndex < pingMarkers.get(lKey).size(); lIndex++) {
+                XYChart.Data lPingMarker = pingMarkers.get(lKey).get(lIndex);
+                if (aInX - Utilities.convertXY(lPingMarker.getXValue()) > MAX_STORED_PING_DURATION) {
+                    pingPoints.get(lKey).remove(lPingMarker);
                 } else break;
             }
 

@@ -94,10 +94,20 @@ public class Constants {
 
     public static final Image APPLICATION_IMAGE = new Image("resources/images/cat.png");
 
-    // Preferences
+    // General preferences
     public static final boolean DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE = true;
     public static final boolean DEFAULT_ENABLE_DETAIL_TOOLTIP_PREFERENCE = true;
 
+    // Ping chart preferences
+    public static final String PING_CHART_MAX_STORED_PING_DURATION_PREFERENCE ="pingChart.maxStoredPingDuration";
+    public static final String PING_CHART_MAX_DISPLAYED_PING_DURATION_PREFERENCE ="pingChart.maxDisplayedPingDuration";
+    public static final String PING_CHART_MIN_DISPLAYED_PING_DURATION_PREFERENCE ="pingChart.minDisplayedPingDuration";
+
+    public static final Integer DEFAULT_CHART_MAX_STORED_PING_DURATION = 3 * 24 * 60 * 60 * 1000; // 3 days
+    public static final Integer DEFAULT_CHART_MAX_DISPLAYED_PING_DURATION = 60 * 60 * 1000;       // 1 hour
+    public static final Integer DEFAULT_CHART_MIN_DISPLAYED_PING_DURATION = 15 * 1000;            // 15 seconds
+
+    // Speed test preferences
     public static final String SPEED_TEST_DOWNLOAD_URL_PREFERENCE = "speedTest.url.download";
     public static final String SPEED_TEST_UPLOAD_URL_PREFERENCE = "speedTest.url.upload";
     public static final String SPEED_TEST_SOCKET_TIMEOUT_PREFERENCE = "speedTest.socketTimeout";
