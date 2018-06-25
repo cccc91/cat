@@ -3,19 +3,24 @@ package cclerc.services;
 import cclerc.cat.Cat;
 import cclerc.cat.Configuration.Configuration;
 import fr.bmartel.speedtest.SpeedTestReport;
+import fr.bmartel.speedtest.model.SpeedTestError;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SpeedTestFactory {
 
-    private SpeedTest periodicSpeedTest;
-    private SpeedTest onRequestSpeedTest;
+    private Map<String, SpeedTest> speedTests = new HashMap<>();
 
     private static SpeedTestFactory speedTestFactoryInstance = new SpeedTestFactory();
 
     // CONSTRUCTOR
 
     private SpeedTestFactory() {
-        buildPeriodicSpeedTest();
-        buildOnRequestSpeedTest();
+        buildSpeedTest("periodic");
+        buildSpeedTest("onRequest");
     }
 
     // SINGLETON
@@ -32,61 +37,92 @@ public class SpeedTestFactory {
 
     /**
      * Builds periodic speed test
+     * @param aInType Type of speed test (onRequest or periodic)
      */
-    private void buildPeriodicSpeedTest() {
+    private void buildSpeedTest(String aInType) {
 
-        periodicSpeedTest = new SpeedTest(new SpeedTestInterface() {
+        speedTests.put(aInType, new SpeedTest(new SpeedTestInterface() {
 
             @Override
-            public void startTest() {
+            public void reportStartTest() {
                 Cat.getInstance().getController().switchStopStartSpeedTestButton();
                 Cat.getInstance().getController().printSpeedTest(
                         new Message(
                                 String.format(Display.getViewResourceBundle().getString("speedTest.start"),
-                                              Display.getViewResourceBundle().getString("speedtest.type.periodic").toUpperCase()), EnumTypes.MessageLevel.INFO));
+                                              Display.getViewResourceBundle().getString("speedtest.type." + aInType).toUpperCase()), EnumTypes.MessageLevel.INFO));
             }
 
             @Override
-            public void stopTest() {
+            public void reportStopTest() {
                 Cat.getInstance().getController().switchStopStartSpeedTestButton();
                 Cat.getInstance().getController().printSpeedTest(
                         new Message(
                                 String.format(Display.getViewResourceBundle().getString("speedTest.end"),
-                                              Display.getViewResourceBundle().getString("speedtest.type.periodic").toUpperCase()), EnumTypes.MessageLevel.INFO));
+                                              Display.getViewResourceBundle().getString("speedtest.type." + aInType).toUpperCase()), EnumTypes.MessageLevel.INFO));
             }
 
             @Override
-            public void interruptTest(String aInMessage) {
+            public void reportInterruption() {
                 Cat.getInstance().getController().switchStopStartSpeedTestButton();
-                Cat.getInstance().getController().printSpeedTest(new Message(aInMessage, EnumTypes.MessageLevel.WARNING));
+                Cat.getInstance().getController().printSpeedTest(new Message(
+                        String.format(Display.getViewResourceBundle().getString("speedTest.interrupted"),
+                                      Display.getViewResourceBundle().getString("speedtest.type." + aInType)), EnumTypes.MessageLevel.WARNING));
                 Cat.getInstance().getController().printSpeedTest(
                         new Message(
                                 String.format(Display.getViewResourceBundle().getString("speedTest.end"),
-                                              Display.getViewResourceBundle().getString("speedtest.type.periodic").toUpperCase()), EnumTypes.MessageLevel.INFO));
-                buildPeriodicSpeedTest();
+                                              Display.getViewResourceBundle().getString("speedtest.type." + aInType).toUpperCase()), EnumTypes.MessageLevel.INFO));
+                buildSpeedTest(aInType);
             }
 
             @Override
-            public void printProgress(String aInMessage) {
-                if (!periodicSpeedTest.isFirstReport()) {
-                    Cat.getInstance().getController().replaceLastSpeedTestMessage(new Message(aInMessage, EnumTypes.MessageLevel.INFO));
+            public void reportProgress(String aInTransferMode, float aInProgress, Map<Integer, BigDecimal> aInBitRate, Map<Integer, BigDecimal> aInOctetRate) {
+                String lMessage =  String.format(
+                        Display.getViewResourceBundle().getString("speedTest.progress"),
+                        Display.getViewResourceBundle().getString("speedtest.type." + aInType),
+                        Display.getViewResourceBundle().getString("speedtest.mode." + aInTransferMode),
+                        aInProgress,
+                        aInOctetRate.values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + aInOctetRate.keySet().iterator().next()),
+                        aInBitRate.values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + aInBitRate.keySet().iterator().next()));
+                if (!speedTests.get(aInType).isFirstReport()) {
+                    Cat.getInstance().getController().replaceLastSpeedTestMessage(new Message(lMessage, EnumTypes.MessageLevel.INFO));
                 } else {
-                    Cat.getInstance().getController().printSpeedTest(new Message(aInMessage, EnumTypes.MessageLevel.INFO));
+                    Cat.getInstance().getController().printSpeedTest(new Message(lMessage, EnumTypes.MessageLevel.INFO));
                 }
             }
 
             @Override
-            public void printResult(String aInMessage) {
-                Message lMessage = new Message(aInMessage, EnumTypes.MessageLevel.INFO);
-                Cat.getInstance().getController().printConsole(lMessage);
-                Cat.getInstance().getController().replaceLastSpeedTestMessage(lMessage);
+            public void reportResult(String aInTransferMode, Map<Integer, BigDecimal> aInBitRate, Map<Integer, BigDecimal> aInOctetRate) {
+                String lMessage = String.format(
+                        Display.getViewResourceBundle().getString("speedTest.completed"),
+                        Display.getViewResourceBundle().getString("speedtest.type." + aInType),
+                        Display.getViewResourceBundle().getString("speedtest.mode." + aInTransferMode),
+                        aInOctetRate.values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + aInOctetRate.keySet().iterator().next()),
+                        aInBitRate.values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + aInBitRate.keySet().iterator().next()));
+                Cat.getInstance().getController().replaceLastSpeedTestMessage(new Message(lMessage, EnumTypes.MessageLevel.INFO));
             }
 
             @Override
-            public void printError(String aInMessage) {
-                Message lMessage = new Message(aInMessage, EnumTypes.MessageLevel.ERROR);
+            public void reportFinalResult(List<Map<Integer, BigDecimal>> aInBitRates, List<Map<Integer, BigDecimal>> aInOctetRates) {
+                String lMessage = String.format(
+                        Display.getViewResourceBundle().getString("speedTest.report"),
+                        Display.getViewResourceBundle().getString("speedtest.type." + aInType),
+                        aInOctetRates.get(0).values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + aInOctetRates.get(0).keySet().iterator().next()),
+                        aInBitRates.get(0).values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + aInBitRates.get(0).keySet().iterator().next()),
+                        aInOctetRates.get(1).values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + aInOctetRates.get(1).keySet().iterator().next()),
+                        aInBitRates.get(1).values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + aInBitRates.get(1).keySet().iterator().next()));
+                Cat.getInstance().getController().printConsole(new Message(lMessage, EnumTypes.MessageLevel.INFO));
+                Display.getLogger().info(lMessage);
+            }
+
+            @Override
+            public void reportError(String aInTransferMode, SpeedTestError aInSpeedTestError, String aInErrorMessage) {
+                Message lMessage = new Message(String.format(Display.getViewResourceBundle().getString("speedTest.error"),
+                                                             Display.getViewResourceBundle().getString("speedtest.type." + aInType),
+                                                             Display.getViewResourceBundle().getString("speedtest.mode." + aInTransferMode),
+                                                             aInSpeedTestError + " - " + aInErrorMessage), EnumTypes.MessageLevel.ERROR);
                 Cat.getInstance().getController().printConsole(lMessage);
                 Cat.getInstance().getController().printSpeedTest(lMessage);
+                buildSpeedTest(aInType);
             }
 
             @Override
@@ -94,102 +130,34 @@ public class SpeedTestFactory {
                 // TODO
             }
 
-            @Override
-            public String getType() {
-                return "periodic";
-            }
         },  (Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkConfiguration(EnumTypes.AddressType.WAN) == null) ? true :
-            Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkConfiguration(EnumTypes.AddressType.WAN).getUseProxy());
-    }
-
-    /**
-     * Builds on request speed test
-     */
-    private void buildOnRequestSpeedTest() {
-
-        onRequestSpeedTest = new SpeedTest(new SpeedTestInterface() {
-
-            @Override
-            public void startTest() {
-                Cat.getInstance().getController().switchStopStartSpeedTestButton();
-                Cat.getInstance().getController().printSpeedTest(
-                        new Message(
-                                String.format(Display.getViewResourceBundle().getString("speedTest.start"),
-                                              Display.getViewResourceBundle().getString("speedtest.type.onRequest").toUpperCase()), EnumTypes.MessageLevel.INFO));
-            }
-
-            @Override
-            public void stopTest() {
-                Cat.getInstance().getController().switchStopStartSpeedTestButton();
-                Cat.getInstance().getController().printSpeedTest(
-                        new Message(
-                                String.format(Display.getViewResourceBundle().getString("speedTest.end"),
-                                              Display.getViewResourceBundle().getString("speedtest.type.onRequest").toUpperCase()), EnumTypes.MessageLevel.INFO));
-            }
-
-            @Override
-            public void interruptTest(String aInMessage) {
-                Cat.getInstance().getController().switchStopStartSpeedTestButton();
-                Cat.getInstance().getController().printSpeedTest(new Message(aInMessage, EnumTypes.MessageLevel.WARNING));
-                Cat.getInstance().getController().printSpeedTest(
-                        new Message(
-                                String.format(Display.getViewResourceBundle().getString("speedTest.end"),
-                                              Display.getViewResourceBundle().getString("speedtest.type.onRequest").toUpperCase()), EnumTypes.MessageLevel.INFO));
-                buildOnRequestSpeedTest();
-            }
-
-            @Override
-            public void printProgress(String aInMessage) {
-                if (!onRequestSpeedTest.isFirstReport()) {
-                    Cat.getInstance().getController().replaceLastSpeedTestMessage(new Message(aInMessage, EnumTypes.MessageLevel.INFO));
-                } else {
-                    Cat.getInstance().getController().printSpeedTest(new Message(aInMessage, EnumTypes.MessageLevel.INFO));
-                }
-            }
-
-            @Override
-            public void printResult(String aInMessage) {
-                Message lMessage = new Message(aInMessage, EnumTypes.MessageLevel.INFO);
-                Cat.getInstance().getController().printConsole(lMessage);
-                Cat.getInstance().getController().replaceLastSpeedTestMessage(lMessage);
-            }
-
-            @Override
-            public void printError(String aInMessage) {
-                Message lMessage = new Message(aInMessage, EnumTypes.MessageLevel.ERROR);
-                Cat.getInstance().getController().printConsole(lMessage);
-                Cat.getInstance().getController().printSpeedTest(lMessage);
-            }
-
-            @Override
-            public void storeResult(SpeedTestReport report) {
-                // TODO
-            }
-
-            @Override
-            public String getType() {
-                return "onRequest";
-            }
-        },  (Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkConfiguration(EnumTypes.AddressType.WAN) == null) ? true :
-            Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkConfiguration(EnumTypes.AddressType.WAN).getUseProxy());
+            Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkConfiguration(EnumTypes.AddressType.WAN).getUseProxy()));
     }
 
     // PUBLIC
 
     /**
-     * Gets the periodic speed test object
-     * @return Periodic speed test object
+     * Gets speed test of the required type
+     * @param aInType Type of speed test (onRequest or periodic)
+     * @return Speed test
      */
-    public SpeedTest getPeriodicSpeedTest() {
-        return periodicSpeedTest;
+    public SpeedTest getSpeedTest(String aInType) {
+        return speedTests.get(aInType);
     }
 
     /**
-     * Gets the on request speed test object
-     * @return On request speed test object
+     * Stops all on-going speed tests
      */
-    public SpeedTest getOnRequestSpeedTest() {
-        return onRequestSpeedTest;
+    public void stopOnGoingSpeedTest() {
+        for (SpeedTest lSpeedTest: speedTests.values()) {
+            if (lSpeedTest.isTestRunning()) lSpeedTest.stop();
+        }
+    }
+
+    public void resetFirstReports() {
+        for (SpeedTest lSpeedTest: speedTests.values()) {
+            lSpeedTest.resetFirstReport();
+        }
     }
 
 }

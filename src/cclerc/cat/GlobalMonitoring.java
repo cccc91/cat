@@ -270,15 +270,14 @@ public class GlobalMonitoring {
                 // Run speed test if needed
                 if (lSpeedTestEnabled && lDownloadUrl != null && lUploadUrl != null && lNow >= lNextSpeedTestExecutionTime) {
                     lNextSpeedTestExecutionTime = Utilities.nextExecutionTime(lNextSpeedTestExecutionTime, lSpeedTestPeriod, lSpeedTestOffset);
-                    if (SpeedTestFactory.getInstance().getOnRequestSpeedTest().isTestRunning() || SpeedTestFactory.getInstance().getPeriodicSpeedTest().isTestRunning()) {
+                    if (SpeedTestFactory.getInstance().getSpeedTest("onRequest").isTestRunning() || SpeedTestFactory.getInstance().getSpeedTest("periodic").isTestRunning()) {
                         Cat.getInstance().getController().replaceLastSpeedTestMessage(
                                 new Message(String.format(
                                         Display.getViewResourceBundle().getString("speedTest.running"),
                                         LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(new Date(lNextSpeedTestExecutionTime))), EnumTypes.MessageLevel.WARNING));
-                        SpeedTestFactory.getInstance().getOnRequestSpeedTest().resetFirstReport();
-                        SpeedTestFactory.getInstance().getPeriodicSpeedTest().resetFirstReport();
+                        SpeedTestFactory.getInstance().resetFirstReports();
                     } else {
-                        SpeedTestFactory.getInstance().getPeriodicSpeedTest().start(lDownloadUrl, lUploadUrl);
+                        SpeedTestFactory.getInstance().getSpeedTest("periodic").start(lDownloadUrl, lUploadUrl);
                     }
                 }
 

@@ -537,13 +537,12 @@ public class CatView {
             String lDownloadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_DOWNLOAD_URL_PREFERENCE);
             String lUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_UPLOAD_URL_PREFERENCE);
             if (lDownloadUrl != null && lUploadUrl != null) {
-                SpeedTestFactory.getInstance().getOnRequestSpeedTest().start(lDownloadUrl, lUploadUrl);
+                SpeedTestFactory.getInstance().getSpeedTest("onRequest").start(lDownloadUrl, lUploadUrl);
             }
 
         } else {
             // Stops current speed test (only one is potentially on-going, nothing is done if trying to stop a not on-going test)
-            SpeedTestFactory.getInstance().getPeriodicSpeedTest().stop();
-            SpeedTestFactory.getInstance().getOnRequestSpeedTest().stop();
+            SpeedTestFactory.getInstance().stopOnGoingSpeedTest();
         }
     }
 

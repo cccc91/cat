@@ -14,7 +14,9 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SpeedTest {
@@ -29,6 +31,8 @@ public class SpeedTest {
     private boolean firstReport = true;
     private BigDecimal bitRate = new BigDecimal(0);
     private BigDecimal octetRate = new BigDecimal(0);
+    private List<Map<Integer, BigDecimal>> bitRates = new ArrayList<>();
+    private List<Map<Integer, BigDecimal>> octetRates = new ArrayList<>();
     private int count = 0;
     private Proxy proxy = Proxy.NO_PROXY;
 
@@ -67,16 +71,14 @@ public class SpeedTest {
             }
 
             @Override
-            public void onError(SpeedTestError speedTestError, String errorMessage) {
+            public void onError(SpeedTestError aInSpeedTestError, String aInErrorMessage) {
                 if (!interrupted) {
-                    aInSpeedTestInterface.printError(
-                            String.format(Display.getViewResourceBundle().getString("speedTest.error"),
-                                          Display.getViewResourceBundle().getString("speedtest.type." + aInSpeedTestInterface.getType()),
-                                          Display.getViewResourceBundle().getString("speedtest.mode." + speedTestSocket.getSpeedTestMode().toString().toLowerCase()),
-                                          speedTestError + " - " + errorMessage));
+                    aInSpeedTestInterface.reportError(speedTestSocket.getSpeedTestMode().toString().toLowerCase(), aInSpeedTestError, aInErrorMessage);
                     testRunning = false;
                     firstReport = true;
-                    speedTestInterface.stopTest();
+                    speedTestSocket.forceStopTask();
+                    speedTestSocket.closeSocket();
+                    speedTestInterface.reportStopTest();
                 }
             }
 
@@ -101,13 +103,7 @@ public class SpeedTest {
         count++;
         bitRate = bitRate.add(aInReport.getTransferRateBit());
         octetRate = octetRate.add(aInReport.getTransferRateOctet());
-        speedTestInterface.printProgress(
-                String.format(Display.getViewResourceBundle().getString("speedTest.progress"),
-                              Display.getViewResourceBundle().getString("speedtest.type." + speedTestInterface.getType()),
-                              Display.getViewResourceBundle().getString("speedtest.mode." + aInReport.getSpeedTestMode().toString().toLowerCase()),
-                              aInReport.getProgressPercent(),
-                              lOctetRate.values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + lOctetRate.keySet().iterator().next()),
-                              lBitRate.values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + lBitRate.keySet().iterator().next())));
+        speedTestInterface.reportProgress(aInReport.getSpeedTestMode().toString().toLowerCase(), aInReport.getProgressPercent(), lBitRate, lOctetRate);
         firstReport = false;
 
     }
@@ -123,12 +119,8 @@ public class SpeedTest {
         octetRate = octetRate.add(aInReport.getTransferRateOctet()).divide(new BigDecimal(count), 2);
         Map<Integer, BigDecimal> lBitRate = convertToBestUnit(bitRate);
         Map<Integer, BigDecimal> lOctetRate = convertToBestUnit(octetRate);
-        speedTestInterface.printResult(
-                String.format(Display.getViewResourceBundle().getString("speedTest.completed"),
-                              Display.getViewResourceBundle().getString("speedtest.type." + speedTestInterface.getType()),
-                              Display.getViewResourceBundle().getString("speedtest.mode." + aInReport.getSpeedTestMode().toString().toLowerCase()),
-                              lOctetRate.values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + lOctetRate.keySet().iterator().next()),
-                              lBitRate.values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + lBitRate.keySet().iterator().next())));
+        bitRates.add(lBitRate); octetRates.add(lOctetRate);
+        speedTestInterface.reportResult(aInReport.getSpeedTestMode().toString().toLowerCase(), lBitRate, lOctetRate);
         speedTestInterface.storeResult(aInReport);
         testRunning = false;
         firstReport = true;
@@ -177,7 +169,7 @@ public class SpeedTest {
      */
     public void start(String aInDownloadUrl, String aInUploadUrl) {
 
-        speedTestInterface.startTest();
+        speedTestInterface.reportStartTest();
         testRunning = true;
 
         // Start download
@@ -215,7 +207,9 @@ public class SpeedTest {
                                     @Override
                                     public void onCompletion(SpeedTestReport aInReport) {
                                         processCompletionReport(aInReport);
-                                        speedTestInterface.stopTest();
+                                        speedTestInterface.reportFinalResult(bitRates, octetRates);
+                                        bitRates.clear(); octetRates.clear();
+                                        speedTestInterface.reportStopTest();
                                     }
 
                                 });
@@ -234,9 +228,7 @@ public class SpeedTest {
             interrupted = true; // Must not be moved as onError callback is called after socked is closed and this flag is tested in this callback
             speedTestSocket.forceStopTask();
             speedTestSocket.closeSocket(); // Socket needs to be closed otherwise transfer goes on forever although no callback is no more called
-            speedTestInterface.interruptTest(
-                    String.format(Display.getViewResourceBundle().getString("speedTest.interrupted"),
-                                  Display.getViewResourceBundle().getString("speedtest.type." + speedTestInterface.getType())));
+            speedTestInterface.reportInterruption();
             testRunning = false;
         }
     }
