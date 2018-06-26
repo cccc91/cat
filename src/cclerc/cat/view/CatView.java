@@ -7,7 +7,6 @@ import cclerc.cat.MonitoringJob;
 import cclerc.cat.model.Alarm;
 import cclerc.services.*;
 import com.sun.javafx.charts.Legend;
-import fr.bmartel.speedtest.SpeedTestReport;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -23,12 +22,10 @@ import javafx.scene.Node;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
@@ -411,10 +408,10 @@ public class CatView {
         firstDisplay.put(speedTestTextFlow, true);
         tabs.put(speedTestTextFlow, speedTestTab);
 
-        // Add listener to detail text flow so that it auto scrolls by default to bottom each time the text changes
+        // Add listener to speed test text flow so that it auto scrolls by default to bottom each time the text changes
         speedTestTextFlow.getChildren().addListener(speedTestScrollPaneChangeListener);
 
-        // Add listener to console scroll pane so that auto scroll is enabled or disabled depending on user action
+        // Add listener to speed test scroll pane so that auto scroll is enabled or disabled depending on user action
         speedTestScrollPane.vvalueProperty().addListener(
                 (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
                     if(oldValue.doubleValue() == 1.0d){
@@ -425,21 +422,7 @@ public class CatView {
                         // If user scrolls up, disable auto scroll to bottom
                         speedTestTextFlow.getChildren().removeListener(speedTestScrollPaneChangeListener);
                     }
-                }
-                                                      );
-
-        // Reset style of the speedTest tab title when it is selected
-        speedTestTab.getTabPane().getSelectionModel().selectedItemProperty().addListener(
-                new ChangeListener<Tab>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Tab> ov, Tab oldTab, Tab newTab) {
-                        if (newTab.equals(speedTestTab)) {
-                            newTab.setStyle("-fx-font-style: normal;");
-                            newTab.setText(newTab.getText().replaceAll(" \\(-*[0-9]+\\)$", ""));
-                        }
-                    }
                 });
-
 
         Tooltip lClearConsoleTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.clearConsole"));
         if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE))
@@ -2249,11 +2232,13 @@ public class CatView {
     }
 
     /**
-     * Prints a message with the required level in the speed test text flow
+     * Prints a message with the required level in the speed test text flow - No change indicator for in tab for this console, so don't call generic printMessage
      * @param aInMessage      Message to display
      */
     public void printSpeedTest(Message aInMessage) {
-        printMessage(aInMessage, speedTestTextFlow);
+        Platform.runLater(() -> {
+            aInMessage.println(speedTestTextFlow);
+        });
     }
 
     /**
@@ -2328,6 +2313,9 @@ public class CatView {
                 speedTestStartStopButton.setText(Display.getViewResourceBundle().getString("catView.speedTest.stop"));
                 speedTestStartStopButton.getStyleClass().add("buttonWarning");
                 speedTestStartStopButton.setDisable(false);
+                Tooltip lTooltip = new Tooltip(Display.getViewResourceBundle().getString("speedTest.tooltip.stop"));
+                if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE))
+                    Tooltip.install(speedTestStartStopButton, lTooltip);
             } else {
                 speedTestStartStopButton.setText(Display.getViewResourceBundle().getString("catView.speedTest.start"));
                 if (speedTestStartStopButton.getStyleClass().contains("buttonWarning")) {
@@ -2336,6 +2324,9 @@ public class CatView {
                 speedTestStartStopButton.setDisable(
                         Preferences.getInstance().getValue(Constants.SPEED_TEST_DOWNLOAD_URL_PREFERENCE) == null ||
                         Preferences.getInstance().getValue(Constants.SPEED_TEST_UPLOAD_URL_PREFERENCE) == null);
+                Tooltip lTooltip = new Tooltip(Display.getViewResourceBundle().getString("speedTest.tooltip.start"));
+                if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE))
+                    Tooltip.install(speedTestStartStopButton, lTooltip);
             }
             speedTestStartState = !speedTestStartState;
         });
