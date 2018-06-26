@@ -97,6 +97,9 @@ public class ConfigurationDialog {
     @FXML TextField globalMeanTimeBetweenTwoConnectionsLostThreshold1TextField;
     @FXML TextField globalMeanTimeBetweenTwoConnectionsLostThreshold2TextField;
     @FXML TextField globalMeanTimeBetweenTwoConnectionsLostThreshold3TextField;
+    @FXML TextField globalMaxStoredPingDurationTextField;
+    @FXML TextField globalMinDisplayedPingDurationTextField;
+    @FXML TextField globalMaxDisplayedPingDurationTextField;
 
     // Alarms tab
 
@@ -722,6 +725,9 @@ public class ConfigurationDialog {
         lGlobalConfigurationTextFields.put("MeanTimeBetweenTwoConnectionsLostThreshold1", globalMeanTimeBetweenTwoConnectionsLostThreshold1TextField);
         lGlobalConfigurationTextFields.put("MeanTimeBetweenTwoConnectionsLostThreshold2", globalMeanTimeBetweenTwoConnectionsLostThreshold2TextField);
         lGlobalConfigurationTextFields.put("MeanTimeBetweenTwoConnectionsLostThreshold3", globalMeanTimeBetweenTwoConnectionsLostThreshold3TextField);
+        lGlobalConfigurationTextFields.put("MaxStoredPingDuration", globalMaxStoredPingDurationTextField);
+        lGlobalConfigurationTextFields.put("MinDisplayedPingDuration", globalMinDisplayedPingDurationTextField);
+        lGlobalConfigurationTextFields.put("MaxDisplayedPingDuration", globalMaxDisplayedPingDurationTextField);
         textFields.put(Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration(), lGlobalConfigurationTextFields);
 
         Map<String, TextField> lAudibleAlarmsTextFields = new HashMap<>(); // Audible alarms configuration text fields

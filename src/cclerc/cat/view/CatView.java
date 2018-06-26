@@ -44,12 +44,9 @@ import java.util.regex.Pattern;
 public class CatView {
 
     // CONSTANTS TODO: customize in GUI
-    private final long MAX_STORED_PING_DURATION = Preferences.getInstance().getIntegerValue(
-                    Constants.PING_CHART_MAX_STORED_PING_DURATION_PREFERENCE, Constants.DEFAULT_CHART_MAX_STORED_PING_DURATION);
-    private final long MAX_DISPLAYED_PING_DURATION = Preferences.getInstance().getIntegerValue(
-        Constants.PING_CHART_MAX_DISPLAYED_PING_DURATION_PREFERENCE, Constants.DEFAULT_CHART_MAX_DISPLAYED_PING_DURATION);
-    private final long MIN_DISPLAYED_PING_DURATION = Preferences.getInstance().getIntegerValue(
-            Constants.PING_CHART_MIN_DISPLAYED_PING_DURATION_PREFERENCE, Constants.DEFAULT_CHART_MIN_DISPLAYED_PING_DURATION);
+    private final long MAX_STORED_PING_DURATION = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration().getMaxStoredPingDuration();
+    private final long MAX_DISPLAYED_PING_DURATION = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration().getMinDisplayedPingDuration();
+    private final long MIN_DISPLAYED_PING_DURATION = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration().getMaxDisplayedPingDuration();
 
     // Class properties
     private static Cat cat;

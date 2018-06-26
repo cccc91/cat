@@ -364,45 +364,101 @@
                      </children></AnchorPane>
             </content>
           </Tab>
-            <Tab text="%configuration.monitoringJobs.globalMonitoringConfiguration">
+            <Tab text="%configuration.monitoringJobs.globalMonitoring">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
                         <VBox spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
                            <children>
-                              <GridPane hgap="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="80.0" styleClass="attributesListGrid">
-                                 <columnConstraints>
-                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" prefWidth="270.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="80.0" />
-                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" prefWidth="270.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="80.0" />
-                                 </columnConstraints>
-                                 <rowConstraints>
-                                    <RowConstraints />
-                                    <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                 </rowConstraints>
+                              <VBox>
                                  <children>
-                                    <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.globalMonitoringConfiguration.meanTimeBetweenTwoConnectionsLostThreshold3" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
-                                       <GridPane.margin>
-                                          <Insets />
-                                       </GridPane.margin>
-                                    </Label>
-                                    <TextField fx:id="globalMeanTimeBetweenTwoConnectionsLostThreshold3TextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                                    <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.globalMonitoringConfiguration.pollingPeriod" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
-                                    <TextField fx:id="globalPollingPeriodTextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.globalMonitoringConfiguration.connectionsLostForgetTime" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
-                                    <TextField fx:id="globalMeanTimeBetweenTwoConnectionsLostThreshold1TextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                    <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.globalMonitoringConfiguration.meanTimeBetweenTwoConnectionsLostThreshold1" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
-                                    <TextField fx:id="globalConnectionsLostForgetTimeTextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                    <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.globalMonitoringConfiguration.meanTimeBetweenTwoConnectionsLostThreshold2" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
-                                    <TextField fx:id="globalMeanTimeBetweenTwoConnectionsLostThreshold2TextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                    <Label text="%configuration.monitoringJobs.globalMonitoring.polling" />
+                                    <GridPane hgap="10.0" maxWidth="1.7976931348623157E308" styleClass="attributesListGrid">
+                                       <columnConstraints>
+                                          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" prefWidth="270.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="80.0" />
+                                          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" prefWidth="270.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="80.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints />
+                                          <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.globalMonitoring.pollingPeriod" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                                          <TextField fx:id="globalPollingPeriodTextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="10.0" right="10.0" />
+                                       </padding>
+                                    </GridPane>
                                  </children>
-                                 <padding>
-                                    <Insets left="10.0" right="10.0" />
-                                 </padding>
-                              </GridPane>
+                              </VBox>
+                              <VBox>
+                                 <children>
+                                    <Label text="%configuration.monitoringJobs.globalMonitoring.alarms" />
+                                    <GridPane hgap="10.0" maxWidth="1.7976931348623157E308" minHeight="80.0" styleClass="attributesListGrid">
+                                       <columnConstraints>
+                                          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" prefWidth="270.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="80.0" />
+                                          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" prefWidth="270.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="80.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints />
+                                          <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.globalMonitoring.meanTimeBetweenTwoConnectionsLostThreshold3" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                                             <GridPane.margin>
+                                                <Insets />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <TextField fx:id="globalMeanTimeBetweenTwoConnectionsLostThreshold3TextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                          <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.globalMonitoring.connectionsLostForgetTime" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                                          <TextField fx:id="globalMeanTimeBetweenTwoConnectionsLostThreshold1TextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                          <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.globalMonitoring.meanTimeBetweenTwoConnectionsLostThreshold1" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                                          <TextField fx:id="globalConnectionsLostForgetTimeTextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.globalMonitoring.meanTimeBetweenTwoConnectionsLostThreshold2" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+                                          <TextField fx:id="globalMeanTimeBetweenTwoConnectionsLostThreshold2TextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="10.0" right="10.0" />
+                                       </padding>
+                                    </GridPane>
+                                 </children>
+                              </VBox>
+                              <VBox>
+                                 <children>
+                                    <Label text="%configuration.monitoringJobs.globalMonitoring.pingChart" />
+                                    <GridPane hgap="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="attributesListGrid">
+                                       <columnConstraints>
+                                          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" prefWidth="270.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="80.0" />
+                                          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" prefWidth="270.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="80.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints />
+                                          <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.globalMonitoring.maxStoredPingDuration" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                                          <TextField fx:id="globalMaxStoredPingDurationTextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <TextField fx:id="globalMinDisplayedPingDurationTextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                          <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.globalMonitoring.minDisplayedPingDuration" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                                          <Label alignment="CENTER_RIGHT" styleClass="attributeName" text="%configuration.monitoringJobs.globalMonitoring.maxDisplayedPingDuration" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+                                          <TextField fx:id="globalMaxDisplayedPingDurationTextField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" styleClass="attributeValue" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="10.0" right="10.0" />
+                                       </padding>
+                                    </GridPane>
+                                 </children>
+                              </VBox>
                            </children>
                         </VBox>
                      </children>

@@ -16,7 +16,8 @@ public class GlobalMonitoringConfiguration extends AbstractConfiguration {
 
     private static final List<String> ATTRIBUTE_NAMES = new ArrayList<>(Arrays.asList("pollingPeriod", "meanTimeBetweenTwoConnectionsLostThreshold1",
                                                                                       "meanTimeBetweenTwoConnectionsLostThreshold2", "meanTimeBetweenTwoConnectionsLostThreshold3",
-                                                                                      "connectionsLostForgetTime"));
+                                                                                      "connectionsLostForgetTime",
+                                                                                      "maxStoredPingDuration", "minDisplayedPingDuration", "maxDisplayedPingDuration"));
 
     // Accessed by introspection
     protected static final Integer DEFAULT_POLLING_PERIOD = Constants.DEFAULT_GLOBAL_MONITORING_POLLING_PERIOD;
@@ -24,13 +25,18 @@ public class GlobalMonitoringConfiguration extends AbstractConfiguration {
     protected static final Long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD2 = Constants.DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD2;
     protected static final Long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD3 = Constants.DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD3;
     protected static final Long DEFAULT_CONNECTIONS_LOST_FORGET_TIME = Constants.DEFAULT_CONNECTIONS_LOST_FORGET_TIME;
-
+    protected static final Long DEFAULT_MAX_STORED_PING_DURATION = Constants.DEFAULT_MAX_STORED_PING_DURATION;
+    protected static final Long DEFAULT_MAX_DISPLAYED_PING_DURATION = Constants.DEFAULT_MAX_DISPLAYED_PING_DURATION;
+    protected static final Long DEFAULT_MIN_DISPLAYED_PING_DURATION = Constants.DEFAULT_MIN_DISPLAYED_PING_DURATION;
 
     protected Integer pollingPeriod;
     protected Long meanTimeBetweenTwoConnectionsLostThreshold1;
     protected Long meanTimeBetweenTwoConnectionsLostThreshold2;
     protected Long meanTimeBetweenTwoConnectionsLostThreshold3;
     protected Long connectionsLostForgetTime;
+    protected Long maxStoredPingDuration;
+    protected Long minDisplayedPingDuration;
+    protected Long maxDisplayedPingDuration;
 
     // SETTERS
 
@@ -66,6 +72,24 @@ public class GlobalMonitoringConfiguration extends AbstractConfiguration {
         }
     }
 
+    public void setMaxStoredPingDuration(String aInMaxStoredPingDuration) throws NumberFormatException {
+        if ((aInMaxStoredPingDuration != null) && !Long.valueOf(aInMaxStoredPingDuration).equals(maxStoredPingDuration)) {
+            maxStoredPingDuration = Long.valueOf(aInMaxStoredPingDuration);
+        }
+    }
+
+    public void setMinDisplayedPingDuration(String aInMinDisplayedPingDuration) throws NumberFormatException {
+        if ((aInMinDisplayedPingDuration != null) && !Long.valueOf(aInMinDisplayedPingDuration).equals(minDisplayedPingDuration)) {
+            minDisplayedPingDuration = Long.valueOf(aInMinDisplayedPingDuration);
+        }
+    }
+
+    public void setMaxDisplayedPingDuration(String aInMaxDisplayedPingDuration) throws NumberFormatException {
+        if ((aInMaxDisplayedPingDuration != null) && !Long.valueOf(aInMaxDisplayedPingDuration).equals(maxDisplayedPingDuration)) {
+            maxDisplayedPingDuration = Long.valueOf(aInMaxDisplayedPingDuration);
+        }
+    }
+
     // GETTERS
 
     public Integer getPollingPeriod() {
@@ -88,6 +112,18 @@ public class GlobalMonitoringConfiguration extends AbstractConfiguration {
         return connectionsLostForgetTime;
     }
 
+    public Long getMaxStoredPingDuration() {
+        return maxStoredPingDuration;
+    }
+
+    public Long getMinDisplayedPingDuration() {
+        return minDisplayedPingDuration;
+    }
+
+    public Long getMaxDisplayedPingDuration() {
+        return maxDisplayedPingDuration;
+    }
+
     // CONSTRUCTORS
 
     public GlobalMonitoringConfiguration(Configuration aInConfiguration, String aInConfigurationFile, boolean aInDisplayError, Element aInElement)
@@ -105,6 +141,9 @@ public class GlobalMonitoringConfiguration extends AbstractConfiguration {
         meanTimeBetweenTwoConnectionsLostThreshold2 = DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD2;
         meanTimeBetweenTwoConnectionsLostThreshold3 = DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD3;
         connectionsLostForgetTime = DEFAULT_CONNECTIONS_LOST_FORGET_TIME;
+        maxStoredPingDuration = DEFAULT_MAX_STORED_PING_DURATION;
+        minDisplayedPingDuration = DEFAULT_MIN_DISPLAYED_PING_DURATION;
+        maxDisplayedPingDuration = DEFAULT_MAX_DISPLAYED_PING_DURATION;
     }
 
 }

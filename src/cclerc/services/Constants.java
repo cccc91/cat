@@ -53,6 +53,10 @@ public class Constants {
     public final static long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD3 = 10 * 1000;          // 1 loss every 10 sec max (major)
     public final static long DEFAULT_CONNECTIONS_LOST_FORGET_TIME = 2 * 60 * 60 * 1000;                      // Consider there were no losses after 2 hours w/o loss
 
+    public static final long DEFAULT_MAX_STORED_PING_DURATION = 3 * 24 * 60 * 60 * 1000; // 3 days
+    public static final long DEFAULT_MAX_DISPLAYED_PING_DURATION = 60 * 60 * 1000;       // 1 hour
+    public static final long DEFAULT_MIN_DISPLAYED_PING_DURATION = 15 * 1000;            // 15 seconds
+
     // States
     public static final String PAUSE_STATE = "pause";
     public static final String SEND_MAIL_STATE = "sendMail";
@@ -97,15 +101,6 @@ public class Constants {
     // General preferences
     public static final boolean DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE = true;
     public static final boolean DEFAULT_ENABLE_DETAIL_TOOLTIP_PREFERENCE = true;
-
-    // Ping chart preferences
-    public static final String PING_CHART_MAX_STORED_PING_DURATION_PREFERENCE ="pingChart.maxStoredPingDuration";
-    public static final String PING_CHART_MAX_DISPLAYED_PING_DURATION_PREFERENCE ="pingChart.maxDisplayedPingDuration";
-    public static final String PING_CHART_MIN_DISPLAYED_PING_DURATION_PREFERENCE ="pingChart.minDisplayedPingDuration";
-
-    public static final Integer DEFAULT_CHART_MAX_STORED_PING_DURATION = 3 * 24 * 60 * 60 * 1000; // 3 days
-    public static final Integer DEFAULT_CHART_MAX_DISPLAYED_PING_DURATION = 60 * 60 * 1000;       // 1 hour
-    public static final Integer DEFAULT_CHART_MIN_DISPLAYED_PING_DURATION = 15 * 1000;            // 15 seconds
 
     // Speed test preferences
     public static final String SPEED_TEST_DOWNLOAD_URL_PREFERENCE = "speedTest.url.download";
