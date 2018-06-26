@@ -111,7 +111,7 @@ public class Configuration {
             emailConfiguration = new EmailConfiguration(this, aInConfigurationFile, displayError, root.getChild("email"));
             alarmsConfiguration = new AlarmsConfiguration(this, aInConfigurationFile, displayError, root.getChild("alarms"));
             monitoringConfiguration = new MonitoringConfiguration(this, aInConfigurationFile, displayError, root.getChild("monitoring"));
-            globalMonitoringConfiguration = new GlobalMonitoringConfiguration(this, aInConfigurationFile, displayError, root.getChild("globalMonitoringConfiguration"));
+            globalMonitoringConfiguration = new GlobalMonitoringConfiguration(this, aInConfigurationFile, displayError, root.getChild("globalMonitoring"));
 
         } catch (IOException e) {
             if (displayError)

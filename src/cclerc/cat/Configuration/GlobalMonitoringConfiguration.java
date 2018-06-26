@@ -94,12 +94,12 @@ public class GlobalMonitoringConfiguration extends AbstractConfiguration {
             throws Exception {
 
         // Add attributes (ignore element on error)
-        super("globalMonitoringConfiguration", aInConfiguration, aInConfigurationFile, aInDisplayError, aInElement, ATTRIBUTE_NAMES, false);
+        super("globalMonitoring", aInConfiguration, aInConfigurationFile, aInDisplayError, aInElement, ATTRIBUTE_NAMES, false);
 
     }
 
     public GlobalMonitoringConfiguration(Configuration aInConfiguration) {
-        super("globalMonitoringConfiguration", aInConfiguration, "globalMonitoringConfiguration", ATTRIBUTE_NAMES);
+        super("globalMonitoringConfiguration", aInConfiguration, "globalMonitoring", ATTRIBUTE_NAMES);
         pollingPeriod = DEFAULT_POLLING_PERIOD;
         meanTimeBetweenTwoConnectionsLostThreshold1 = DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD1;
         meanTimeBetweenTwoConnectionsLostThreshold2 = DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD2;

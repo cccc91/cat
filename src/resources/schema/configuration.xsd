@@ -100,7 +100,7 @@
             <xs:element type="emailType" name="email" minOccurs="1" maxOccurs="1"/>
             <xs:element type="alarmsType" name="alarms" minOccurs="1" maxOccurs="1"/>
             <xs:element type="monitoringType" name="monitoring" minOccurs="1" maxOccurs="1"/>
-            <xs:element type="globalMonitoringConfigurationType" name="globalMonitoringConfiguration" minOccurs="1" maxOccurs="1"/>
+            <xs:element type="globalMonitoringType" name="globalMonitoring" minOccurs="1" maxOccurs="1"/>
         </xs:sequence>
         <xs:attribute type="xs:string" name="version"/>
     </xs:complexType>
@@ -233,25 +233,19 @@
 
     <!-- Global Monitoring element and children -->
 
-    <xs:complexType name="speedtestType">
+    <xs:complexType name="globalMonitoringType">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute type="xs:boolean" name="periodic"/>
-                <xs:attribute type="timeType" name="startTime"/>
-                <xs:attribute type="speedtestPeriodType" name="period"/>
-            </xs:extension>
-        </xs:simpleContent>
-    </xs:complexType>
-
-    <xs:complexType name="globalMonitoringConfigurationType">
-        <xs:sequence>
-            <xs:element type="speedtestType" name="speedtest" minOccurs="0" maxOccurs="1"/>
-        </xs:sequence>
                 <xs:attribute type="pollingPeriodType" name="pollingPeriod"/>
                 <xs:attribute type="xs:integer" name="meanTimeBetweenTwoConnectionsLostThreshold1"/>
                 <xs:attribute type="xs:integer" name="meanTimeBetweenTwoConnectionsLostThreshold2"/>
                 <xs:attribute type="xs:integer" name="meanTimeBetweenTwoConnectionsLostThreshold3"/>
                 <xs:attribute type="xs:integer" name="connectionsLostForgetTime"/>
+                <xs:attribute type="xs:integer" name="maxStoredPingDuration"/>
+                <xs:attribute type="xs:integer" name="minDisplayedPingDuration"/>
+                <xs:attribute type="xs:integer" name="maxDisplayedPingDuration"/>
+            </xs:extension>
+        </xs:simpleContent>
     </xs:complexType>
 
 </xs:schema>
