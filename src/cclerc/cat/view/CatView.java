@@ -306,6 +306,7 @@ public class CatView {
     @FXML private TextFlow speedTestTextFlow;
     @FXML private Tab speedTestTab;
     @FXML private Button speedTestStartStopButton;
+    @FXML private Button speedTestConfigureButton;
 
     @FXML private HBox pingLineChartContainer;
     @FXML private CheckBox pingLineManageCheckBox;
@@ -483,6 +484,9 @@ public class CatView {
         checkPingChartState();
 
         switchStopStartSpeedTestButton();
+        ImageView lImageView = new ImageView(new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_CONFIGURE).toString()));
+        lImageView.setFitHeight(20d); lImageView.setFitWidth(20d);
+        speedTestConfigureButton.setGraphic(lImageView);
 
     }
 

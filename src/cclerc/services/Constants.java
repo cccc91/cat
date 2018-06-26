@@ -95,6 +95,7 @@ public class Constants {
     public static final String IMAGE_WIFI = "wifi_std.png";
     public static final String IMAGE_WIFI_OK = "wifi_ok.png";
     public static final String IMAGE_WIFI_NOK = "wifi_nok.png";
+    public static final String IMAGE_CONFIGURE = "configure.png";
 
     public static final Image APPLICATION_IMAGE = new Image("resources/images/cat.png");
 
