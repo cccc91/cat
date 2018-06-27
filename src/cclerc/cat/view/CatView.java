@@ -45,8 +45,8 @@ public class CatView {
 
     // CONSTANTS TODO: customize in GUI
     private final long MAX_STORED_PING_DURATION = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration().getMaxStoredPingDuration();
-    private final long MAX_DISPLAYED_PING_DURATION = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration().getMinDisplayedPingDuration();
-    private final long MIN_DISPLAYED_PING_DURATION = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration().getMaxDisplayedPingDuration();
+    private final long MIN_DISPLAYED_PING_DURATION = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration().getMinDisplayedPingDuration();
+    private final long MAX_DISPLAYED_PING_DURATION = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration().getMaxDisplayedPingDuration();
 
     // Class properties
     private static Cat cat;
@@ -484,9 +484,12 @@ public class CatView {
         checkPingChartState();
 
         switchStopStartSpeedTestButton();
-        ImageView lImageView = new ImageView(new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_CONFIGURE).toString()));
-        lImageView.setFitHeight(20d); lImageView.setFitWidth(20d);
-        speedTestConfigureButton.setGraphic(lImageView);
+        ImageView lImageViewConfigure = new ImageView(new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_CONFIGURE).toString()));
+        lImageViewConfigure.setFitHeight(20d); lImageViewConfigure.setFitWidth(20d);
+        speedTestConfigureButton.setGraphic(lImageViewConfigure);
+        ImageView lImageViewSpeedTest = new ImageView(new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_SPEED_TEST).toString()));
+        lImageViewSpeedTest.setFitHeight(20d); lImageViewSpeedTest.setFitWidth(20d);
+        speedTestStartStopButton.setGraphic(lImageViewSpeedTest);
 
     }
 
@@ -2073,35 +2076,31 @@ public class CatView {
 
         checkPingChartState();
 
-        if (pingLineManageCheckBox.isSelected()) {
+        // Recompute ratios depending on sliders position
+        pingLineXMoveRatio = (100 - pingLineChartHorizontalMoveSlider.getValue()) / 100;
+        pingLineXZoomRatio = pingLineChartHorizontalZoomSlider.getValue() / 100;
 
-            // Recompute ratios depending on sliders position
-            pingLineXMoveRatio = (100 - pingLineChartHorizontalMoveSlider.getValue()) / 100;
-            pingLineXZoomRatio = pingLineChartHorizontalZoomSlider.getValue() / 100;
+        // Recompute duration to be displayed
+        pingLineDuration = Math.max(MIN_DISPLAYED_PING_DURATION, Math.round(MAX_DISPLAYED_PING_DURATION * pingLineXZoomRatio));
 
-            // Recompute duration to be displayed
-            pingLineDuration = Math.max(MIN_DISPLAYED_PING_DURATION, Math.round(MAX_DISPLAYED_PING_DURATION * pingLineXZoomRatio));
-
-            // Recompute min and max time to be displayed
-            long lMinX = Long.MAX_VALUE;
-            long lMaxX = Long.MIN_VALUE;
-            for (int lKey : pingLines.keySet()) {
-                if (pingPoints.containsKey(lKey) && pingPoints.get(lKey).size() != 0) {
-                    XYChart.Data lFirstPoint = pingPoints.get(lKey).get(0).getPoint();
-                    XYChart.Data lLastPoint = pingPoints.get(lKey).get(pingPoints.get(lKey).size() - 1).getPoint();
-                    if (Utilities.convertXY(lFirstPoint.getXValue()) < lMinX) lMinX = Utilities.convertXY(lFirstPoint.getXValue());
-                    if (Utilities.convertXY(lLastPoint.getXValue()) > lMaxX) lMaxX = Utilities.convertXY(lLastPoint.getXValue());
-                }
+        // Recompute min and max time to be displayed
+        long lMinX = Long.MAX_VALUE;
+        long lMaxX = Long.MIN_VALUE;
+        for (int lKey : pingLines.keySet()) {
+            if (pingPoints.containsKey(lKey) && pingPoints.get(lKey).size() != 0) {
+                XYChart.Data lFirstPoint = pingPoints.get(lKey).get(0).getPoint();
+                XYChart.Data lLastPoint = pingPoints.get(lKey).get(pingPoints.get(lKey).size() - 1).getPoint();
+                if (Utilities.convertXY(lFirstPoint.getXValue()) < lMinX) lMinX = Utilities.convertXY(lFirstPoint.getXValue());
+                if (Utilities.convertXY(lLastPoint.getXValue()) > lMaxX) lMaxX = Utilities.convertXY(lLastPoint.getXValue());
             }
-            pingLineMaxTime = lMaxX - Math.round((lMaxX - lMinX) * pingLineXMoveRatio);
-            pingLineMinTime = Math.max(0, pingLineMaxTime - pingLineDuration);
-
-            for (int lKey : pingLines.keySet()) {
-                refreshPingSeries(lKey);
-            }
-            refreshPingAxisBounds();
-
         }
+        pingLineMaxTime = lMaxX - Math.round((lMaxX - lMinX) * pingLineXMoveRatio);
+        pingLineMinTime = Math.max(0, pingLineMaxTime - pingLineDuration);
+
+        for (int lKey : pingLines.keySet()) {
+            refreshPingSeries(lKey);
+        }
+        refreshPingAxisBounds();
 
     }
 

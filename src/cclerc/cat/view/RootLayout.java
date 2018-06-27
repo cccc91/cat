@@ -6,6 +6,9 @@ import cclerc.services.Constants;
 import cclerc.services.Preferences;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -15,11 +18,33 @@ public class RootLayout {
     private static AboutDialog aboutDialog;
     private static ConfigurationDialog configurationDialogController;
 
+    @FXML private MenuItem save;
+    @FXML private MenuItem saveAs;
+    @FXML private MenuItem close;
+    @FXML private MenuItem configure;
     @FXML private CheckMenuItem autoSaveConfigurationPreference;
     @FXML private CheckMenuItem enableGeneralTooltipPreference;
     @FXML private CheckMenuItem enableDetailTooltipPreference;
 
-    // SETTERS
+    @FXML private void initialize() {
+
+        // Menu images
+        ImageView lImageViewSave = new ImageView(new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_SAVE).toString()));
+        lImageViewSave.setFitHeight(20d); lImageViewSave.setFitWidth(20d);
+        save.setGraphic(lImageViewSave);
+        ImageView lImageViewSaveAs = new ImageView(new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_SAVE_AS).toString()));
+        lImageViewSaveAs.setFitHeight(20d); lImageViewSaveAs.setFitWidth(20d);
+        saveAs.setGraphic(lImageViewSaveAs);
+        ImageView lImageViewClose = new ImageView(new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_CLOSE_APP).toString()));
+        lImageViewClose.setFitHeight(20d); lImageViewClose.setFitWidth(20d);
+        close.setGraphic(lImageViewClose);
+        ImageView lImageViewConfigure = new ImageView(new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_CONFIGURE).toString()));
+        lImageViewConfigure.setFitHeight(20d); lImageViewConfigure.setFitWidth(20d);
+        configure.setGraphic(lImageViewConfigure);
+
+    }
+
+        // SETTERS
 
     /**
      * Sets a reference to AboutDialog controller

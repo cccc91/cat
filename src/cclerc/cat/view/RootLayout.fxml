@@ -14,7 +14,7 @@
         <menus>
           <Menu mnemonicParsing="false" text="%root.menu.file">
             <items>
-                  <MenuItem mnemonicParsing="false" onAction="#saveMenuItem" text="%root.menu.file.save">
+                  <MenuItem fx:id="save" mnemonicParsing="false" onAction="#saveMenuItem" text="%root.menu.file.save">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
@@ -24,7 +24,7 @@
                         <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
                      </accelerator>
                   </MenuItem>
-              <MenuItem mnemonicParsing="false" onAction="#closeMenuItem" text="%root.menu.file.close">
+              <MenuItem fx:id="close" mnemonicParsing="false" onAction="#closeMenuItem" text="%root.menu.file.close">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="W" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
@@ -32,7 +32,7 @@
           </Menu>
           <Menu mnemonicParsing="false" text="%root.menu.edit">
             <items>
-                  <MenuItem mnemonicParsing="false" onAction="#configureMonitoringJobs" text="%root.menu.edit.configuration">
+                  <MenuItem fx:id="configure" mnemonicParsing="false" onAction="#configureMonitoringJobs" text="%root.menu.edit.configuration">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="C" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
