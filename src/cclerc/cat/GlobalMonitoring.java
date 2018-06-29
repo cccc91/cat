@@ -243,7 +243,6 @@ public class GlobalMonitoring {
                 Utilities.sleep(1000);
             }
 
-            // TODO: DO IT PERIODICALLLY
             // Get periodic speed test period
             int lSpeedTestPeriod = Preferences.getInstance().getIntegerValue(
                     Constants.SPEED_TEST_PERIODIC_TEST_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD);
