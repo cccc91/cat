@@ -304,14 +304,14 @@ public class GlobalMonitoring {
                     // For each connection type, store the max mean time (the most favorable case among the same connection type jobs is considered)
                     EnumTypes.ConnectionType lAddressType = EnumTypes.ConnectionType.valueOf(lMonitoringJob.getAddressType());
                     if (!lStatsPerConnectionType.containsKey(lAddressType) || lMeanTimeBetweenTwoConnectionsLost > lStatsPerConnectionType.get(lAddressType)) {
-                        if (lMeanTimeBetweenTwoConnectionsLost != Double.MAX_VALUE) lStatsPerConnectionType.put(lAddressType, lMeanTimeBetweenTwoConnectionsLost);;
+                        lStatsPerConnectionType.put(lAddressType, lMeanTimeBetweenTwoConnectionsLost);;
                     }
                     EnumTypes.ConnectionType lInterfaceType = EnumTypes.ConnectionType.valueOf(lMonitoringJob.getInterfaceType());
                     if (!lStatsPerConnectionType.containsKey(lInterfaceType) || lMeanTimeBetweenTwoConnectionsLost > lStatsPerConnectionType.get(lInterfaceType)) {
-                        if (lMeanTimeBetweenTwoConnectionsLost != Double.MAX_VALUE) lStatsPerConnectionType.put(lInterfaceType, lMeanTimeBetweenTwoConnectionsLost);
+                        lStatsPerConnectionType.put(lInterfaceType, lMeanTimeBetweenTwoConnectionsLost);
                     }
                     if (lMeanTimeBetweenTwoConnectionsLost > lNetworkStats) {
-                        if (lMeanTimeBetweenTwoConnectionsLost != Double.MAX_VALUE) lNetworkStats = lMeanTimeBetweenTwoConnectionsLost;
+                        lNetworkStats = lMeanTimeBetweenTwoConnectionsLost;
                     }
 
                 }
