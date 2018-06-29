@@ -48,9 +48,6 @@ public class CatView {
     private final long MIN_DISPLAYED_PING_DURATION = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration().getMinDisplayedPingDuration();
     private final long MAX_DISPLAYED_PING_DURATION = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration().getMaxDisplayedPingDuration();
 
-    // Class properties
-    private static Cat cat;
-
     // Display management
     private Map<EnumTypes.AddressType, TabPane> monitoringTabPanes = new HashMap<>();
     private Map<EnumTypes.AddressType, List<Tab>> monitoringTabs = new HashMap<>();
@@ -840,6 +837,7 @@ public class CatView {
                         boolean lAllAcknowledged = true;
                         boolean lAllUnacknowledged = true;
                         for (Alarm lAlarm: aInAlarmsTable.getSelectionModel().getSelectedItems()) {
+
                             if (lAlarm.getState().equals(EnumTypes.AlarmState.ACKNOWLEDGED)) {
                                 lAllUnacknowledged = false;
                             }
@@ -1198,14 +1196,6 @@ public class CatView {
     }
 
     // SETTERS
-
-    /**
-     * Sets a back reference to Cat main class
-     * @param aInCat Cat main class
-     */
-    public static void setCat(Cat aInCat) {
-        cat = aInCat;
-    }
 
     /**
      * Refreshes jobs count
@@ -1654,7 +1644,7 @@ public class CatView {
 
         States.getInstance().saveValue(BuildStatePropertyName(Constants.SEND_MAIL_STATE), isButtonGeneralEmailEnabled);
 
-        cat.checkEmailState();
+        Cat.getInstance().checkEmailState();
     }
 
     /**
