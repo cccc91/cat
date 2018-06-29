@@ -1969,7 +1969,8 @@ public class CatView {
                         lPingLine.getSeries().getData().add(lPingPoint.getPoint());
                         lPingPoint.getPoint().getNode().getStyleClass().add(lSymbolStyle);
                     } else {
-                        pingMarkers.get(aInKey).add(pingLineChart.addVerticalValueMarker(lPingPoint.getPoint(), "line-" + lPingLine.getId()));
+                        pingMarkers.get(aInKey).add(pingLineChart.addVerticalValueMarker(
+                                lPingPoint.getPoint(), "line-" + lPingLine.getId() + "-" + EnumTypes.ServerType.valueOf(lPingPoint.getServerType())));
                     }
                 } else {
                     lPingPoint.getPoint().setNode(null);
