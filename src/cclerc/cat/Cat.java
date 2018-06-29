@@ -144,7 +144,6 @@ public class Cat extends Application {
             catController = lLoader.getController();
 
             // Initialize general information
-            CatView.setCat(this);
             catController.refreshJobsCount();
             catController.refreshPingsCount();
             catController.refreshConnectionsLostCount();
