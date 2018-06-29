@@ -6,6 +6,7 @@ import cclerc.cat.model.Alarm;
 import cclerc.services.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.omg.CORBA.MARSHAL;
 
 import java.net.InetAddress;
 import java.util.*;
@@ -303,14 +304,14 @@ public class GlobalMonitoring {
                     // For each connection type, store the max mean time (the most favorable case among the same connection type jobs is considered)
                     EnumTypes.ConnectionType lAddressType = EnumTypes.ConnectionType.valueOf(lMonitoringJob.getAddressType());
                     if (!lStatsPerConnectionType.containsKey(lAddressType) || lMeanTimeBetweenTwoConnectionsLost > lStatsPerConnectionType.get(lAddressType)) {
-                        lStatsPerConnectionType.put(lAddressType, lMeanTimeBetweenTwoConnectionsLost);;
+                        if (lMeanTimeBetweenTwoConnectionsLost != Double.MAX_VALUE) lStatsPerConnectionType.put(lAddressType, lMeanTimeBetweenTwoConnectionsLost);;
                     }
                     EnumTypes.ConnectionType lInterfaceType = EnumTypes.ConnectionType.valueOf(lMonitoringJob.getInterfaceType());
                     if (!lStatsPerConnectionType.containsKey(lInterfaceType) || lMeanTimeBetweenTwoConnectionsLost > lStatsPerConnectionType.get(lInterfaceType)) {
-                        lStatsPerConnectionType.put(lInterfaceType, lMeanTimeBetweenTwoConnectionsLost);
+                        if (lMeanTimeBetweenTwoConnectionsLost != Double.MAX_VALUE) lStatsPerConnectionType.put(lInterfaceType, lMeanTimeBetweenTwoConnectionsLost);
                     }
                     if (lMeanTimeBetweenTwoConnectionsLost > lNetworkStats) {
-                        lNetworkStats = lMeanTimeBetweenTwoConnectionsLost;
+                        if (lMeanTimeBetweenTwoConnectionsLost != Double.MAX_VALUE) lNetworkStats = lMeanTimeBetweenTwoConnectionsLost;
                     }
 
                 }
@@ -318,6 +319,8 @@ public class GlobalMonitoring {
 
                 // Check unstable connection types
                 for (EnumTypes.ConnectionType lConnectionType: lStatsPerConnectionType.keySet()) {
+
+                    if (!lStatsPerConnectionType.containsKey(lConnectionType)) lStatsPerConnectionType.put(lConnectionType, Double.MAX_VALUE);
 
                     if ((lStatsPerConnectionType.get(lConnectionType) == Double.MAX_VALUE && connectionTypeUnstableAlarm.get(lConnectionType) != null) ||
                         lNetworkStats != Double.MAX_VALUE) {
@@ -369,17 +372,17 @@ public class GlobalMonitoring {
                     }
                     if (lNetworkStats <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold3()) {
                         if (!networkUnstableAlarm.getSeverity().equals(EnumTypes.AlarmSeverity.MAJOR)) {
-                            networkUnstableAlarm.changeSeverity(EnumTypes.AlarmSeverity.MAJOR);
+                            changeSeverity(networkUnstableAlarm, EnumTypes.AlarmSeverity.MAJOR);
                             if (displayGraphicalInterface) Cat.getInstance().getController().refreshActiveAlarmsListAndRemoveSelection();
                         }
                     } else if (lNetworkStats <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold2()) {
                         if (!networkUnstableAlarm.getSeverity().equals(EnumTypes.AlarmSeverity.MINOR)) {
-                            networkUnstableAlarm.changeSeverity(EnumTypes.AlarmSeverity.MINOR);
+                            changeSeverity(networkUnstableAlarm, EnumTypes.AlarmSeverity.MINOR);
                             if (displayGraphicalInterface) Cat.getInstance().getController().refreshActiveAlarmsListAndRemoveSelection();
                         }
                     } else if (lNetworkStats <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold1()) {
                         if (!networkUnstableAlarm.getSeverity().equals(EnumTypes.AlarmSeverity.WARNING)) {
-                            networkUnstableAlarm.changeSeverity(EnumTypes.AlarmSeverity.WARNING);
+                            changeSeverity(networkUnstableAlarm, EnumTypes.AlarmSeverity.WARNING);
                             if (displayGraphicalInterface) Cat.getInstance().getController().refreshActiveAlarmsListAndRemoveSelection();
                         }
                     }
