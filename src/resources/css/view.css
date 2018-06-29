@@ -93,7 +93,8 @@
     -fx-background-color: transparent;
 }
 
-.table-row-cell .text{
+// Do not use .table-row-cell .text {-fx-fill: black;} because it overwrites alarm cells styles on un-select
+.table-cell {
     -fx-fill: black;
 }
 
@@ -101,7 +102,8 @@
     -fx-background-color: #005797;
 }
 
-.table-row-cell:selected .text{
+// Do not use .table-row-cell .text {-fx-fill: white;} because it overwrites alarm cells styles on select
+.table-cell:selected {
     -fx-fill: white;
 }
 
@@ -116,6 +118,36 @@
 
 .table-row-cell:preferredSmtpServer{
     -fx-font-weight: bold;
+}
+
+.alarm-info, .alarm-info:selected {
+    -fx-text-fill: black;
+    -fx-alignment: top-center;
+    -fx-background-color: transparent;
+}
+
+.alarm-warning, .alarm-warning:selected {
+    -fx-text-fill: white;
+    -fx-alignment: top-center;
+    -fx-background-color: blue;
+}
+
+.alarm-minor, .alarm-minor.selected {
+    -fx-text-fill: black;
+    -fx-alignment: top-center;
+    -fx-background-color: yellow;
+}
+
+.alarm-major, .alarm-major:selected {
+    -fx-text-fill: black;
+    -fx-alignment: top-center;
+    -fx-background-color: orange;
+}
+
+.alarm-critical, .alarm-critical:selected {
+    -fx-text-fill: white;
+    -fx-alignment: top-center;
+    -fx-background-color: red;
 }
 
 // COMBO BOXES
@@ -499,34 +531,4 @@
 // Used within a Timeline for making the text blink
 :blinkText {
     -fx-text-fill: none;
-}
-
-.alarm-info {
-    -fx-text-fill: black;
-    -fx-alignment: top-center;
-    -fx-background-color: transparent;
-}
-
-.alarm-warning {
-    -fx-text-fill: white;
-    -fx-alignment: top-center;
-    -fx-background-color: blue;
-}
-
-.alarm-minor {
-    -fx-text-fill: black;
-    -fx-alignment: top-center;
-    -fx-background-color: yellow;
-}
-
-.alarm-major {
-    -fx-text-fill: black;
-    -fx-alignment: top-center;
-    -fx-background-color: orange;
-}
-
-.alarm-critical {
-    -fx-text-fill: white;
-    -fx-alignment: top-center;
-    -fx-background-color: red;
 }
