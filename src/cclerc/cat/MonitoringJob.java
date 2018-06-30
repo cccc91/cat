@@ -246,7 +246,6 @@ public class MonitoringJob implements Runnable {
                         controller.setDetailsScrollPolicy();
 
                     }
-                    refreshDisplay();
                     if (displayGraphicalInterface) controller.getCat().getController().setMonitoringJobTooltip(addressType, networkInterfaceIndex + 1, networkInterface, lServerParameters.remoteIp);
 
                     serverParameters.put(lServerIndex, lServerParameters);
@@ -344,6 +343,7 @@ public class MonitoringJob implements Runnable {
         }
 
         changeActiveServer(activeServer, "startup");
+        refreshDisplay();
 
         long lStartTime = Instant.now().toEpochMilli();
 
