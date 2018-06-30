@@ -251,7 +251,8 @@ public class MonitoringJob implements Runnable {
                     serverParameters.put(lServerIndex, lServerParameters);
 
                 } else {
-                    Display.getLogger().error(String.format(Display.getMessagesResourceBundle().getString("log.monitoringJob.incorrectIp"), lServerParameters.remoteHostname));
+                    Display.getLogger().error(String.format(Display.getMessagesResourceBundle().getString("log.monitoringJob.incorrectIp"),
+                                                            lServerParameters.remoteHostname, aInAddressType, Network.getInterfaceType(networkInterface.getName())));
                 }
 
                 // Case no job can be created, controller must be created anyway if this is the last server of the list
