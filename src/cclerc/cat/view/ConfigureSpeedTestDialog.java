@@ -1,21 +1,13 @@
 package cclerc.cat.view;
 
 import cclerc.cat.Cat;
-import cclerc.cat.Configuration.Configuration;
-import cclerc.services.Constants;
-import cclerc.services.Display;
-import cclerc.services.Preferences;
-import cclerc.services.Utilities;
+import cclerc.services.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
-import java.util.Optional;
 
 public class ConfigureSpeedTestDialog {
 
@@ -70,6 +62,7 @@ public class ConfigureSpeedTestDialog {
      * Displays the dialog box
      */
     public void show() {
+        GeoLocalization.getInstance().getLocalGeoLocalization();
         dialogStage.showAndWait();
     }
 

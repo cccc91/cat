@@ -1,7 +1,11 @@
 package cclerc.services;
 
+import cclerc.cat.Configuration.Configuration;
 import com.btr.proxy.search.ProxySearch;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.*;
 import java.time.Instant;
 import java.util.*;
@@ -427,6 +431,38 @@ public class Network {
      */
     public static EnumTypes.InterfaceType getInterfaceType(String aInInterfaceName) {
         return (aInInterfaceName.startsWith("w")) ? EnumTypes.InterfaceType.WIFI : EnumTypes.InterfaceType.ETH;
+    }
+
+    /**
+     * Gets public ip using Amazon services
+     * @return Public ip
+     */
+    public static String getExternalIp() {
+
+        // Proxy case, return proxy address
+        if (Configuration.getCurrentConfiguration().getMonitoringConfiguration().getWan().getUseProxy()) {
+            // TODO: check
+            return ((InetSocketAddress) findHttpProxy(Constants.SPEED_TEST_GET_SERVERS_URL).address()).getAddress().getHostAddress();
+        }
+
+        String lIp = null;
+        BufferedReader lInputStream = null;
+
+        try {
+            URL lURL = new URL("http://checkip.amazonaws.com");
+            lInputStream = new BufferedReader(new InputStreamReader(lURL.openStream()));
+            lIp = lInputStream.readLine();
+        } catch (Exception e) {
+        } finally {
+            if (lInputStream != null) {
+                try {
+                    lInputStream.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+        return lIp;
+
     }
 
 }

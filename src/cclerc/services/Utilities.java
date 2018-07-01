@@ -3,6 +3,8 @@ package cclerc.services;
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.util.*;
 
@@ -270,6 +272,45 @@ public class Utilities {
         }
 
 
+    }
+
+    /**
+     * Exports a resource potentially embedded into a jar file to the local file path if it is not already exported.
+     *
+     * @param aInResourceName         Resource to extract
+     * @param aInDestinationDirectory Destination directory
+     * @return Path to the exported resource
+     */
+     public static String exportResource(String aInResourceName, String aInDestinationDirectory) throws Exception {
+
+        InputStream lInputStream = null;
+        OutputStream lOutputStream = null;
+        String lDestinationPath;
+
+        try {
+
+            lInputStream = Utilities.class.getClassLoader().getResourceAsStream(aInResourceName);
+
+            int lReadBytes;
+            byte[] lBuffer = new byte[4096];
+
+            lDestinationPath = new File(aInDestinationDirectory).getPath().replace('\\', '/') + "/" + new File(aInResourceName).getName();
+            File lDestinationFile = new File(lDestinationPath);
+            if (!lDestinationFile.exists()) {
+                lOutputStream = new FileOutputStream(lDestinationPath);
+                while ((lReadBytes = lInputStream.read(lBuffer)) > 0) {
+                    lOutputStream.write(lBuffer, 0, lReadBytes);
+                }
+            }
+
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (lInputStream != null) lInputStream.close();
+            if (lOutputStream != null) lOutputStream.close();
+        }
+
+        return lDestinationPath;
     }
 
 }

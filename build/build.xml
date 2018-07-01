@@ -88,6 +88,15 @@
         <pathelement location="${thirdparty.dir}/proxy-vole-20131209/proxy-vole_20131209.jar"/>
     </path>
 
+    <!-- GitHub (MaxMind) library for geographic localization -->
+    <path id="geoIp.classpath.ref">
+        <pathelement location="${thirdparty.dir}/geoip2-2.12.0/lib/geoip2-2.12.0.jar"/>
+        <pathelement location="${thirdparty.dir}/geoip2-2.12.0/lib/jackson-annotations-2.9.5.jar"/>
+        <pathelement location="${thirdparty.dir}/geoip2-2.12.0/lib/jackson-core-2.9.5.jar"/>
+        <pathelement location="${thirdparty.dir}/geoip2-2.12.0/lib/jackson-databind-2.9.5.jar"/>
+        <pathelement location="${thirdparty.dir}/geoip2-2.12.0/lib/maxmind-db-1.2.2.jar"/>
+    </path>
+
     <path id="cat.classpath.ref">
         <path refid="log4j.classpath.ref"/>
         <path refid="cli.classpath.ref"/>
@@ -95,6 +104,7 @@
         <path refid="jdom.classpath.ref"/>
         <path refid="jspeedtest.classpath.ref"/>
         <path refid="proxy-vole.classpath.ref"/>
+        <path refid="geoIp.classpath.ref"/>
     </path>
 
     <!-- CLEAN TARGETS -->

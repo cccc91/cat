@@ -21,8 +21,6 @@ import java.util.Map;
 
 public class SpeedTest {
 
-    private final String URL = "http://c.speedtest.net/speedtest-servers-static.php";
-
     private boolean testRunning = false;
 
     private SpeedTestSocket speedTestSocket = new SpeedTestSocket();
@@ -48,7 +46,7 @@ public class SpeedTest {
 
         // Set proxy if needed
         if (aInUseProxy) {
-            proxy = Network.findHttpProxy(URL);
+            proxy = Network.findHttpProxy(Constants.SPEED_TEST_GET_SERVERS_URL);
             speedTestSocket.setProxyServer(proxy.toString().replace(" @ ", "://"));
         }
 
@@ -246,7 +244,7 @@ public class SpeedTest {
         try {
 
             // Build HTTP GET request to retrieve servers list from speedtest.net
-            URL lUrl = new URL(URL);
+            URL lUrl = new URL(Constants.SPEED_TEST_GET_SERVERS_URL);
             HttpURLConnection lConnection = (HttpURLConnection) lUrl.openConnection(proxy);
             lConnection.setRequestMethod("GET");
             lConnection.setRequestProperty("Accept", "application/json");

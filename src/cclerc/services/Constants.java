@@ -108,6 +108,7 @@ public class Constants {
     public static final boolean DEFAULT_ENABLE_DETAIL_TOOLTIP_PREFERENCE = true;
 
     // Speed test preferences
+    public static final String SPEED_TEST_GET_SERVERS_URL = "http://c.speedtest.net/speedtest-servers-static.php";
     public static final String SPEED_TEST_DOWNLOAD_URL_PREFERENCE = "speedTest.url.download";
     public static final String SPEED_TEST_UPLOAD_URL_PREFERENCE = "speedTest.url.upload";
     public static final String SPEED_TEST_SOCKET_TIMEOUT_PREFERENCE = "speedTest.socketTimeout";
@@ -130,5 +131,7 @@ public class Constants {
     public static final Integer DEFAULT_SPEED_TEST_REPORT_INTERVAL = 300;         // ms
     public static final Boolean DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED = false;
     public static final Integer DEFAULT_SPEED_TEST_UPLOAD_FILE_SIZE = 100000000;
+
+    public static final String GEO_LOC_DATABASE = "GeoLite2-City.mmdb";
 
 }

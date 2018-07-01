@@ -313,7 +313,7 @@
                                  <content>
                                     <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
                                        <children>
-                                          <BorderPane layoutX="20.0" layoutY="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+                                          <BorderPane layoutX="20.0" layoutY="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <center>
                                                 <GridPane alignment="CENTER" hgap="10.0" maxHeight="-Infinity" styleClass="attributesListGrid" BorderPane.alignment="TOP_CENTER">
                                                   <columnConstraints>
@@ -354,6 +354,9 @@
                                                    </BorderPane.margin>
                                                 </Label>
                                              </top>
+                                             <padding>
+                                                <Insets top="20.0" />
+                                             </padding>
                                           </BorderPane>
                                        </children>
                                     </AnchorPane>
@@ -372,7 +375,7 @@
                            <children>
                               <VBox>
                                  <children>
-                                    <Label text="%configuration.monitoringJobs.globalMonitoring.polling" />
+                                    <Label styleClass="attributeNameMain" text="%configuration.monitoringJobs.globalMonitoring.polling" />
                                     <GridPane hgap="10.0" maxWidth="1.7976931348623157E308" styleClass="attributesListGrid">
                                        <columnConstraints>
                                           <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" prefWidth="270.0" />
@@ -396,7 +399,7 @@
                               </VBox>
                               <VBox>
                                  <children>
-                                    <Label text="%configuration.monitoringJobs.globalMonitoring.alarms" />
+                                    <Label styleClass="attributeNameMain" text="%configuration.monitoringJobs.globalMonitoring.alarms" />
                                     <GridPane hgap="10.0" maxWidth="1.7976931348623157E308" minHeight="80.0" styleClass="attributesListGrid">
                                        <columnConstraints>
                                           <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" prefWidth="270.0" />
@@ -432,7 +435,7 @@
                               </VBox>
                               <VBox>
                                  <children>
-                                    <Label text="%configuration.monitoringJobs.globalMonitoring.pingChart" />
+                                    <Label styleClass="attributeNameMain" text="%configuration.monitoringJobs.globalMonitoring.pingChart" />
                                     <GridPane hgap="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="attributesListGrid">
                                        <columnConstraints>
                                           <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" prefWidth="270.0" />
@@ -597,7 +600,7 @@
                            <children>
                               <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0">
                                  <children>
-                                    <Label text="%configuration.monitoringJobs.email.smtpServers" />
+                                    <Label styleClass="attributeNameMain" text="%configuration.monitoringJobs.email.smtpServers" />
                                     <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0" VBox.vgrow="ALWAYS">
                                        <children>
                                           <TableView fx:id="smtpServersTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" styleClass="configurationTable" HBox.hgrow="ALWAYS">

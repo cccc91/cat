@@ -2314,7 +2314,7 @@ public class CatView {
                 speedTestStartStopButton.setText(Display.getViewResourceBundle().getString("catView.speedTest.stop"));
                 speedTestStartStopButton.getStyleClass().add("buttonWarning");
                 speedTestStartStopButton.setDisable(false);
-                Tooltip lTooltip = new Tooltip(Display.getViewResourceBundle().getString("speedTest.tooltip.stop"));
+                Tooltip lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.speedTest.tooltip.stop"));
                 if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE))
                     Tooltip.install(speedTestStartStopButton, lTooltip);
             } else {
@@ -2325,7 +2325,7 @@ public class CatView {
                 speedTestStartStopButton.setDisable(
                         Preferences.getInstance().getValue(Constants.SPEED_TEST_DOWNLOAD_URL_PREFERENCE) == null ||
                         Preferences.getInstance().getValue(Constants.SPEED_TEST_UPLOAD_URL_PREFERENCE) == null);
-                Tooltip lTooltip = new Tooltip(Display.getViewResourceBundle().getString("speedTest.tooltip.start"));
+                Tooltip lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.speedTest.tooltip.start"));
                 if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE))
                     Tooltip.install(speedTestStartStopButton, lTooltip);
             }
