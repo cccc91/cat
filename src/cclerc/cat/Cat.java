@@ -280,82 +280,15 @@ public class Cat extends Application {
      */
     private void createDialogs() {
 
-        try {
+        // CONFIGURATION DIALOG
+        configurationDialogController = ConfigurationDialog.getInstance(mainStage);
+        rootController.setConfigurationMonitoringJobsDialogController(configurationDialogController);
 
-            // CONFIGURATION DIALOG
+        // ABOUT DIALOG
+        rootController.setAboutDialogController(AboutDialog.getInstance(mainStage));
 
-            // Load the fxml file and create a new stage for the popup dialog.
-            FXMLLoader lConfigurationMonitoringJobsDialogLoader = new FXMLLoader();
-            lConfigurationMonitoringJobsDialogLoader.setLocation(Cat.class.getResource("view/ConfigurationDialog.fxml"));
-            lConfigurationMonitoringJobsDialogLoader.setResources(Display.getViewResourceBundle());
-            VBox lConfigurationMonitoringJobsDialogPane = lConfigurationMonitoringJobsDialogLoader.load();
-
-            // Create the dialog stage
-            Stage lConfigurationMonitoringJobsDialogStage = new Stage();
-            lConfigurationMonitoringJobsDialogStage.setTitle(Display.getViewResourceBundle().getString("configuration.title"));
-            lConfigurationMonitoringJobsDialogStage.initModality(Modality.WINDOW_MODAL);
-            lConfigurationMonitoringJobsDialogStage.initOwner(mainStage);
-            Scene lConfigurationMonitoringJobDialogScene = new Scene(lConfigurationMonitoringJobsDialogPane);
-            lConfigurationMonitoringJobDialogScene.getStylesheets().add("resources/css/view.css");
-            lConfigurationMonitoringJobsDialogStage.setScene(lConfigurationMonitoringJobDialogScene);
-            lConfigurationMonitoringJobsDialogStage.getIcons().add(Constants.APPLICATION_IMAGE);
-            lConfigurationMonitoringJobsDialogStage.setOnCloseRequest(confirmCloseConfigurationDialogEventHandler);
-
-            // Set the dialog stage
-            configurationDialogController = lConfigurationMonitoringJobsDialogLoader.getController();
-            configurationDialogController.setDialogStage(lConfigurationMonitoringJobsDialogStage);
-            rootController.setConfigurationMonitoringJobsDialogController(configurationDialogController);
-
-            // ABOUT DIALOG
-
-            // Load the fxml file and create a new stage for the popup dialog.
-            FXMLLoader lAboutDialogLoader = new FXMLLoader();
-            lAboutDialogLoader.setLocation(Cat.class.getResource("view/AboutDialog.fxml"));
-            lAboutDialogLoader.setResources(Display.getViewResourceBundle());
-            VBox lAboutDialogPane = lAboutDialogLoader.load();
-
-            // Create the dialog stage
-            Stage lAboutDialogStage = new Stage();
-            lAboutDialogStage.setTitle(Display.getViewResourceBundle().getString("aboutDialog.title") + " " + Display.getAboutResourceBundle().getString("product.name"));
-            lAboutDialogStage.initModality(Modality.WINDOW_MODAL);
-            lAboutDialogStage.initOwner(mainStage);
-            Scene lAboutDialogScene = new Scene(lAboutDialogPane);
-            lAboutDialogScene.getStylesheets().add("resources/css/view.css");
-            lAboutDialogStage.setScene(lAboutDialogScene);
-            lAboutDialogStage.getIcons().add(Constants.APPLICATION_IMAGE);
-
-            // Set the dialog stage
-            AboutDialog lAboutDialogController = lAboutDialogLoader.getController();
-            lAboutDialogController.setDialogStage(lAboutDialogStage);
-            rootController.setAboutDialogController(lAboutDialogController);
-
-            // ALARM DETAILS DIALOG
-
-            // Load the fxml file and create a new stage for the popup dialog.
-            FXMLLoader lAlarmDetailsDialogLoader = new FXMLLoader();
-            lAlarmDetailsDialogLoader.setLocation(Cat.class.getResource("view/AlarmDetailsDialog.fxml"));
-            lAlarmDetailsDialogLoader.setResources(Display.getViewResourceBundle());
-            VBox lAlarmDetailsDialogPane = lAlarmDetailsDialogLoader.load();
-
-            // Create the dialog stage
-            Stage lAlarmDetailsDialogStage = new Stage();
-            lAlarmDetailsDialogStage.setTitle(Display.getViewResourceBundle().getString("alarmDetailsDialog.title"));
-            lAlarmDetailsDialogStage.initModality(Modality.WINDOW_MODAL);
-            lAlarmDetailsDialogStage.initOwner(mainStage);
-            Scene lAlarmDetailsDialogScene = new Scene(lAlarmDetailsDialogPane);
-            lAlarmDetailsDialogScene.getStylesheets().add("resources/css/view.css");
-            lAlarmDetailsDialogStage.setScene(lAlarmDetailsDialogScene);
-            lAlarmDetailsDialogStage.getIcons().add(Constants.APPLICATION_IMAGE);
-
-            // Set the dialog stage
-            AlarmDetailsDialog lAlarmDetailsDialogController = lAlarmDetailsDialogLoader.getController();
-            lAlarmDetailsDialogController.setDialogStage(lAlarmDetailsDialogStage);
-            lAlarmDetailsDialogController.setCatController(catController);
-            catController.setAlarmDetailsDialogController(lAlarmDetailsDialogController);
-
-        } catch (Exception e) {
-            Display.getLogger().error(String.format(Display.getMessagesResourceBundle().getString("log.cat.error.displayDialog"), Utilities.getStackTrace(e)));
-        }
+        // ALARM DETAILS DIALOG
+        catController.setAlarmDetailsDialogController(AlarmDetailsDialog.getInstance(mainStage));
 
     }
 
@@ -431,14 +364,6 @@ public class Cat extends Application {
             }
         }
 
-    };
-
-    /**
-     * Manages close event
-     */
-    private EventHandler<WindowEvent> confirmCloseConfigurationDialogEventHandler = event -> {
-        configurationDialogController.close();
-        event.consume();
     };
 
     /**

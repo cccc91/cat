@@ -1,5 +1,6 @@
 package cclerc.cat.view;
 
+import cclerc.cat.Cat;
 import cclerc.cat.Configuration.AbstractConfiguration;
 import cclerc.cat.Configuration.Configuration;
 import cclerc.cat.Configuration.SmtpServerConfiguration;
@@ -9,11 +10,14 @@ import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -25,8 +29,10 @@ import java.util.*;
 
 public class AddEditSmtpServersDialog {
 
+    private static AddEditSmtpServersDialog addEditSmtpServersDialogInstance;
+
     // Display management
-    private Stage dialogStage;
+    private static Stage dialogStage = new Stage();
 
     @FXML TextField name;
     @FXML ChoiceBox tlsMode;
@@ -47,6 +53,42 @@ public class AddEditSmtpServersDialog {
     private List<Object> invalidConfigurationData = new ArrayList<>();
     private SmtpServerConfiguration initialSmtpServerConfiguration = new SmtpServerConfiguration(Configuration.getInitialConfiguration());
     private  SmtpServerConfiguration smtpServerConfiguration;
+
+    /**
+     * Creates instance of AddEditSmtpServersDialog controller
+     * @param aInParentStage Parent stage of add edit smtp server dialog stage
+     */
+    public static AddEditSmtpServersDialog getInstance(Stage aInParentStage) {
+
+        FXMLLoader lDialogLoader = new FXMLLoader();
+
+        try {
+
+            // Load the fxml file and create a new stage for the popup dialog.
+            lDialogLoader.setLocation(Cat.class.getResource("view/AddEditSmtpServersDialog.fxml"));
+            lDialogLoader.setResources(Display.getViewResourceBundle());
+            VBox lDialogPane = lDialogLoader.load();
+
+            // Create the dialog stage
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(aInParentStage);
+            Scene lScene = new Scene(lDialogPane);
+            lScene.getStylesheets().add("resources/css/view.css");
+            dialogStage.setScene(lScene);
+            dialogStage.getIcons().add(Constants.APPLICATION_IMAGE);
+            dialogStage.setResizable(false);
+            addEditSmtpServersDialogInstance = lDialogLoader.getController();
+            dialogStage.setOnCloseRequest(event -> {
+                addEditSmtpServersDialogInstance.cancel();
+                event.consume();
+            });
+        } catch (Exception e) {
+            Display.getLogger().error(String.format(Display.getMessagesResourceBundle().getString("log.cat.error.displayDialog"), Utilities.getStackTrace(e)));
+        }
+
+        return addEditSmtpServersDialogInstance;
+
+    }
 
     // SETTERS
 

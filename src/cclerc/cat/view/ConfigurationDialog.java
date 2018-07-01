@@ -36,8 +36,10 @@ import java.util.List;
 
 public class ConfigurationDialog {
 
+    private static ConfigurationDialog configurationDialogInstance;
+
     // Display management
-    private Stage dialogStage;
+    private static Stage dialogStage = new Stage();
 
     @FXML TabPane configurationTabPane;
 
@@ -170,7 +172,180 @@ public class ConfigurationDialog {
     private volatile ObservableList<ConfiguredSmtpServer> configuredSmtpServers = FXCollections.observableArrayList();
     private static AddNetworkInterfacesDialog addNetworkInterfacesDialogController;
     private static AddEditSmtpServersDialog addEditSmtpServerDialogController;
-    private static boolean initializationDone = false;
+
+    /**
+     * Creates instance of ConfigurationDialog controller
+     * @param aInParentStage Parent stage of configuration dialog stage
+     */
+    public static ConfigurationDialog getInstance(Stage aInParentStage) {
+
+        FXMLLoader lDialogLoader = new FXMLLoader();
+
+        try {
+
+            // Load the fxml file and create a new stage for the popup dialog.
+            lDialogLoader.setLocation(Cat.class.getResource("view/ConfigurationDialog.fxml"));
+            lDialogLoader.setResources(Display.getViewResourceBundle());
+            VBox lDialogPane = lDialogLoader.load();
+
+            // Create the dialog stage
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(aInParentStage);
+            Scene lScene = new Scene(lDialogPane);
+            lScene.getStylesheets().add("resources/css/view.css");
+            dialogStage.setScene(lScene);
+            dialogStage.getIcons().add(Constants.APPLICATION_IMAGE);
+            dialogStage.setResizable(false);
+            dialogStage.setTitle(Display.getViewResourceBundle().getString("configuration.title"));
+            configurationDialogInstance = lDialogLoader.getController();
+            dialogStage.setOnCloseRequest(event -> {
+                configurationDialogInstance.close();
+                event.consume();
+            });
+            configurationDialogInstance.initialize();
+        } catch (Exception e) {
+            Display.getLogger().error(String.format(Display.getMessagesResourceBundle().getString("log.cat.error.displayDialog"), Utilities.getStackTrace(e)));
+        }
+
+        return configurationDialogInstance;
+
+    }
+
+    private void initialize() {
+
+        // NETWORK INTERFACES CREATION DIALOG
+        addNetworkInterfacesDialogController = AddNetworkInterfacesDialog.getInstance(dialogStage);
+
+        // SMTP SERVER CREATION AND EDITION DIALOG
+        addEditSmtpServerDialogController = new AddEditSmtpServersDialog().getInstance(dialogStage);
+
+        initializeTabs();
+        initializeInitialConfiguration();
+        initializeSimpleFields();
+        addSimpleFieldsTooltips();
+
+        // Add listener on tab selection
+        configurationTabPane.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldTab, newTab) ->
+                        States.getInstance().saveValue("configuration.selectedTab", newTab.getTabPane().getSelectionModel().getSelectedIndex()));
+        monitoringJobsTabPane.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldTab, newTab) ->
+                        States.getInstance().saveValue("configuration.monitoringJobs.selectedTab", newTab.getTabPane().getSelectionModel().getSelectedIndex()));
+
+        // Change buttons states on selection in tables
+        interfacesTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<ConfiguredInterface>) selection -> setInterfacesButtonsStates());
+        smtpServersTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<ConfiguredSmtpServer>) selection -> setSmtpServersButtonsStates());
+
+        // Add listener on file selection buttons
+        clearSoundFileButton.addEventHandler(
+                MouseEvent.MOUSE_CLICKED,
+                new FileSelector.FileSelectorBuilder(dialogStage, FileSelector.FileSelectorType.CONFIGURATION)
+                        .setFileIdentification("clearAlarmSoundFile")
+                        .setFilenameTextField(clearSoundFileTextField)
+                        .addPattern("Audio files", Arrays.asList("*.mp3", "*.wav"))
+                        .setDefaultPattern("*.mp3")
+                        .build());
+        infoSoundFileButton.addEventHandler(
+                MouseEvent.MOUSE_CLICKED,
+                new FileSelector.FileSelectorBuilder(dialogStage, FileSelector.FileSelectorType.CONFIGURATION)
+                        .setFileIdentification("infoAlarmSoundFile")
+                        .setFilenameTextField(infoSoundFileTextField)
+                        .addPattern("Audio files", Arrays.asList("*.mp3", "*.wav"))
+                        .setDefaultPattern("*.mp3")
+                        .build());
+        warningSoundFileButton.addEventHandler(
+                MouseEvent.MOUSE_CLICKED,
+                new FileSelector.FileSelectorBuilder(dialogStage, FileSelector.FileSelectorType.CONFIGURATION)
+                        .setFileIdentification("warningAlarmSoundFile")
+                        .setFilenameTextField(warningSoundFileTextField)
+                        .addPattern("Audio files", Arrays.asList("*.mp3", "*.wav"))
+                        .setDefaultPattern("*.mp3")
+                        .build());
+        minorSoundFileButton.addEventHandler(
+                MouseEvent.MOUSE_CLICKED,
+                new FileSelector.FileSelectorBuilder(dialogStage, FileSelector.FileSelectorType.CONFIGURATION)
+                        .setFileIdentification("minorAlarmSoundFile")
+                        .setFilenameTextField(minorSoundFileTextField)
+                        .addPattern("Audio files", Arrays.asList("*.mp3", "*.wav"))
+                        .setDefaultPattern("*.mp3")
+                        .build());
+        majorSoundFileButton.addEventHandler(
+                MouseEvent.MOUSE_CLICKED,
+                new FileSelector.FileSelectorBuilder(dialogStage, FileSelector.FileSelectorType.CONFIGURATION)
+                        .setFileIdentification("majorAlarmSoundFile")
+                        .setFilenameTextField(majorSoundFileTextField)
+                        .addPattern("Audio files", Arrays.asList("*.mp3", "*.wav"))
+                        .setDefaultPattern("*.mp3")
+                        .build());
+        criticalSoundFileButton.addEventHandler(
+                MouseEvent.MOUSE_CLICKED,
+                new FileSelector.FileSelectorBuilder(dialogStage, FileSelector.FileSelectorType.CONFIGURATION)
+                        .setFileIdentification("criticalAlarmSoundFile")
+                        .setFilenameTextField(criticalSoundFileTextField)
+                        .addPattern("Audio files", Arrays.asList("*.mp3", "*.wav"))
+                        .setDefaultPattern("*.mp3")
+                        .build());
+
+        // Set tooltips
+        if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) {
+
+            // Buttons tooltips
+
+            Tooltip lTooltipInterfacesSave = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.networkInterfaceConfiguration.tooltip.save"));
+            Tooltip.install(saveButton, lTooltipInterfacesSave);
+            Tooltip lTooltipInterfacesCancel = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.networkInterfaceConfiguration.tooltip.cancel"));
+            Tooltip.install(cancelButton, lTooltipInterfacesCancel);
+            Tooltip lTooltipInterfacesClose;
+            if (Preferences.getInstance().getBooleanValue("autoSaveConfiguration")) {
+                lTooltipInterfacesClose = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.networkInterfaceConfiguration.tooltip.saveAndClose"));
+            } else {
+                lTooltipInterfacesClose = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.networkInterfaceConfiguration.tooltip.close"));
+            }
+            Tooltip.install(closeButton, lTooltipInterfacesClose);
+
+            // Complex fields tooltips
+
+            Tooltip lTooltipInterfacesConfiguredInterfaces =
+                    new Tooltip(String.format(Display.getViewResourceBundle().getString("configuration.monitoringJobs.networkInterfaceConfiguration.tooltip.configuredInterfaces"),
+                                              Constants.MAXIMUM_NUMBER_OF_MONITORED_INTERFACES));
+            Tooltip.install(interfacesTable, lTooltipInterfacesConfiguredInterfaces);
+            Tooltip lTooltipInterfacesAdd = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.networkInterfaceConfiguration.tooltip.add"));
+            Tooltip.install(addInterfaceButton, lTooltipInterfacesAdd);
+            Tooltip lTooltipInterfacesDelete = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.networkInterfaceConfiguration.tooltip.remove"));
+            Tooltip.install(deleteInterfaceButton, lTooltipInterfacesDelete);
+            Tooltip lTooltipInterfacesUp = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.networkInterfaceConfiguration.tooltip.up"));
+            Tooltip.install(upInterfaceButton, lTooltipInterfacesUp);
+            Tooltip lTooltipInterfacesDown = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.networkInterfaceConfiguration.tooltip.down"));
+            Tooltip.install(downInterfaceButton, lTooltipInterfacesDown);
+
+            Tooltip lTooltipAlarms = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.audibleAlarms.tooltip.configuredAlarms"));
+            Tooltip.install(alarmsTable, lTooltipAlarms);
+            Tooltip lToolMuteStartTime = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.audibleAlarms.tooltip.muteStartTime"));
+            Tooltip.install(muteStartTimeHourSpinner.getEditor(), lToolMuteStartTime);
+            Tooltip.install(muteStartTimeMinuteSpinner.getEditor(), lToolMuteStartTime);
+            Tooltip lToolMuteEndTime = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.audibleAlarms.tooltip.muteEndTime"));
+            Tooltip.install(muteEndTimeHourSpinner.getEditor(), lToolMuteEndTime);
+            Tooltip.install(muteEndTimeMinuteSpinner.getEditor(), lToolMuteEndTime);
+
+            Tooltip lTooltipEmailsConfiguredSmtpServers =
+                    new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.email.tooltip.configuredSmtpServers"));
+            Tooltip.install(smtpServersTable, lTooltipEmailsConfiguredSmtpServers);
+            Tooltip lTooltipEmailsConfiguredSmtpServersAdd = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.email.tooltip.add"));
+            Tooltip.install(addSmtpServerButton, lTooltipEmailsConfiguredSmtpServersAdd);
+            Tooltip lTooltipEmailsConfiguredSmtpServersDelete = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.email.tooltip.remove"));
+            Tooltip.install(deleteSmtpServerButton, lTooltipEmailsConfiguredSmtpServersDelete);
+            Tooltip lTooltipEmailsConfiguredSmtpServersEdit = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.email.tooltip.edit"));
+            Tooltip.install(editSmtpServerButton, lTooltipEmailsConfiguredSmtpServersEdit);
+            Tooltip lTooltipEmailsConfiguredSmtpServersPreferred = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.email.tooltip.preferred"));
+            Tooltip.install(preferredSmtpServerButton, lTooltipEmailsConfiguredSmtpServersPreferred);
+            Tooltip lTooltipEmailsConfiguredSmtpServersUp = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.email.tooltip.up"));
+            Tooltip.install(upSmtpServerButton, lTooltipEmailsConfiguredSmtpServersUp);
+            Tooltip lTooltipEmailsConfiguredSmtpServersDown = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.email.tooltip.down"));
+            Tooltip.install(downSmtpServerButton, lTooltipEmailsConfiguredSmtpServersDown);
+
+        }
+
+    }
 
     /**
      * Initializes the different tabs
@@ -1290,77 +1465,6 @@ public class ConfigurationDialog {
     }
 
     /**
-     * Creates the dialog stages depending on Configuration window
-     */
-    private void createDialogs() {
-
-        try {
-
-            // NETWORK INTERFACES CREATION DIALOG
-
-            AddNetworkInterfacesDialog lNetworkInterfaceDialogController;
-
-            // Load the fxml file and create a new stage for the popup dialog.
-            FXMLLoader lAddNetworkInterfaceDialogLoader = new FXMLLoader();
-            lAddNetworkInterfaceDialogLoader.setLocation(Cat.class.getResource("view/AddNetworkInterfacesDialog.fxml"));
-            lAddNetworkInterfaceDialogLoader.setResources(Display.getViewResourceBundle());
-            VBox lAddNetworkInterfaceDialogPane = lAddNetworkInterfaceDialogLoader.load();
-
-            // Create the dialog stage
-            Stage lAddNetworkInterfacesDialogStage = new Stage();
-            lAddNetworkInterfacesDialogStage.setTitle(Display.getViewResourceBundle().getString("addNetworkInterfaces.title"));
-            lAddNetworkInterfacesDialogStage.initModality(Modality.WINDOW_MODAL);
-            lAddNetworkInterfacesDialogStage.initOwner(dialogStage);
-            Scene lAddNetworkInterfacesDialogScene = new Scene(lAddNetworkInterfaceDialogPane);
-            lAddNetworkInterfacesDialogScene.getStylesheets().add("resources/css/view.css");
-            lAddNetworkInterfacesDialogStage.setScene(lAddNetworkInterfacesDialogScene);
-            lAddNetworkInterfacesDialogStage.getIcons().add(Constants.APPLICATION_IMAGE);
-
-            // Set the dialog stage
-            lNetworkInterfaceDialogController = lAddNetworkInterfaceDialogLoader.getController();
-            lNetworkInterfaceDialogController.setDialogStage(lAddNetworkInterfacesDialogStage);
-            lNetworkInterfaceDialogController.initializeInterfacesTable();
-            addNetworkInterfacesDialogController = lNetworkInterfaceDialogController;
-            lAddNetworkInterfacesDialogStage.setOnCloseRequest(event -> {
-                addNetworkInterfacesDialogController.cancel();
-                event.consume();
-            });
-
-            // SMTP SERVER CREATION AND EDITION DIALOG
-
-            AddEditSmtpServersDialog lSmtpServersDialogController;
-
-            // Load the fxml file and create a new stage for the popup dialog.
-            FXMLLoader lAddEditSmtpServersDialogLoader = new FXMLLoader();
-            lAddEditSmtpServersDialogLoader.setLocation(Cat.class.getResource("view/AddEditSmtpServersDialog.fxml"));
-            lAddEditSmtpServersDialogLoader.setResources(Display.getViewResourceBundle());
-            VBox lAddEditSmtpServersDialogPane = lAddEditSmtpServersDialogLoader.load();
-
-            // Create the dialog stage
-            Stage lAddEditSmtpServersDialogStage = new Stage();
-            lAddEditSmtpServersDialogStage.initModality(Modality.WINDOW_MODAL);
-            lAddEditSmtpServersDialogStage.initOwner(dialogStage);
-            Scene lAddNetworkInterfacesEditSmtpServer = new Scene(lAddEditSmtpServersDialogPane);
-            lAddNetworkInterfacesEditSmtpServer.getStylesheets().add("resources/css/view.css");
-            lAddEditSmtpServersDialogStage.setScene(lAddNetworkInterfacesEditSmtpServer);
-            lAddEditSmtpServersDialogStage.getIcons().add(Constants.APPLICATION_IMAGE);
-
-            // Set the dialog stage
-            lSmtpServersDialogController = lAddEditSmtpServersDialogLoader.getController();
-            lSmtpServersDialogController.setDialogStage(lAddEditSmtpServersDialogStage);
-            addEditSmtpServerDialogController = lSmtpServersDialogController;
-            lAddEditSmtpServersDialogStage.setOnCloseRequest(event -> {
-                addEditSmtpServerDialogController.cancel();
-                event.consume();
-            });
-
-        } catch (Exception e) {
-            Display.getLogger().error(String.format(Display.getMessagesResourceBundle().getString("log.cat.error.displayDialog"), Utilities.getStackTrace(e)));
-        }
-
-    }
-
-    /**
      * Changes the state of general buttons
      * @param aInSaveState Initial state of the save button (enabled if true, disabled otherwise)
      */
@@ -1455,80 +1559,6 @@ public class ConfigurationDialog {
         configurationTabPane.getSelectionModel().select(States.getInstance().getIntegerValue("configuration.selectedTab", 0));
         monitoringJobsTabPane.getSelectionModel().select(States.getInstance().getIntegerValue("configuration.monitoringJobs.selectedTab", 0));
 
-        // Initializations to be done at first opening only
-        if (!initializationDone) {
-
-            createDialogs();
-            initializeTabs();
-            initializeInitialConfiguration();
-            initializeSimpleFields();
-            addSimpleFieldsTooltips();
-
-            // Add listener on tab selection
-            configurationTabPane.getSelectionModel().selectedItemProperty().addListener(
-                    (observable, oldTab, newTab) ->
-                            States.getInstance().saveValue("configuration.selectedTab", newTab.getTabPane().getSelectionModel().getSelectedIndex()));
-            monitoringJobsTabPane.getSelectionModel().selectedItemProperty().addListener(
-                    (observable, oldTab, newTab) ->
-                            States.getInstance().saveValue("configuration.monitoringJobs.selectedTab", newTab.getTabPane().getSelectionModel().getSelectedIndex()));
-
-            // Change buttons states on selection in tables
-            interfacesTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<ConfiguredInterface>) selection -> setInterfacesButtonsStates());
-            smtpServersTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<ConfiguredSmtpServer>) selection -> setSmtpServersButtonsStates());
-
-            // Add listener on file selection buttons
-            clearSoundFileButton.addEventHandler(
-                    MouseEvent.MOUSE_CLICKED,
-                    new FileSelector.FileSelectorBuilder(dialogStage, FileSelector.FileSelectorType.CONFIGURATION)
-                            .setFileIdentification("clearAlarmSoundFile")
-                            .setFilenameTextField(clearSoundFileTextField)
-                            .addPattern("Audio files", Arrays.asList("*.mp3", "*.wav"))
-                            .setDefaultPattern("*.mp3")
-                            .build());
-            infoSoundFileButton.addEventHandler(
-                    MouseEvent.MOUSE_CLICKED,
-                    new FileSelector.FileSelectorBuilder(dialogStage, FileSelector.FileSelectorType.CONFIGURATION)
-                            .setFileIdentification("infoAlarmSoundFile")
-                            .setFilenameTextField(infoSoundFileTextField)
-                            .addPattern("Audio files", Arrays.asList("*.mp3", "*.wav"))
-                            .setDefaultPattern("*.mp3")
-                            .build());
-            warningSoundFileButton.addEventHandler(
-                    MouseEvent.MOUSE_CLICKED,
-                    new FileSelector.FileSelectorBuilder(dialogStage, FileSelector.FileSelectorType.CONFIGURATION)
-                            .setFileIdentification("warningAlarmSoundFile")
-                            .setFilenameTextField(warningSoundFileTextField)
-                            .addPattern("Audio files", Arrays.asList("*.mp3", "*.wav"))
-                            .setDefaultPattern("*.mp3")
-                            .build());
-            minorSoundFileButton.addEventHandler(
-                    MouseEvent.MOUSE_CLICKED,
-                    new FileSelector.FileSelectorBuilder(dialogStage, FileSelector.FileSelectorType.CONFIGURATION)
-                            .setFileIdentification("minorAlarmSoundFile")
-                            .setFilenameTextField(minorSoundFileTextField)
-                            .addPattern("Audio files", Arrays.asList("*.mp3", "*.wav"))
-                            .setDefaultPattern("*.mp3")
-                            .build());
-            majorSoundFileButton.addEventHandler(
-                    MouseEvent.MOUSE_CLICKED,
-                    new FileSelector.FileSelectorBuilder(dialogStage, FileSelector.FileSelectorType.CONFIGURATION)
-                            .setFileIdentification("majorAlarmSoundFile")
-                            .setFilenameTextField(majorSoundFileTextField)
-                            .addPattern("Audio files", Arrays.asList("*.mp3", "*.wav"))
-                            .setDefaultPattern("*.mp3")
-                            .build());
-            criticalSoundFileButton.addEventHandler(
-                    MouseEvent.MOUSE_CLICKED,
-                    new FileSelector.FileSelectorBuilder(dialogStage, FileSelector.FileSelectorType.CONFIGURATION)
-                            .setFileIdentification("criticalAlarmSoundFile")
-                            .setFilenameTextField(criticalSoundFileTextField)
-                            .addPattern("Audio files", Arrays.asList("*.mp3", "*.wav"))
-                            .setDefaultPattern("*.mp3")
-                            .build());
-
-            initializationDone = true;
-        }
-
         // Add listeners on simple fields
         addSimpleFieldListeners();
 
@@ -1557,65 +1587,6 @@ public class ConfigurationDialog {
         checkTime(false, muteEndTimeMinuteSpinner, "", muteEndTimeMinuteSpinner.getEditor().getText(), "MuteEndTime");
         changeAudibleAlarmsState(!audibleAlarmsCheckBox.isDisable());
 
-        // Set tooltips
-        if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) {
-
-            // Buttons tooltips
-
-            Tooltip lTooltipInterfacesSave = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.networkInterfaceConfiguration.tooltip.save"));
-            Tooltip.install(saveButton, lTooltipInterfacesSave);
-            Tooltip lTooltipInterfacesCancel = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.networkInterfaceConfiguration.tooltip.cancel"));
-            Tooltip.install(cancelButton, lTooltipInterfacesCancel);
-            Tooltip lTooltipInterfacesClose;
-            if (Preferences.getInstance().getBooleanValue("autoSaveConfiguration")) {
-                lTooltipInterfacesClose = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.networkInterfaceConfiguration.tooltip.saveAndClose"));
-            } else {
-                lTooltipInterfacesClose = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.networkInterfaceConfiguration.tooltip.close"));
-            }
-            Tooltip.install(closeButton, lTooltipInterfacesClose);
-
-            // Complex fields tooltips
-
-            Tooltip lTooltipInterfacesConfiguredInterfaces =
-                    new Tooltip(String.format(Display.getViewResourceBundle().getString("configuration.monitoringJobs.networkInterfaceConfiguration.tooltip.configuredInterfaces"),
-                                              Constants.MAXIMUM_NUMBER_OF_MONITORED_INTERFACES));
-            Tooltip.install(interfacesTable, lTooltipInterfacesConfiguredInterfaces);
-            Tooltip lTooltipInterfacesAdd = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.networkInterfaceConfiguration.tooltip.add"));
-            Tooltip.install(addInterfaceButton, lTooltipInterfacesAdd);
-            Tooltip lTooltipInterfacesDelete = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.networkInterfaceConfiguration.tooltip.remove"));
-            Tooltip.install(deleteInterfaceButton, lTooltipInterfacesDelete);
-            Tooltip lTooltipInterfacesUp = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.networkInterfaceConfiguration.tooltip.up"));
-            Tooltip.install(upInterfaceButton, lTooltipInterfacesUp);
-            Tooltip lTooltipInterfacesDown = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.networkInterfaceConfiguration.tooltip.down"));
-            Tooltip.install(downInterfaceButton, lTooltipInterfacesDown);
-
-            Tooltip lTooltipAlarms = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.audibleAlarms.tooltip.configuredAlarms"));
-            Tooltip.install(alarmsTable, lTooltipAlarms);
-            Tooltip lToolMuteStartTime = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.audibleAlarms.tooltip.muteStartTime"));
-            Tooltip.install(muteStartTimeHourSpinner.getEditor(), lToolMuteStartTime);
-            Tooltip.install(muteStartTimeMinuteSpinner.getEditor(), lToolMuteStartTime);
-            Tooltip lToolMuteEndTime = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.audibleAlarms.tooltip.muteEndTime"));
-            Tooltip.install(muteEndTimeHourSpinner.getEditor(), lToolMuteEndTime);
-            Tooltip.install(muteEndTimeMinuteSpinner.getEditor(), lToolMuteEndTime);
-
-            Tooltip lTooltipEmailsConfiguredSmtpServers =
-                    new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.email.tooltip.configuredSmtpServers"));
-            Tooltip.install(smtpServersTable, lTooltipEmailsConfiguredSmtpServers);
-            Tooltip lTooltipEmailsConfiguredSmtpServersAdd = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.email.tooltip.add"));
-            Tooltip.install(addSmtpServerButton, lTooltipEmailsConfiguredSmtpServersAdd);
-            Tooltip lTooltipEmailsConfiguredSmtpServersDelete = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.email.tooltip.remove"));
-            Tooltip.install(deleteSmtpServerButton, lTooltipEmailsConfiguredSmtpServersDelete);
-            Tooltip lTooltipEmailsConfiguredSmtpServersEdit = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.email.tooltip.edit"));
-            Tooltip.install(editSmtpServerButton, lTooltipEmailsConfiguredSmtpServersEdit);
-            Tooltip lTooltipEmailsConfiguredSmtpServersPreferred = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.email.tooltip.preferred"));
-            Tooltip.install(preferredSmtpServerButton, lTooltipEmailsConfiguredSmtpServersPreferred);
-            Tooltip lTooltipEmailsConfiguredSmtpServersUp = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.email.tooltip.up"));
-            Tooltip.install(upSmtpServerButton, lTooltipEmailsConfiguredSmtpServersUp);
-            Tooltip lTooltipEmailsConfiguredSmtpServersDown = new Tooltip(Display.getViewResourceBundle().getString("configuration.monitoringJobs.email.tooltip.down"));
-            Tooltip.install(downSmtpServerButton, lTooltipEmailsConfiguredSmtpServersDown);
-
-        }
-
         validateConfiguration("Interfaces", Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkInterfacesConfiguration(), interfacesTable);
         validateConfiguration("SmtpServers", Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration(), smtpServersTable);
         setButtonsStates(aInSaveState);
@@ -1629,7 +1600,6 @@ public class ConfigurationDialog {
         lanBackupIpv6CheckBox.setDisable(!lIpv6Supported);
 
         // Display
-        dialogStage.setResizable(false);
         dialogStage.showAndWait();
 
     }

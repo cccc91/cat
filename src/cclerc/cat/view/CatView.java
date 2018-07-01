@@ -315,9 +315,13 @@ public class CatView {
     @FXML private Slider pingLineChartHorizontalMoveSlider;
     @FXML private Slider pingLineChartHorizontalZoomSlider;
 
+    // Ping chart
     private NumberAxis pingLineChartXAxis = new NumberAxis();
     private NumberAxis pingLineChartYAxis = new NumberAxis();
     private LineChartWithMarkers<Number,Number> pingLineChart = new LineChartWithMarkers<>(pingLineChartXAxis, pingLineChartYAxis);
+
+    // Speed test
+    ConfigureSpeedTestDialog configureSpeedTestDialogController;
 
     @FXML private void initialize() {
 
@@ -422,6 +426,8 @@ public class CatView {
         Tooltip lClearConsoleTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.clearConsole"));
         if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE))
             Tooltip.install(clearConsoleButtonImageView, lClearConsoleTooltip);
+
+        configureSpeedTestDialogController = ConfigureSpeedTestDialog.getInstance(Cat.getInstance().getMainStage());
 
        // Initialize ping chart
         pingLineFilterCheckBoxes.add(pingLineInterface1FilterCheckBox);
@@ -528,6 +534,10 @@ public class CatView {
             // Stops current speed test (only one is potentially on-going, nothing is done if trying to stop a not on-going test)
             SpeedTestFactory.getInstance().stopOnGoingSpeedTest();
         }
+    }
+
+    @FXML private void configureSpeedTest() {
+        configureSpeedTestDialogController.show();
     }
 
     /**

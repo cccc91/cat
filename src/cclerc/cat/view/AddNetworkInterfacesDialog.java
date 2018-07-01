@@ -1,15 +1,17 @@
 package cclerc.cat.view;
 
+import cclerc.cat.Cat;
 import cclerc.cat.model.ConfiguredInterface;
-import cclerc.services.Constants;
-import cclerc.services.Display;
-import cclerc.services.Network;
-import cclerc.services.Preferences;
+import cclerc.services.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.net.NetworkInterface;
@@ -17,8 +19,10 @@ import java.util.HashMap;
 
 public class AddNetworkInterfacesDialog {
 
+    private static AddNetworkInterfacesDialog addNetworkInterfacesDialogInstance;
+
     // Display management
-    private Stage dialogStage;
+    private static Stage dialogStage = new Stage();
 
     @FXML TableView<ConfiguredInterface> interfacesTable;
     @FXML TableColumn<ConfiguredInterface, String> nameColumn;
@@ -31,6 +35,44 @@ public class AddNetworkInterfacesDialog {
 
     private volatile ObservableList<ConfiguredInterface> configuredInterfaces = FXCollections.observableArrayList();
     private ConfigurationDialog configurationDialogController;
+
+    /**
+     * Creates instance of AddNetworkInterfacesDialog controller
+     * @param aInParentStage Parent stage of add network interfaces dialog stage
+     */
+    public static AddNetworkInterfacesDialog getInstance(Stage aInParentStage) {
+
+        FXMLLoader lDialogLoader = new FXMLLoader();
+
+        try {
+
+            // Load the fxml file and create a new stage for the popup dialog.
+            lDialogLoader.setLocation(Cat.class.getResource("view/AddNetworkInterfacesDialog.fxml"));
+            lDialogLoader.setResources(Display.getViewResourceBundle());
+            VBox lDialogPane = lDialogLoader.load();
+
+            // Create the dialog stage
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(aInParentStage);
+            Scene lScene = new Scene(lDialogPane);
+            lScene.getStylesheets().add("resources/css/view.css");
+            dialogStage.setScene(lScene);
+            dialogStage.getIcons().add(Constants.APPLICATION_IMAGE);
+            dialogStage.setResizable(false);
+            dialogStage.setTitle(Display.getViewResourceBundle().getString("addNetworkInterfaces.title"));
+            addNetworkInterfacesDialogInstance = lDialogLoader.getController();
+            dialogStage.setOnCloseRequest(event -> {
+                addNetworkInterfacesDialogInstance.cancel();
+                event.consume();
+            });
+            addNetworkInterfacesDialogInstance.initializeInterfacesTable();
+        } catch (Exception e) {
+            Display.getLogger().error(String.format(Display.getMessagesResourceBundle().getString("log.cat.error.displayDialog"), Utilities.getStackTrace(e)));
+        }
+
+        return addNetworkInterfacesDialogInstance;
+
+    }
 
     /**
      * Initializes interfaces table

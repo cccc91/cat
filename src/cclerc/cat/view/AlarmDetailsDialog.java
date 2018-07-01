@@ -1,12 +1,14 @@
 package cclerc.cat.view;
 
+import cclerc.cat.Cat;
 import cclerc.cat.GlobalMonitoring;
 import cclerc.cat.model.Alarm;
-import cclerc.services.Display;
-import cclerc.services.EnumTypes;
-import cclerc.services.LocaleUtilities;
+import cclerc.services.*;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -18,13 +20,15 @@ import java.util.ResourceBundle;
 
 public class AlarmDetailsDialog {
 
+    private static AlarmDetailsDialog alarmDetailsDialogController;
+
     // Display management
-    private Stage dialogStage;
+    private static Stage dialogStage = new Stage();
 
     // AlarmConfiguration details dialog properties
     private List<Alarm> alarms;
     private boolean acknowledge = true;
-    private CatView catViewController;
+//    private CatView catViewController;
 
     // FXML
     @FXML private Label internalId;
@@ -47,7 +51,37 @@ public class AlarmDetailsDialog {
     @FXML private Button clearButton;
     @FXML private Button closeButton;
 
-    @FXML private void initialize() {
+    /**
+     * Creates instance of AlarmDetailsDialog controller
+     * @param aInParentStage Parent stage of alarm details dialog stage
+     */
+    public static AlarmDetailsDialog getInstance(Stage aInParentStage) {
+
+        FXMLLoader lDialogLoader = new FXMLLoader();
+
+        try {
+
+            // Load the fxml file and create a new stage for the popup dialog.
+            lDialogLoader.setLocation(Cat.class.getResource("view/AlarmDetailsDialog.fxml"));
+            lDialogLoader.setResources(Display.getViewResourceBundle());
+            VBox lDialogPane = lDialogLoader.load();
+
+            // Create the dialog stage
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(aInParentStage);
+            Scene lScene = new Scene(lDialogPane);
+            lScene.getStylesheets().add("resources/css/view.css");
+            dialogStage.setScene(lScene);
+            dialogStage.getIcons().add(Constants.APPLICATION_IMAGE);
+            dialogStage.setResizable(false);
+            dialogStage.setTitle(Display.getViewResourceBundle().getString("alarmDetailsDialog.title"));
+            alarmDetailsDialogController = lDialogLoader.getController();
+        } catch (Exception e) {
+            Display.getLogger().error(String.format(Display.getMessagesResourceBundle().getString("log.cat.error.displayDialog"), Utilities.getStackTrace(e)));
+        }
+
+        return alarmDetailsDialogController;
+
     }
 
     // SETTERS
@@ -58,14 +92,6 @@ public class AlarmDetailsDialog {
      */
     public void setDialogStage(Stage aInDialogStage) {
         dialogStage = aInDialogStage;
-    }
-
-    /**
-     * Sets back reference to cat overview controller
-     * @param aInCatViewController Cat overview controller
-     */
-    public void setCatController(CatView aInCatViewController) {
-        catViewController = aInCatViewController;
     }
 
     // METHODS
@@ -202,7 +228,7 @@ public class AlarmDetailsDialog {
         }
         additionalInformationLabel.setText(alarms.get(0).getAdditionalInformation());
         acknowledge = !acknowledge;
-        catViewController.refreshActiveAlarmsListAndRemoveSelection();
+        Cat.getInstance().getController().refreshActiveAlarmsListAndRemoveSelection();
 
     }
 
@@ -221,7 +247,7 @@ public class AlarmDetailsDialog {
         clearDateLabel.setText(lClearDate);
         clearButton.setVisible(false);
         acknowledgeUnAcknowledgeButton.setVisible(false);
-        catViewController.refreshActiveAlarmsListAndRemoveSelection();
+        Cat.getInstance().getController().refreshActiveAlarmsListAndRemoveSelection();
     }
 
     /**
@@ -245,10 +271,10 @@ public class AlarmDetailsDialog {
             // Remove selected alarms from the correct list
             if (!alarms.get(0).getState().equals(EnumTypes.AlarmState.CLEARED)) {
                 GlobalMonitoring.getInstance().getActiveAlarmsList().removeAll(alarms);
-                catViewController.refreshActiveAlarmsListAndRemoveSelection();
+                Cat.getInstance().getController().refreshActiveAlarmsListAndRemoveSelection();
             } else {
                 GlobalMonitoring.getInstance().getHistoricalAlarmsList().removeAll(alarms);
-                catViewController.refreshHistoricalAlarmsListAndRemoveSelection();
+                Cat.getInstance().getController().refreshHistoricalAlarmsListAndRemoveSelection();
             }
             dialogStage.close();
         }
