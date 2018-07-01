@@ -107,6 +107,16 @@
     -fx-fill: white;
 }
 
+// Do this only for configurationTable, otherwise if done for all tables alarm severity text color is not correct on select
+.configurationTable .table-row-cell:selected .text {
+    -fx-fill: white;
+}
+
+// Do this only for configurationTable, otherwise if done for all tables alarm severity text color is not correct on unselect
+.configurationTable .table-row-cell .text {
+    -fx-fill: black;
+}
+
 .table-row-cell:acknowledged{
     -fx-font-style: italic;
     -fx-background-color: lavender;
