@@ -1,10 +1,13 @@
 package cclerc.cat.view;
 
 import cclerc.cat.Cat;
+import cclerc.cat.model.SpeedTestServer;
 import cclerc.services.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -12,6 +15,12 @@ import javafx.stage.Stage;
 public class ConfigureSpeedTestDialog {
 
     private static ConfigureSpeedTestDialog configureSpeedTestDialogInstance;
+
+    @FXML TableView<SpeedTestServer> speedTestServersTable;
+    @FXML  TableColumn<SpeedTestServer, String> nameColumn;
+    @FXML TableColumn<SpeedTestServer, String> countryColumn;
+    @FXML TableColumn<SpeedTestServer, String> cityColumn;
+    @FXML TableColumn<SpeedTestServer, Double> distanceColumn;
 
     // Display management
     private static Stage dialogStage = new Stage();
@@ -41,6 +50,7 @@ public class ConfigureSpeedTestDialog {
             dialogStage.setResizable(false);
             dialogStage.setTitle(Display.getViewResourceBundle().getString("configureSpeedTest.title"));
             configureSpeedTestDialogInstance = lDialogLoader.getController();
+            configureSpeedTestDialogInstance.initializeSpeedTestServersTable();
 
         } catch (Exception e) {
             Display.getLogger().error(String.format(Display.getMessagesResourceBundle().getString("log.cat.error.displayDialog"), Utilities.getStackTrace(e)));
@@ -56,6 +66,10 @@ public class ConfigureSpeedTestDialog {
     @FXML
     public void close() {
         dialogStage.close();
+    }
+
+    public void initializeSpeedTestServersTable() {
+
     }
 
     /**

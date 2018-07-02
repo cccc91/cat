@@ -39,7 +39,7 @@ public class GeoLocalization {
 
     /**
      * Returns the singleton
-     * @return GEo localization singleton instance
+     * @return Geo localization singleton instance
      */
     public static GeoLocalization getInstance() {
         return geoLocInstance;
