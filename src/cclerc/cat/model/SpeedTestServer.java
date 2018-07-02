@@ -9,6 +9,8 @@ public class SpeedTestServer {
     private StringProperty city;
     private DoubleProperty distance;
 
+    private String url;
+
     // GETTERS
 
     public String getName() {
@@ -23,8 +25,12 @@ public class SpeedTestServer {
         return city.get();
     }
 
-    public Double distance() {
+    public Double getDistance() {
         return distance.get();
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     // PROPERTY GETTERS
@@ -63,12 +69,21 @@ public class SpeedTestServer {
         distance.set(aInDistance);
     }
 
+    public void setUrl(String aInUrl) {
+        url = aInUrl;
+    }
+
     // CONSTRUCTORS
 
     /**
      * Builds the speed test server from XML parsing
      */
-    public SpeedTestServer() {
+    public SpeedTestServer(String aInName, String aInCountry, String aInCity, Double aInDistance, String aInUrl) {
+        name = new SimpleStringProperty(aInName);
+        country = new SimpleStringProperty(aInCountry);
+        city = new SimpleStringProperty(aInCity);
+        distance = new SimpleDoubleProperty(aInDistance);
+        url = aInUrl;
         // TODO
 
     }

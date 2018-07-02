@@ -218,7 +218,9 @@ public class CatView {
 
     // Speed test
     private boolean speedTestStartState = false;
-
+    private String speedTestServer;
+    private String speedTestDownloadUrl;
+    private String speedTestUploadUrl;
 
     // FXML
     @FXML private Label nameLabel;
@@ -302,6 +304,7 @@ public class CatView {
     @FXML private ScrollPane speedTestScrollPane;
     @FXML private TextFlow speedTestTextFlow;
     @FXML private Tab speedTestTab;
+    @FXML private Label speedTestServerLabel;
     @FXML private Button speedTestStartStopButton;
     @FXML private Button speedTestConfigureButton;
 
@@ -486,6 +489,10 @@ public class CatView {
         }
         checkPingChartState();
 
+        speedTestServer = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE);
+        speedTestUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE);
+        if (speedTestUploadUrl != null) speedTestDownloadUrl = speedTestUploadUrl.replaceAll("upload.php", "random4000x4000.jpg");
+        setSpeedTestServer();
         switchStopStartSpeedTestButton();
         ImageView lImageViewConfigure = new ImageView(new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_CONFIGURE).toString()));
         lImageViewConfigure.setFitHeight(20d); lImageViewConfigure.setFitWidth(20d);
@@ -524,10 +531,8 @@ public class CatView {
     @FXML private void startStopSpeedTest() {
 
         if (speedTestStartState) {
-            String lDownloadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_DOWNLOAD_URL_PREFERENCE);
-            String lUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_UPLOAD_URL_PREFERENCE);
-            if (lDownloadUrl != null && lUploadUrl != null) {
-                SpeedTestFactory.getInstance().getSpeedTest("onRequest").start(lDownloadUrl, lUploadUrl);
+            if (speedTestDownloadUrl != null && speedTestUploadUrl != null) {
+                SpeedTestFactory.getInstance().getSpeedTest("onRequest").start(speedTestDownloadUrl, speedTestUploadUrl);
             }
 
         } else {
@@ -1130,12 +1135,11 @@ public class CatView {
 
             aInFilteredAlarms.setPredicate(alarm -> {
 
-                // If filter text is empty, display all persons.
+                // If filter text is empty, display all alarms.
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
                 }
 
-                // Compare first name and last name of every person with filter text.
                 String lLowerCaseFilter = newValue.toLowerCase();
 
                 if (alarm.getState().toString().toLowerCase().contains(lLowerCaseFilter)) {
@@ -2307,6 +2311,20 @@ public class CatView {
         }
     }
 
+    /**
+     * Sets the speed test server
+     */
+    public void setSpeedTestServer() {
+        if (speedTestServer != null) {
+            speedTestServerLabel.setText(speedTestServer);
+        } else {
+            speedTestServerLabel.setText("");
+        }
+    }
+
+    /**
+     * Switches speed test button between start and stop
+     */
     public void switchStopStartSpeedTestButton() {
 
         Platform.runLater(() -> {
@@ -2322,9 +2340,7 @@ public class CatView {
                 if (speedTestStartStopButton.getStyleClass().contains("buttonWarning")) {
                     speedTestStartStopButton.getStyleClass().removeAll("buttonWarning");
                 }
-                speedTestStartStopButton.setDisable(
-                        Preferences.getInstance().getValue(Constants.SPEED_TEST_DOWNLOAD_URL_PREFERENCE) == null ||
-                        Preferences.getInstance().getValue(Constants.SPEED_TEST_UPLOAD_URL_PREFERENCE) == null);
+                speedTestStartStopButton.setDisable(speedTestDownloadUrl == null || speedTestUploadUrl == null);
                 Tooltip lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.speedTest.tooltip.start"));
                 if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE))
                     Tooltip.install(speedTestStartStopButton, lTooltip);

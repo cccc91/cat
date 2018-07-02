@@ -445,6 +445,8 @@
                                  <children>
                                     <GridPane hgap="10.0">
                                        <columnConstraints>
+                                          <ColumnConstraints hgrow="NEVER" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                           <ColumnConstraints hgrow="NEVER" />
                                           <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
@@ -453,8 +455,10 @@
                                           <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                                        </rowConstraints>
                                        <children>
-                                          <Button fx:id="speedTestStartStopButton" minWidth="100.0" mnemonicParsing="false" onAction="#startStopSpeedTest" text="%catView.speedTest.start" GridPane.columnIndex="2" GridPane.hgrow="NEVER" />
-                                          <Button fx:id="speedTestConfigureButton" mnemonicParsing="false" onAction="#configureSpeedTest" text="%catView.speedTest.configure" GridPane.columnIndex="1" GridPane.hgrow="NEVER" />
+                                          <Button fx:id="speedTestStartStopButton" minWidth="100.0" mnemonicParsing="false" onAction="#startStopSpeedTest" text="%catView.speedTest.start" GridPane.columnIndex="4" GridPane.hgrow="NEVER" />
+                                          <Button fx:id="speedTestConfigureButton" mnemonicParsing="false" onAction="#configureSpeedTest" text="%catView.speedTest.configure" GridPane.columnIndex="3" GridPane.hgrow="NEVER" />
+                                          <Label styleClass="attributeName" text="%catView.speedTest.server" />
+                                          <Label fx:id="speedTestServerLabel" styleClass="attributeValue" text="Label" GridPane.columnIndex="1" />
                                        </children>
                                        <VBox.margin>
                                           <Insets left="10.0" right="10.0" />

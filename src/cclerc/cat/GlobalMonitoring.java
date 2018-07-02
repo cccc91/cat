@@ -251,8 +251,8 @@ public class GlobalMonitoring {
             boolean lSpeedTestEnabled = Preferences.getInstance().getBooleanValue(
                     Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED);
 
-            String lDownloadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_DOWNLOAD_URL_PREFERENCE);
-            String lUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_UPLOAD_URL_PREFERENCE);
+            String lUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE);
+            String lDownloadUrl = (lUploadUrl != null) ? lUploadUrl.replaceAll("upload.php", "random4000x4000.jpg") : null;
 
             Long lNextSpeedTestExecutionTime = null;
             lNextSpeedTestExecutionTime = Utilities.nextExecutionTime(lNextSpeedTestExecutionTime, lSpeedTestPeriod, lSpeedTestOffset);

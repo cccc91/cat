@@ -109,8 +109,8 @@ public class Constants {
 
     // Speed test preferences
     public static final String SPEED_TEST_GET_SERVERS_URL = "http://c.speedtest.net/speedtest-servers-static.php";
-    public static final String SPEED_TEST_DOWNLOAD_URL_PREFERENCE = "speedTest.url.download";
-    public static final String SPEED_TEST_UPLOAD_URL_PREFERENCE = "speedTest.url.upload";
+    public static final String SPEED_TEST_SERVER_NAME_PREFERENCE = "speedTest.server";
+    public static final String SPEED_TEST_SERVER_URL_PREFERENCE = "speedTest.url";
     public static final String SPEED_TEST_SOCKET_TIMEOUT_PREFERENCE = "speedTest.socketTimeout";
     public static final String SPEED_TEST_DOWNLOAD_SETUP_TIME_PREFERENCE = "speedTest.setupTime.download";
     public static final String SPEED_TEST_UPLOAD_SETUP_TIME_PREFERENCE = "speedTest.setupTime.upload";

@@ -536,6 +536,20 @@
     -fx-text-fill: DarkRed;
 }
 
+// PAGINATION
+
+.pagination {
+    -fx-background-color: transparent;
+    -fx-page-information-alignment: right;
+}
+
+.pagination > .pagination-control {
+    -fx-font-size: 10, 5;
+}
+.pagination > .pagination-control > .control-box {
+    -fx-spacing: 0;
+}
+
 // PSEUDO CLASSES
 
 // Used within a Timeline for making the text blink
