@@ -159,7 +159,7 @@ public class MonitoringJob implements Runnable {
             // Retrieve current server configuration
             ServerConfiguration lServerConfiguration = Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkConfiguration(aInAddressType).getServer(lServerIndex);
 
-            if (lServerConfiguration != null) {
+            if (lServerConfiguration != null && !lServerConfiguration.getHostname().equals("")) {
 
                 // Create the server parameters instance
                 ServerParameters lServerParameters = new ServerParameters();
