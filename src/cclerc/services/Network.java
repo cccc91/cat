@@ -441,8 +441,7 @@ public class Network {
 
         // Proxy case, return proxy address
         if (Configuration.getCurrentConfiguration().getMonitoringConfiguration().getWan().getUseProxy()) {
-            // TODO: check
-            return ((InetSocketAddress) findHttpProxy(Constants.SPEED_TEST_GET_SERVERS_URL).address()).getAddress().getHostAddress();
+            return ((InetSocketAddress) findHttpProxy(Constants.SPEED_TEST_GET_SERVERS_URL).address()).getHostName();
         }
 
         String lIp = null;

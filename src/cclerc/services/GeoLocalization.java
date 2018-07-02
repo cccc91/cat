@@ -14,6 +14,7 @@ public class GeoLocalization {
     private static GeoLocalization geoLocInstance = new GeoLocalization();
 
     private DatabaseReader geoLocalizationDatabase;
+    private CityResponse cityResponse;
 
     private GeoLocalization() {
         try {
@@ -24,8 +25,13 @@ public class GeoLocalization {
             File lDatabase = new File(lTemporaryLocalizationDatabase);
             geoLocalizationDatabase = new DatabaseReader.Builder(lDatabase).build();
 
+            // Get localization of local ip
+            InetAddress lLocalIp = InetAddress.getByName(Network.getExternalIp());
+            cityResponse = geoLocalizationDatabase.city(lLocalIp);
+
+
         } catch (Exception e) {
-            Display.logUnexpectedError(e);
+            Display.getLogger().error(String.format(Display.getMessagesResourceBundle().getString("log.localization.notFound"), e.getMessage()));
         }
     };
 
@@ -41,22 +47,16 @@ public class GeoLocalization {
 
     public void getLocalGeoLocalization() {
 
-        try {
-
-            // Retrieve local ip address
-            InetAddress lLocalIp = InetAddress.getByName(Network.getExternalIp());
-
-
-            CityResponse response = geoLocalizationDatabase.city(lLocalIp);
+        if (cityResponse != null) {
 
             System.out.println(
                     String.format("Country=%s, City=%s, Postal=%s, State=%s, lat=%s, long=%s",
-                                  response.getCountry().getNames().get(LocaleUtilities.getInstance().getCurrentLocale().getLanguage()),
-                                  response.getCity().getName(), response.getPostal().getCode(),
-                                  response.getLeastSpecificSubdivision().getName(), response.getLocation().getLatitude(), response.getLocation().getLongitude()));
+                            cityResponse.getCountry().getNames().get(LocaleUtilities.getInstance().getCurrentLocale().getLanguage()),
+                            cityResponse.getCity().getName(), cityResponse.getPostal().getCode(),
+                            cityResponse.getLeastSpecificSubdivision().getName(), cityResponse.getLocation().getLatitude(), cityResponse.getLocation().getLongitude()));
 
-        } catch (Exception e) {
-            Display.logUnexpectedError(e);
+        } else {
+            System.out.println("No localization found for local ip");
         }
 
     }
