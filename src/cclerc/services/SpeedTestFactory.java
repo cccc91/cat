@@ -106,6 +106,7 @@ public class SpeedTestFactory {
                 String lMessage = String.format(
                         Display.getViewResourceBundle().getString("speedTest.report"),
                         Display.getViewResourceBundle().getString("speedtest.type." + aInType),
+                        Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE),
                         aInOctetRates.get(0).values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + aInOctetRates.get(0).keySet().iterator().next()),
                         aInBitRates.get(0).values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + aInBitRates.get(0).keySet().iterator().next()),
                         aInOctetRates.get(1).values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + aInOctetRates.get(1).keySet().iterator().next()),

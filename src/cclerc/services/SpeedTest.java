@@ -5,15 +5,10 @@ import fr.bmartel.speedtest.SpeedTestSocket;
 import fr.bmartel.speedtest.inter.IRepeatListener;
 import fr.bmartel.speedtest.inter.ISpeedTestListener;
 import fr.bmartel.speedtest.model.SpeedTestError;
-import org.jdom2.input.SAXBuilder;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
+import java.math.RoundingMode;
 import java.net.Proxy;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +27,6 @@ public class SpeedTest {
     private List<Map<Integer, BigDecimal>> bitRates = new ArrayList<>();
     private List<Map<Integer, BigDecimal>> octetRates = new ArrayList<>();
     private int count = 0;
-    private Proxy proxy = Proxy.NO_PROXY;
 
     /**
      * Speed test constructor
@@ -45,13 +39,11 @@ public class SpeedTest {
         interrupted = false; // Must be set to false at each re-instantiation (re-instantiation is done after interruption)
 
         // Set proxy if needed
+        Proxy lProxy = Proxy.NO_PROXY;
         if (aInUseProxy) {
-            proxy = Network.findHttpProxy(Constants.SPEED_TEST_GET_SERVERS_URL);
-            speedTestSocket.setProxyServer(proxy.toString().replace(" @ ", "://"));
+            lProxy = Network.findHttpProxy(Constants.SPEED_TEST_GET_SERVERS_URL);
+            speedTestSocket.setProxyServer(lProxy.toString().replace(" @ ", "://"));
         }
-
-        // TODO : uncomment
-        // buildServersList();
 
         // Initialise speed test socket
         speedTestSocket.setSocketTimeout(
@@ -133,9 +125,9 @@ public class SpeedTest {
     private Map<Integer, BigDecimal> convertToBestUnit(BigDecimal aInRate) {
 
         Integer lPower = 0;
-        while (aInRate.divide(BigDecimal.valueOf(Math.pow(1024, lPower++))).compareTo(BigDecimal.valueOf(1024)) == 1);
+        while (aInRate.divide(BigDecimal.valueOf(Math.pow(1024, lPower++)), RoundingMode.FLOOR).compareTo(BigDecimal.valueOf(1024)) == 1);
         Map<Integer, BigDecimal> lResult = new HashMap<>();
-        lResult.put(--lPower, aInRate.divide(BigDecimal.valueOf(Math.pow(1024, lPower))));
+        lResult.put(--lPower, aInRate.divide(BigDecimal.valueOf(Math.pow(1024, lPower)), RoundingMode.FLOOR));
         return lResult;
 
     }
@@ -237,41 +229,6 @@ public class SpeedTest {
      */
     public boolean isTestRunning() {
         return testRunning;
-    }
-
-    public void buildServersList() {
-
-        try {
-
-            // Build HTTP GET request to retrieve servers list from speedtest.net
-            URL lUrl = new URL(Constants.SPEED_TEST_GET_SERVERS_URL);
-            HttpURLConnection lConnection = (HttpURLConnection) lUrl.openConnection(proxy);
-            lConnection.setRequestMethod("GET");
-            lConnection.setRequestProperty("Accept", "application/json");
-
-            if (lConnection.getResponseCode() != 200) {
-                throw new ConnectException(lConnection.getResponseCode() + ": " + lConnection.getResponseMessage());
-            }
-
-            SAXBuilder lBuilder = new SAXBuilder();
-//            Document lDocument = (Document) lBuilder.build(lConnection.getInputStream());
-
-            // TODO: construire classe speedTestServer + GUI pour lancer et configurer le serveur
-            BufferedReader br = new BufferedReader(new InputStreamReader(
-                    (lConnection.getInputStream())));
-
-            String output;
-            System.out.println("Output from Server .... \n");
-            while ((output = br.readLine()) != null) {
-                if (output.contains("FR")) System.out.println(output);
-            }
-
-            lConnection.disconnect();
-
-        } catch (Exception e) {
-            Display.logUnexpectedError(e);
-        }
-
     }
 
 }

@@ -1,6 +1,7 @@
 package cclerc.cat.model;
 
 import javafx.beans.property.*;
+import org.jdom2.Element;
 
 public class SpeedTestServer {
 
@@ -76,7 +77,12 @@ public class SpeedTestServer {
     // CONSTRUCTORS
 
     /**
-     * Builds the speed test server from XML parsing
+     * Builds the speed test server from specified attributes
+     * @param aInName     Server name
+     * @param aInCountry  Country of the server
+     * @param aInCity     City of the server
+     * @param aInDistance Distance of the server from current location
+     * @param aInUrl      Server url
      */
     public SpeedTestServer(String aInName, String aInCountry, String aInCity, Double aInDistance, String aInUrl) {
         name = new SimpleStringProperty(aInName);
@@ -86,6 +92,17 @@ public class SpeedTestServer {
         url = aInUrl;
         // TODO
 
+    }
+
+    /**
+     * Builds the speed test server from XML parsing
+     */
+    public SpeedTestServer(Element aInElement) {
+        name = new SimpleStringProperty(aInElement.getAttributeValue("host").replaceAll(":[0-9]*$", ""));
+        country = new SimpleStringProperty(aInElement.getAttributeValue("cc"));
+        city = new SimpleStringProperty(aInElement.getAttributeValue("name"));
+        distance = new SimpleDoubleProperty(0);
+        url = aInElement.getAttributeValue("url");
     }
 
 }

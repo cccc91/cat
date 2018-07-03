@@ -485,7 +485,18 @@
                                  <tabs>
                                     <Tab closable="false" text="%catView.charts.speedTest">
                                       <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                             <children>
+                                                <HBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <ImageView fitHeight="163.0" fitWidth="236.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../../../resources/images/big-plans.jpg" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </children>
+                                                </HBox>
+                                             </children></AnchorPane>
                                       </content>
                                     </Tab>
                                     <Tab closable="false" text="%catView.charts.pings">

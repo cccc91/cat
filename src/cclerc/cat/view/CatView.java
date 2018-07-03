@@ -5,19 +5,23 @@ import cclerc.cat.Configuration.Configuration;
 import cclerc.cat.GlobalMonitoring;
 import cclerc.cat.MonitoringJob;
 import cclerc.cat.model.Alarm;
+import cclerc.cat.model.SpeedTestServer;
 import cclerc.services.*;
 import com.sun.javafx.charts.Legend;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -34,8 +38,11 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.input.SAXBuilder;
 
-import java.net.NetworkInterface;
+import java.net.*;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -221,6 +228,7 @@ public class CatView {
     private String speedTestServer;
     private String speedTestDownloadUrl;
     private String speedTestUploadUrl;
+    private ObservableList<SpeedTestServer> speedTestServers;
 
     // FXML
     @FXML private Label nameLabel;
@@ -322,9 +330,6 @@ public class CatView {
     private NumberAxis pingLineChartXAxis = new NumberAxis();
     private NumberAxis pingLineChartYAxis = new NumberAxis();
     private LineChartWithMarkers<Number,Number> pingLineChart = new LineChartWithMarkers<>(pingLineChartXAxis, pingLineChartYAxis);
-
-    // Speed test
-    ConfigureSpeedTestDialog configureSpeedTestDialogController;
 
     @FXML private void initialize() {
 
@@ -430,7 +435,7 @@ public class CatView {
         if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE))
             Tooltip.install(clearConsoleButtonImageView, lClearConsoleTooltip);
 
-        configureSpeedTestDialogController = ConfigureSpeedTestDialog.getInstance(Cat.getInstance().getMainStage());
+// TODO        configureSpeedTestDialogController = ConfigureSpeedTestDialog.getInstance(Cat.getInstance().getMainStage());
 
        // Initialize ping chart
         pingLineFilterCheckBoxes.add(pingLineInterface1FilterCheckBox);
@@ -489,10 +494,7 @@ public class CatView {
         }
         checkPingChartState();
 
-        speedTestServer = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE);
-        speedTestUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE);
-        if (speedTestUploadUrl != null) speedTestDownloadUrl = speedTestUploadUrl.replaceAll("upload.php", "random4000x4000.jpg");
-        setSpeedTestServer();
+        reloadSpeedTestConfiguration();
         switchStopStartSpeedTestButton();
         ImageView lImageViewConfigure = new ImageView(new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_CONFIGURE).toString()));
         lImageViewConfigure.setFitHeight(20d); lImageViewConfigure.setFitWidth(20d);
@@ -541,8 +543,55 @@ public class CatView {
         }
     }
 
+    /**
+     * Builds the speed test servers list
+     */
+    public void buildSpeedTestServersList() {
+
+        try {
+
+            speedTestServers = FXCollections.observableArrayList();
+            Proxy lProxy = Proxy.NO_PROXY;
+            if ((Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkConfiguration(EnumTypes.AddressType.WAN) == null) ||
+                Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkConfiguration(EnumTypes.AddressType.WAN).getUseProxy()) {
+                lProxy = Network.findHttpProxy(Constants.SPEED_TEST_GET_SERVERS_URL);
+            }
+
+            // Build HTTP GET request to retrieve servers list from speedtest.net
+            URL lUrl = new URL(Constants.SPEED_TEST_GET_SERVERS_URL);
+            HttpURLConnection lConnection = (HttpURLConnection) lUrl.openConnection(lProxy);
+            lConnection.setRequestMethod("GET");
+            lConnection.setRequestProperty("Accept", "application/json");
+
+            if (lConnection.getResponseCode() != 200) {
+                throw new ConnectException(lConnection.getResponseCode() + ": " + lConnection.getResponseMessage());
+            }
+
+            SAXBuilder lBuilder = new SAXBuilder();
+            Document lDocument = (Document) lBuilder.build(lConnection.getInputStream());
+            Element lRoot = lDocument.getRootElement();
+
+            // Build speed test servers list
+            List<Element> lSpeedTestServers = lRoot.getChild("servers").getChildren("server");
+            if (lSpeedTestServers != null) {
+
+                // Parse speed test servers
+                for (Element lSpeedTestServer: lSpeedTestServers) {
+                    speedTestServers.add(new SpeedTestServer(lSpeedTestServer));
+                }
+
+            }
+
+            lConnection.disconnect();
+
+        } catch (Exception e) {
+            Display.logUnexpectedError(e);
+        }
+
+    }
+
     @FXML private void configureSpeedTest() {
-        configureSpeedTestDialogController.show();
+        ConfigureSpeedTestDialog.getInstance(Cat.getInstance().getMainStage()).show();
     }
 
     /**
@@ -2322,6 +2371,13 @@ public class CatView {
         }
     }
 
+    public void reloadSpeedTestConfiguration() {
+        speedTestServer = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE);
+        speedTestUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE);
+        if (speedTestUploadUrl != null) speedTestDownloadUrl = speedTestUploadUrl.replaceAll("upload.php", "random4000x4000.jpg");
+        setSpeedTestServer();
+    }
+
     /**
      * Switches speed test button between start and stop
      */
@@ -2330,6 +2386,7 @@ public class CatView {
         Platform.runLater(() -> {
             if (speedTestStartState) {
                 speedTestStartStopButton.setText(Display.getViewResourceBundle().getString("catView.speedTest.stop"));
+                speedTestConfigureButton.setDisable(true);
                 speedTestStartStopButton.getStyleClass().add("buttonWarning");
                 speedTestStartStopButton.setDisable(false);
                 Tooltip lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.speedTest.tooltip.stop"));
@@ -2337,6 +2394,7 @@ public class CatView {
                     Tooltip.install(speedTestStartStopButton, lTooltip);
             } else {
                 speedTestStartStopButton.setText(Display.getViewResourceBundle().getString("catView.speedTest.start"));
+                speedTestConfigureButton.setDisable(false);
                 if (speedTestStartStopButton.getStyleClass().contains("buttonWarning")) {
                     speedTestStartStopButton.getStyleClass().removeAll("buttonWarning");
                 }

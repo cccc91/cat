@@ -23,11 +23,20 @@
             <Insets bottom="20.0" left="20.0" top="20.0" />
          </VBox.margin>
       </Label>
+      <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308">
+         <children>
+            <Label styleClass="attributeName" text="%configureSpeedTestDialog.count" />
+            <Label fx:id="speedTestServersCountLabel" styleClass="attributeValue" text="Label" />
+         </children>
+         <VBox.margin>
+            <Insets left="20.0" />
+         </VBox.margin>
+      </FlowPane>
       <HBox spacing="10.0" VBox.vgrow="ALWAYS">
          <children>
-            <VBox fx:id="speedTestVBox" HBox.hgrow="ALWAYS">
+            <FlowPane>
                <children>
-                  <TableView fx:id="speedTestServersTableView" styleClass="configurationTable">
+                  <TableView fx:id="speedTestServersTableView" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="390.0" prefWidth="840.0" styleClass="configurationTable">
                     <columns>
                       <TableColumn fx:id="nameColumn" maxWidth="1.7976931348623157E308" prefWidth="500.0" text="%catView.speedTest.configure.server.name" />
                       <TableColumn fx:id="countryColumn" maxWidth="1.7976931348623157E308" prefWidth="70.0" text="%catView.speedTest.configure.server.country" />
@@ -35,15 +44,9 @@
                         <TableColumn fx:id="distanceColumn" maxWidth="1.7976931348623157E308" prefWidth="90.0" text="%catView.speedTest.configure.server.distance" />
                     </columns>
                   </TableView>
-                  <FlowPane prefHeight="200.0" prefWidth="200.0">
-                     <children>
-                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.count" />
-                        <Label fx:id="speedTestServersCountLabel" styleClass="attributeValue" text="Label" />
-                        <Pagination fx:id="speedTestServersPagination" nodeOrientation="LEFT_TO_RIGHT" pageCount="10" />
-                     </children>
-                  </FlowPane>
+                  <Pagination fx:id="speedTestServersPagination" nodeOrientation="LEFT_TO_RIGHT" pageCount="10" />
                </children>
-            </VBox>
+            </FlowPane>
             <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0" HBox.hgrow="ALWAYS">
                <children>
                   <Label styleClass="attributeValueMain" text="%catView.speedTest.configure.server.filter">
@@ -68,7 +71,7 @@
                         <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
                         <Label contentDisplay="RIGHT" styleClass="attributeName" text="%catView.speedTest.configure.server.maxDistance" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
                         <TextField styleClass="attributeValue" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
-                        <TextField fx:id="speedTestNameFilter" styleClass="attributeValue" GridPane.columnIndex="1" />
+                        <TextField fx:id="speedTestNameFilterTextField" styleClass="attributeValue" GridPane.columnIndex="1" />
                         <Label contentDisplay="RIGHT" styleClass="attributeName" text="%catView.speedTest.configure.server.name" />
                         <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                      </children>
@@ -86,9 +89,9 @@
             <Insets left="20.0" right="20.0" />
          </VBox.margin>
       </HBox>
-      <VBox>
+      <VBox VBox.vgrow="ALWAYS">
          <children>
-            <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+            <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                <center>
                   <GridPane alignment="CENTER" hgap="10.0" maxHeight="-Infinity" styleClass="attributesListGrid" BorderPane.alignment="TOP_CENTER">
                      <columnConstraints>
