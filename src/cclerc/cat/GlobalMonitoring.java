@@ -251,9 +251,6 @@ public class GlobalMonitoring {
             boolean lSpeedTestEnabled = Preferences.getInstance().getBooleanValue(
                     Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED);
 
-            String lUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE);
-            String lDownloadUrl = (lUploadUrl != null) ? lUploadUrl.replaceAll("upload.php", "random4000x4000.jpg") : null;
-
             Long lNextSpeedTestExecutionTime = null;
             lNextSpeedTestExecutionTime = Utilities.nextExecutionTime(lNextSpeedTestExecutionTime, lSpeedTestPeriod, lSpeedTestOffset);
 
@@ -267,7 +264,9 @@ public class GlobalMonitoring {
                 HashMap<EnumTypes.ConnectionType, Double> lStatsPerConnectionType = new HashMap<>();
                 Double lNetworkStats = 0.0;
 
-                // Run speed test if needed
+                // Run speed test if needed - url needs to be read at each occurrence in case of change
+                String lUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE);
+                String lDownloadUrl = (lUploadUrl != null) ? lUploadUrl.replaceAll("upload.php", "random4000x4000.jpg") : null;
                 if (lSpeedTestEnabled && lDownloadUrl != null && lUploadUrl != null && lNow >= lNextSpeedTestExecutionTime) {
                     lNextSpeedTestExecutionTime = Utilities.nextExecutionTime(lNextSpeedTestExecutionTime, lSpeedTestPeriod, lSpeedTestOffset);
                     if (SpeedTestFactory.getInstance().getSpeedTest("onRequest").isTestRunning() || SpeedTestFactory.getInstance().getSpeedTest("periodic").isTestRunning()) {

@@ -2376,6 +2376,7 @@ public class CatView {
         speedTestUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE);
         if (speedTestUploadUrl != null) speedTestDownloadUrl = speedTestUploadUrl.replaceAll("upload.php", "random4000x4000.jpg");
         setSpeedTestServer();
+        speedTestStartStopButton.setDisable(false);
     }
 
     /**

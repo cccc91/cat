@@ -139,7 +139,7 @@
             <HBox alignment="CENTER_LEFT" />
             <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Button mnemonicParsing="false" onAction="#save" text="%configureSpeedTestDialog.save" />
+                  <Button fx:id="saveButton" mnemonicParsing="false" onAction="#save" text="%configureSpeedTestDialog.save" />
                           <Button mnemonicParsing="false" onAction="#close" text="%configureSpeedTestDialog.close" />
                </children>
             </HBox>

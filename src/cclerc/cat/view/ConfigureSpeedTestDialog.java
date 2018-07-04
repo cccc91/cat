@@ -30,6 +30,7 @@ import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 
 public class ConfigureSpeedTestDialog {
 
@@ -37,10 +38,10 @@ public class ConfigureSpeedTestDialog {
 
     private final int SPEED_TEST_TABLE_ROWS_PER_PAGE = 15;
     private SpeedTestServer selectedSpeedTestServer;
+    private SortedList<SpeedTestServer> sortedSpeedTestServers;
+    private boolean hasConfigurationChanged = false;
 
     private static ObservableList<SpeedTestServer> speedTestServers = FXCollections.observableArrayList();
-    private volatile SortedList<SpeedTestServer> sortedSpeedTestServers;
-
     private static boolean firstDisplay = true;
 
     @FXML TableView<SpeedTestServer> speedTestServersTableView;
@@ -51,6 +52,7 @@ public class ConfigureSpeedTestDialog {
     @FXML Pagination speedTestServersPagination;
     @FXML Label speedTestServersCountLabel;
     @FXML TextField speedTestNameFilterTextField;
+    @FXML Button saveButton;
 
     private static String  speedTestNameFilter;
 
@@ -68,24 +70,14 @@ public class ConfigureSpeedTestDialog {
 
         try {
 
-            // Load the fxml file and create a new stage for the popup dialog.
-            lDialogLoader.setLocation(Cat.class.getResource("view/ConfigureSpeedTestDialog.fxml"));
-            lDialogLoader.setResources(Display.getViewResourceBundle());
-            VBox lDialogPane = lDialogLoader.load();
-
-            // Create the dialog stage
+            // As building server list is long, it is done only the first time and a wait dialog box is displayed meanwhile
             if (firstDisplay) {
 
-                WaitDialog lWaitDialog = Display.waitDialog(Cat.getInstance().getMainStage(), Display.getViewResourceBundle().getString("catView.speedTest.configure.serverList.wait"),
-                                                            Constants.IMAGE_SPEED_TEST);
-                lWaitDialog.show(new WaitDialogInterface() {
-                    @Override
-                    public void runAction() {
-                        buildServersList();
-                        Platform.runLater(() -> {
-                            lWaitDialog.close();
-                        });
-                    }
+                WaitDialog lWaitDialog = Display.waitDialog(
+                        Cat.getInstance().getMainStage(), Display.getViewResourceBundle().getString("catView.speedTest.configure.serverList.wait"), Constants.IMAGE_SPEED_TEST);
+                lWaitDialog.show(() -> {
+                    buildServersList();
+                    Platform.runLater(lWaitDialog::close);
                 });
 
                 dialogStage.initModality(Modality.WINDOW_MODAL);
@@ -94,6 +86,12 @@ public class ConfigureSpeedTestDialog {
 
             }
 
+            // Load the fxml file and create a new stage for the popup dialog.
+            lDialogLoader.setLocation(Cat.class.getResource("view/ConfigureSpeedTestDialog.fxml"));
+            lDialogLoader.setResources(Display.getViewResourceBundle());
+            VBox lDialogPane = lDialogLoader.load();
+
+            // Create the dialog stage
             Scene lScene = new Scene(lDialogPane);
             lScene.getStylesheets().add("resources/css/view.css");
             dialogStage.setScene(lScene);
@@ -102,6 +100,7 @@ public class ConfigureSpeedTestDialog {
             dialogStage.setTitle(Display.getViewResourceBundle().getString("configureSpeedTest.title"));
             configureSpeedTestDialogInstance = lDialogLoader.getController();
             configureSpeedTestDialogInstance.initializeSpeedTestServersTable();
+            configureSpeedTestDialogInstance.saveButton.setDisable(true);
 
             // TODO: replace with something getting current localization
             GeoLocalization.getInstance().getLocalGeoLocalization();
@@ -114,6 +113,9 @@ public class ConfigureSpeedTestDialog {
 
     }
 
+    /**
+     * Builds the speed test servers list
+     */
     public static void buildServersList() {
 
         try {
@@ -130,15 +132,16 @@ public class ConfigureSpeedTestDialog {
             lConnection.setRequestMethod("GET");
             lConnection.setRequestProperty("Accept", "application/json");
 
+            // Check errors
             if (lConnection.getResponseCode() != 200) {
                 throw new ConnectException(lConnection.getResponseCode() + ": " + lConnection.getResponseMessage());
             }
 
+            // Parse the result
             SAXBuilder lBuilder = new SAXBuilder();
             Document lDocument = (Document) lBuilder.build(lConnection.getInputStream());
             Element lRoot = lDocument.getRootElement();
 
-            // Build speed test servers list
             List<Element> lSpeedTestServers = lRoot.getChild("servers").getChildren("server");
             if (lSpeedTestServers != null) {
 
@@ -157,6 +160,9 @@ public class ConfigureSpeedTestDialog {
 
     }
 
+    /**
+     * Initializes the speed test servers table with data and behaviour
+     */
     public void initializeSpeedTestServersTable() {
 
         // Configure table view
@@ -174,8 +180,9 @@ public class ConfigureSpeedTestDialog {
         // Wrap the ObservableList in a FilteredList (initially display all data).
         FilteredList<SpeedTestServer> lFilteredSpeedTestServers = new FilteredList<>(speedTestServers, p -> true);
 
-        // Set the filter Predicate whenever the filter changes.
+        // Set the filter predicate whenever the filters change.
         speedTestNameFilterTextField.textProperty().addListener(speedTestServersNameFilterListener(lFilteredSpeedTestServers));
+        // TODO: add other fields that are involved in the filter
 
         // Wrap the FilteredList in a SortedList.
         sortedSpeedTestServers = new SortedList<>(lFilteredSpeedTestServers);
@@ -188,33 +195,31 @@ public class ConfigureSpeedTestDialog {
         speedTestServersCountLabel.setText(String.valueOf(sortedSpeedTestServers.size()));
 
         // Set the speed test server count and refresh pages whenever the sorted speed test servers list changes
-        sortedSpeedTestServers.addListener(speedTestServersListChangeListener(sortedSpeedTestServers));
+        sortedSpeedTestServers.addListener(speedTestServersListChangeListener());
 
+        // Add listeners on different fields
+        speedTestServersTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                checkChanges();
+            }
+        });
     }
 
     /**
      * Listener on changes on a sorted speed test servers list
-     * @param aInSortedSpeedTestServers Sorted speed test servers list the listener is applied to
      * @return Listener
      */
-    private ListChangeListener<SpeedTestServer> speedTestServersListChangeListener(SortedList<SpeedTestServer> aInSortedSpeedTestServers) {
-        Callback<Integer, Node> lCallback = this::createPage;
-        return new ListChangeListener<SpeedTestServer>(){
-            @Override
-            public void onChanged(Change<? extends SpeedTestServer> aInChanges) {
-//               Platform.runLater(() -> {
-                    speedTestServersCountLabel.setText(String.valueOf(aInSortedSpeedTestServers.size()));
-                    speedTestServersTableView.setItems(sortedSpeedTestServers);
-                    speedTestServersPagination.setPageCount(sortedSpeedTestServers.size() / SPEED_TEST_TABLE_ROWS_PER_PAGE + ((sortedSpeedTestServers.size() % SPEED_TEST_TABLE_ROWS_PER_PAGE) != 0 ? 1 : 0));
-//                    if (selectedSpeedTestServer != null) {
-//                        speedTestServersPagination.setPageFactory(null);
-//                        speedTestServersPagination.setCurrentPageIndex(sortedSpeedTestServers.indexOf(selectedSpeedTestServer) / SPEED_TEST_TABLE_ROWS_PER_PAGE);
-//                        speedTestServersTableView.getSelectionModel().select(selectedSpeedTestServer);
-//                        speedTestServersPagination.setPageFactory(lCallback);
-//                    }
-//                });
+    private ListChangeListener<SpeedTestServer> speedTestServersListChangeListener() {
+        return aInChanges -> Platform.runLater(() -> {
+            speedTestServersCountLabel.setText(String.valueOf(sortedSpeedTestServers.size()));
+            speedTestServersTableView.setItems(sortedSpeedTestServers);
+            speedTestServersPagination.setPageCount(sortedSpeedTestServers.size() / SPEED_TEST_TABLE_ROWS_PER_PAGE + ((sortedSpeedTestServers.size() % SPEED_TEST_TABLE_ROWS_PER_PAGE) != 0 ? 1 : 0));
+
+            if (selectedSpeedTestServer != null && sortedSpeedTestServers.indexOf(selectedSpeedTestServer) != -1) {
+                speedTestServersPagination.setCurrentPageIndex(sortedSpeedTestServers.indexOf(selectedSpeedTestServer) / SPEED_TEST_TABLE_ROWS_PER_PAGE);
+                speedTestServersTableView.getSelectionModel().select(selectedSpeedTestServer);
             }
-        };
+        });
     }
 
     /**
@@ -231,7 +236,7 @@ public class ConfigureSpeedTestDialog {
 
                 // If filter text is empty or filter matches the server, display it.
                 String lLowerCaseFilter = newValue.toLowerCase();
-                if (newValue == null || newValue.isEmpty() || speedTestServer.getName().toLowerCase().contains(lLowerCaseFilter)) {
+                if (newValue.isEmpty() || speedTestServer.getName().toLowerCase().contains(lLowerCaseFilter)) {
                     return true;
                 }
                 return false; // Does not match.
@@ -283,7 +288,7 @@ public class ConfigureSpeedTestDialog {
 
     /**
      * Creates page in the speed test table
-     * @param aInPageIndex
+     * @param aInPageIndex Page index
      * @return
      */
     private Node createPage(int aInPageIndex) {
@@ -296,6 +301,49 @@ public class ConfigureSpeedTestDialog {
 
     }
 
+
+    // FXML
+
+    /**
+     * Cancels changes if confirmed and closes dialog box
+     */
+    @FXML private void close() {
+
+        // Ask user for confirmation if needed
+        if (hasConfigurationChanged) {
+            Alert lConfirmation =
+                    new Alert(Alert.AlertType.CONFIRMATION, Display.getViewResourceBundle().getString("confirm.cancelConfiguration.question"), ButtonType.YES, ButtonType.NO);
+            lConfirmation.setHeaderText(Display.getViewResourceBundle().getString("confirm.cancelConfiguration.title"));
+            lConfirmation.initModality(Modality.APPLICATION_MODAL);
+
+            // Display confirmation dialog box
+            Optional<ButtonType> lResponse = lConfirmation.showAndWait();
+
+            // OK is pressed
+            if (lResponse.isPresent() && lResponse.get().equals(ButtonType.YES)) {
+                dialogStage.close();
+            }
+        } else {
+            dialogStage.close();
+        }
+
+    }
+
+    /**
+     * Saves configuration and exits dialog box
+     */
+    @FXML private  void save() {
+        // TODO add listeners on values and table and activate button only if changes
+        SpeedTestServer lSpeedTestServer = speedTestServersTableView.getSelectionModel().getSelectedItem();
+        if (lSpeedTestServer != null) {
+            Preferences.getInstance().saveValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE, lSpeedTestServer.getName());
+            Preferences.getInstance().saveValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE, lSpeedTestServer.getUrl());
+            Cat.getInstance().getController().reloadSpeedTestConfiguration();
+        }
+        dialogStage.close();
+    }
+
+    // PUBLIC
 
     /**
      * Displays the dialog box
@@ -312,8 +360,10 @@ public class ConfigureSpeedTestDialog {
             if (lSpeedTestServer.getUrl().equals(lCurrentUrl)) {
                 // Goto relevant page and select server
                 selectedSpeedTestServer = lSpeedTestServer;
-                speedTestServersPagination.setCurrentPageIndex(sortedSpeedTestServers.indexOf(selectedSpeedTestServer) / SPEED_TEST_TABLE_ROWS_PER_PAGE);
-                speedTestServersTableView.getSelectionModel().select(selectedSpeedTestServer);
+                Platform.runLater(() -> {
+                    speedTestServersPagination.setCurrentPageIndex(sortedSpeedTestServers.indexOf(selectedSpeedTestServer) / SPEED_TEST_TABLE_ROWS_PER_PAGE);
+                    speedTestServersTableView.getSelectionModel().select(selectedSpeedTestServer);
+                });
                 break;
             }
         }
@@ -321,26 +371,14 @@ public class ConfigureSpeedTestDialog {
         dialogStage.showAndWait();
     }
 
-    /**
-     * Cancels changes if confirmed and closes dialog box
-     */
-    public void close() {
-        // TODO check changes and confirm
-        dialogStage.close();
-    }
-
-    /**
-     * Saves configuration and exits dialog box
-     */
-    public void save() {
-        // TODO add listeners on values and table and activate button only if changes
-        SpeedTestServer lSpeedTestServer = speedTestServersTableView.getSelectionModel().getSelectedItem();
-        if (lSpeedTestServer != null) {
-            Preferences.getInstance().saveValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE, lSpeedTestServer.getName());
-            Preferences.getInstance().saveValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE, lSpeedTestServer.getUrl());
-            Cat.getInstance().getController().reloadSpeedTestConfiguration();
+    public void checkChanges() {
+        if (speedTestServersTableView.getSelectionModel().getSelectedItem().getName().equals(Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE))) {
+            hasConfigurationChanged = false;
+            saveButton.setDisable(true);
+        } else {
+            hasConfigurationChanged = true;
+            saveButton.setDisable(false);
         }
-        dialogStage.close();
     }
 
 }
