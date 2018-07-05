@@ -213,10 +213,12 @@ public class ConfigureSpeedTestDialog {
         return aInChanges -> Platform.runLater(() -> {
             speedTestServersCountLabel.setText(String.valueOf(sortedSpeedTestServers.size()));
             speedTestServersTableView.setItems(sortedSpeedTestServers);
-            speedTestServersPagination.setPageCount(sortedSpeedTestServers.size() / SPEED_TEST_TABLE_ROWS_PER_PAGE + ((sortedSpeedTestServers.size() % SPEED_TEST_TABLE_ROWS_PER_PAGE) != 0 ? 1 : 0));
+            speedTestServersPagination.setPageCount(
+                    Math.max(1, sortedSpeedTestServers.size() / SPEED_TEST_TABLE_ROWS_PER_PAGE + ((sortedSpeedTestServers.size() % SPEED_TEST_TABLE_ROWS_PER_PAGE) != 0 ? 1 : 0)));
 
+            int lSelectedIndex = Math.max(0, sortedSpeedTestServers.indexOf(selectedSpeedTestServer));
+            speedTestServersPagination.setCurrentPageIndex(lSelectedIndex / SPEED_TEST_TABLE_ROWS_PER_PAGE);
             if (selectedSpeedTestServer != null && sortedSpeedTestServers.indexOf(selectedSpeedTestServer) != -1) {
-                speedTestServersPagination.setCurrentPageIndex(sortedSpeedTestServers.indexOf(selectedSpeedTestServer) / SPEED_TEST_TABLE_ROWS_PER_PAGE);
                 speedTestServersTableView.getSelectionModel().select(selectedSpeedTestServer);
             }
         });
