@@ -120,6 +120,7 @@ public class Constants {
     public static final String SPEED_TEST_REPEAT_DURATION_PREFERENCE = "speedTest.repeatDuration";
     public static final String SPEED_TEST_REPORT_INTERVAL_PREFERENCE = "speedTest.reportInterval";
     public static final String SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE = "speedTest.emailReportEnabled";
+    public static final String SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE = "speedTest.emailReportPeriod";
 
     public static final Integer DEFAULT_SPEED_TEST_SOCKET_TIMEOUT = 10000;
     public static final Long DEFAULT_SPEED_TEST_DOWNLOAD_SETUP_TIME = 100L;
@@ -130,6 +131,7 @@ public class Constants {
     public static final Integer DEFAULT_SPEED_TEST_REPEAT_DURATION = 30000;       // ms
     public static final Integer DEFAULT_SPEED_TEST_REPORT_INTERVAL = 300;         // ms
     public static final Boolean DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED = false;
+    public static final Integer DEFAULT_SPEED_TEST_EMAIL_PERIOD = 1;
     public static final Integer DEFAULT_SPEED_TEST_UPLOAD_FILE_SIZE = 100000000;
 
     public static final String GEO_LOC_DATABASE = "GeoLite2-City.mmdb";
