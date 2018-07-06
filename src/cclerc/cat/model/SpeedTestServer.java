@@ -1,5 +1,7 @@
 package cclerc.cat.model;
 
+import cclerc.services.GeoLocalization;
+import cclerc.services.Utilities;
 import javafx.beans.property.*;
 import org.jdom2.Element;
 
@@ -101,7 +103,9 @@ public class SpeedTestServer {
         name = new SimpleStringProperty(aInElement.getAttributeValue("host").replaceAll(":[0-9]*$", ""));
         country = new SimpleStringProperty(aInElement.getAttributeValue("cc"));
         city = new SimpleStringProperty(aInElement.getAttributeValue("name"));
-        distance = new SimpleDoubleProperty(0);
+        Double lLatitude = (aInElement.getAttributeValue("lat") == null) ? 0d :Double.valueOf(aInElement.getAttributeValue("lat"));
+        Double lLongitude = (aInElement.getAttributeValue("lat") == null) ? 0d :Double.valueOf(aInElement.getAttributeValue("lon"));
+        distance = new SimpleDoubleProperty(GeoLocalization.getInstance().computeDistanceToLocal(lLatitude, lLongitude));
         url = aInElement.getAttributeValue("url");
     }
 

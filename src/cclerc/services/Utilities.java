@@ -3,6 +3,8 @@ package cclerc.services;
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.*;
@@ -311,6 +313,22 @@ public class Utilities {
         }
 
         return lDestinationPath;
+    }
+
+    /**
+     * Rounds a double to the required decimal places
+     * @param aInValue  Value to round
+     * @param aInPlaces Number of decimals
+     * @return
+     */
+    public static double round(double aInValue, int aInPlaces) {
+
+        if (aInPlaces < 0) throw new IllegalArgumentException();
+
+        BigDecimal lBigDecimal = new BigDecimal(aInValue);
+        lBigDecimal = lBigDecimal.setScale(aInPlaces, RoundingMode.HALF_UP);
+        return lBigDecimal.doubleValue();
+
     }
 
 }

@@ -16,6 +16,28 @@ import java.util.*;
  */
 public class GlobalMonitoring {
 
+    private static boolean speedTestEnabled;
+    private static int speedTestPeriod;
+    private static int speedTestOffset;
+    private static Long nextSpeedTestExecutionTime;
+    private static String speedTestUploadUrl;
+    private static String speedTestDownloadUrl;
+
+    public static void reloadSpeedTestConfiguration() {
+
+        speedTestEnabled = Preferences.getInstance().getBooleanValue(
+                Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED);
+        speedTestPeriod = Preferences.getInstance().getIntegerValue(
+                Constants.SPEED_TEST_PERIODIC_TEST_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD);
+        speedTestOffset = Preferences.getInstance().getIntegerValue(
+                Constants.SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET);
+        nextSpeedTestExecutionTime = Utilities.nextExecutionTime(
+                (nextSpeedTestExecutionTime == null || nextSpeedTestExecutionTime > System.currentTimeMillis()) ? null : nextSpeedTestExecutionTime, speedTestPeriod, speedTestOffset);
+        speedTestUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE);
+        speedTestDownloadUrl = (speedTestUploadUrl != null) ? speedTestUploadUrl.replaceAll("upload.php", "random4000x4000.jpg") : null;
+
+    }
+
     class JobDetails {
 
         private EnumTypes.HostState state;
@@ -243,16 +265,7 @@ public class GlobalMonitoring {
                 Utilities.sleep(1000);
             }
 
-            // Get periodic speed test period
-            int lSpeedTestPeriod = Preferences.getInstance().getIntegerValue(
-                    Constants.SPEED_TEST_PERIODIC_TEST_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD);
-            int lSpeedTestOffset = Preferences.getInstance().getIntegerValue(
-                    Constants.SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET);
-            boolean lSpeedTestEnabled = Preferences.getInstance().getBooleanValue(
-                    Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED);
-
-            Long lNextSpeedTestExecutionTime = null;
-            lNextSpeedTestExecutionTime = Utilities.nextExecutionTime(lNextSpeedTestExecutionTime, lSpeedTestPeriod, lSpeedTestOffset);
+            reloadSpeedTestConfiguration();
 
             // Run the thread
             while (running) {
@@ -264,19 +277,17 @@ public class GlobalMonitoring {
                 HashMap<EnumTypes.ConnectionType, Double> lStatsPerConnectionType = new HashMap<>();
                 Double lNetworkStats = 0.0;
 
-                // Run speed test if needed - url needs to be read at each occurrence in case of change
-                String lUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE);
-                String lDownloadUrl = (lUploadUrl != null) ? lUploadUrl.replaceAll("upload.php", "random4000x4000.jpg") : null;
-                if (lSpeedTestEnabled && lDownloadUrl != null && lUploadUrl != null && lNow >= lNextSpeedTestExecutionTime) {
-                    lNextSpeedTestExecutionTime = Utilities.nextExecutionTime(lNextSpeedTestExecutionTime, lSpeedTestPeriod, lSpeedTestOffset);
+                // Run speed test if needed
+                if (speedTestEnabled && speedTestDownloadUrl != null && speedTestUploadUrl != null && lNow >= nextSpeedTestExecutionTime) {
+                    nextSpeedTestExecutionTime = Utilities.nextExecutionTime(nextSpeedTestExecutionTime, speedTestPeriod, speedTestOffset);
                     if (SpeedTestFactory.getInstance().getSpeedTest("onRequest").isTestRunning() || SpeedTestFactory.getInstance().getSpeedTest("periodic").isTestRunning()) {
                         Cat.getInstance().getController().replaceLastSpeedTestMessage(
                                 new Message(String.format(
                                         Display.getViewResourceBundle().getString("speedTest.running"),
-                                        LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(new Date(lNextSpeedTestExecutionTime))), EnumTypes.MessageLevel.WARNING));
+                                        LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(new Date(nextSpeedTestExecutionTime))), EnumTypes.MessageLevel.WARNING));
                         SpeedTestFactory.getInstance().resetFirstReports();
                     } else {
-                        SpeedTestFactory.getInstance().getSpeedTest("periodic").start(lDownloadUrl, lUploadUrl);
+                        SpeedTestFactory.getInstance().getSpeedTest("periodic").start(speedTestDownloadUrl, speedTestUploadUrl);
                     }
                 }
 
@@ -424,6 +435,8 @@ public class GlobalMonitoring {
     private volatile ObservableList<Alarm> activeAlarmsList = FXCollections.observableArrayList();
     private volatile ObservableList<Alarm> historicalAlarmsList = FXCollections.observableArrayList();
 
+    private PeriodicCheck periodicCheck = new PeriodicCheck();
+
     // SINGLETON
 
     /**
@@ -442,7 +455,7 @@ public class GlobalMonitoring {
         final boolean TEST_ENABLE = false;
 
         // Launch periodic check
-        Thread lThread = new Thread(new PeriodicCheck());
+        Thread lThread = new Thread(periodicCheck);
         lThread.start();
         // For test only - to be disabled when not useful
         if (TEST_ENABLE) {
@@ -460,6 +473,10 @@ public class GlobalMonitoring {
 
     public ObservableList<Alarm> getHistoricalAlarmsList() {
         return historicalAlarmsList;
+    }
+
+    public PeriodicCheck getPeriodicCheck() {
+        return periodicCheck;
     }
 
     // SETTERS

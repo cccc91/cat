@@ -2,6 +2,7 @@ package cclerc.cat.view;
 
 import cclerc.cat.Cat;
 import cclerc.cat.Configuration.Configuration;
+import cclerc.cat.GlobalMonitoring;
 import cclerc.cat.model.SpeedTestServer;
 import cclerc.services.*;
 import javafx.application.Platform;
@@ -28,10 +29,7 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class ConfigureSpeedTestDialog {
 
@@ -45,11 +43,7 @@ public class ConfigureSpeedTestDialog {
 
     private static ObservableList<SpeedTestServer> speedTestServers = FXCollections.observableArrayList();
     private static boolean firstDisplay = true;
-    private static String serverNameFilter;
     private static List<String> serverCountryFilterList = new ArrayList<>();
-    private static String serverCountryFilter;
-    private static String serverCityFilter;
-    private static String serverDistanceFilter;
 
     // Display management
     private static Stage dialogStage = new Stage();
@@ -66,6 +60,7 @@ public class ConfigureSpeedTestDialog {
     @FXML ChoiceBox<String> serverCountryFilterChoiceBox;
     @FXML TextField serverCityFilterTextField;
     @FXML TextField serverDistanceFilterTextField;
+    @FXML Button clearButton;
     @FXML Button refreshButton;
     @FXML Button saveButton;
     @FXML Button closeButton;
@@ -121,13 +116,10 @@ public class ConfigureSpeedTestDialog {
             dialogStage.setResizable(false);
             dialogStage.setTitle(Display.getViewResourceBundle().getString("configureSpeedTest.title"));
             configureSpeedTestDialogInstance = lDialogLoader.getController();
-            configureSpeedTestDialogInstance.initializeSpeedTestServersTable();
+            configureSpeedTestDialogInstance.initializeConfiguration();
             configureSpeedTestDialogInstance.serverCountryFilterChoiceBox.setItems(FXCollections.observableArrayList(serverCountryFilterList));
             configureSpeedTestDialogInstance.saveButton.setDisable(true);
             configureSpeedTestDialogInstance.addTooltips();
-
-            // TODO: replace with something getting current localization
-            GeoLocalization.getInstance().getLocalGeoLocalization();
 
         } catch (Exception e) {
             Display.getLogger().error(String.format(Display.getMessagesResourceBundle().getString("log.cat.error.displayDialog"), Utilities.getStackTrace(e)));
@@ -137,6 +129,19 @@ public class ConfigureSpeedTestDialog {
 
     }
 
+    /**
+     * Clears all filters
+     */
+    public void clearFilter() {
+        serverNameFilterTextField.setText("");
+        serverCountryFilterChoiceBox.getSelectionModel().select("");
+        serverCityFilterTextField.setText("");
+        serverDistanceFilterTextField.setText("");
+    }
+
+    /**
+     * Refreshes servers list
+     */
     public void refreshServersList() {
         WaitDialog lWaitDialog = Display.waitDialog(
                 Cat.getInstance().getMainStage(), Display.getViewResourceBundle().getString("configureSpeedTestDialog.serverList.wait"), Constants.IMAGE_SPEED_TEST);
@@ -174,7 +179,7 @@ public class ConfigureSpeedTestDialog {
 
             // Parse the result
             SAXBuilder lBuilder = new SAXBuilder();
-            Document lDocument = (Document) lBuilder.build(lConnection.getInputStream());
+            Document lDocument = lBuilder.build(lConnection.getInputStream());
             Element lRoot = lDocument.getRootElement();
 
             List<Element> lSpeedTestServers = lRoot.getChild("servers").getChildren("server");
@@ -187,6 +192,10 @@ public class ConfigureSpeedTestDialog {
                 }
 
             }
+            // Add some servers extra server
+            speedTestServers.add(new SpeedTestServer("intuxication.lafibre.info", "FR", "Vitry-sur-Seine", 14.5d, "http://intuxication.lafibre.info/speedtest/upload.php"));
+            speedTestServers.sort(Comparator.comparing(SpeedTestServer::getDistance));
+
             serverCountryFilterList.add("");
             Collections.sort(serverCountryFilterList);
             lConnection.disconnect();
@@ -224,6 +233,10 @@ public class ConfigureSpeedTestDialog {
         lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.server.distance");
         lTooltip = new Tooltip(lTooltipText);
         Tooltip.install(serverDistanceFilterTextField, lTooltip);
+
+        lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.server.clear");
+        lTooltip = new Tooltip(lTooltipText);
+        Tooltip.install(clearButton, lTooltip);
 
         lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.server.refresh");
         lTooltip = new Tooltip(lTooltipText);
@@ -284,9 +297,9 @@ public class ConfigureSpeedTestDialog {
     }
 
     /**
-     * Initializes the speed test servers table with data and behaviour
+     * Initializes all configuration data with data and behaviour
      */
-    public void initializeSpeedTestServersTable() {
+    private void initializeConfiguration() {
 
         // Configure table view
         serversTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -332,8 +345,25 @@ public class ConfigureSpeedTestDialog {
                 socketTimeoutTextField, Constants.SPEED_TEST_SOCKET_TIMEOUT_PREFERENCE, Constants.DEFAULT_SPEED_TEST_SOCKET_TIMEOUT));
         downloadSetupTimeTextField.textProperty().addListener(longTextFieldChangeListener(
                 downloadSetupTimeTextField, Constants.SPEED_TEST_DOWNLOAD_SETUP_TIME_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DOWNLOAD_SETUP_TIME));
+        uploadSetupTimeTextField.textProperty().addListener(longTextFieldChangeListener(
+                uploadSetupTimeTextField, Constants.SPEED_TEST_UPLOAD_SETUP_TIME_PREFERENCE, Constants.DEFAULT_SPEED_TEST_UPLOAD_SETUP_TIME));
+        uploadFileSizeTextField.textProperty().addListener(integerTextFieldChangeListener(
+                uploadFileSizeTextField, Constants.SPEED_TEST_UPLOAD_FILE_SIZE_PREFERENCE, Constants.DEFAULT_SPEED_TEST_UPLOAD_FILE_SIZE));
+        repeatDurationTextField.textProperty().addListener(integerTextFieldChangeListener(
+                repeatDurationTextField, Constants.SPEED_TEST_REPEAT_DURATION_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPEAT_DURATION));
+        reportIntervalTextField.textProperty().addListener(integerTextFieldChangeListener(
+                reportIntervalTextField, Constants.SPEED_TEST_REPORT_INTERVAL_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPORT_INTERVAL));
         periodicTestEnabledCheckBox.selectedProperty().addListener(booleanTextFieldChangeListener(
                 periodicTestEnabledCheckBox, Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED));
+        periodicTestPeriodTextField.textProperty().addListener(integerTextFieldChangeListener(
+                periodicTestPeriodTextField, Constants.SPEED_TEST_PERIODIC_TEST_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD));
+        periodicTestOffsetTextField.textProperty().addListener(integerTextFieldChangeListener(
+                periodicTestOffsetTextField, Constants.SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET));
+        periodicTestEmailEnabledCheckBox.selectedProperty().addListener(booleanTextFieldChangeListener(
+                periodicTestEmailEnabledCheckBox, Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED));
+        periodicTestEmailPeriodTextField.textProperty().addListener(integerTextFieldChangeListener(
+                periodicTestEmailPeriodTextField, Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD));
+
     }
 
     /**
@@ -344,7 +374,7 @@ public class ConfigureSpeedTestDialog {
         return (obs, oldValue, newValue) -> {
             try {
                 Integer.valueOf(newValue);
-                if (erroredFields.contains(aInTextField)) erroredFields.remove(aInTextField);
+                erroredFields.remove(aInTextField);
                 setTextFieldStyle(aInTextField, Preferences.getInstance().getIntegerValue(aInPreference, aInDefaultValue), Integer.valueOf(newValue), aInDefaultValue);
                 checkChanges();
                 if (erroredFields.size() == 0 && hasConfigurationChanged) saveButton.setDisable(false);
@@ -356,22 +386,6 @@ public class ConfigureSpeedTestDialog {
         };
     }
 
-    private void setTextFieldStyle(TextField aInTextField, Integer aInOldValue, Integer aInNewValue, Integer aInDefaultValue) {
-        if (Integer.valueOf(aInNewValue).equals(aInDefaultValue)) {
-            if (aInNewValue.equals(aInOldValue)) {
-                aInTextField.setId("default-value");
-            } else {
-                aInTextField.setId("default-new-value");
-            }
-        } else {
-            if (aInNewValue.equals(aInOldValue)) {
-                aInTextField.setId("");
-            } else {
-                aInTextField.setId("new-value");
-            }
-        }
-    }
-
     /**
      * Listener on changes on an long text field
      * @return Listener
@@ -380,7 +394,7 @@ public class ConfigureSpeedTestDialog {
         return (obs, oldValue, newValue) -> {
             try {
                 Long.valueOf(newValue);
-                if (erroredFields.contains(aInTextField)) erroredFields.remove(aInTextField);
+                erroredFields.remove(aInTextField);
                 setTextFieldStyle(aInTextField, Preferences.getInstance().getLongValue(aInPreference, aInDefaultValue), Long.valueOf(newValue), aInDefaultValue);
                 checkChanges();
                 if (erroredFields.size() == 0 && hasConfigurationChanged) saveButton.setDisable(false);
@@ -392,49 +406,41 @@ public class ConfigureSpeedTestDialog {
         };
     }
 
-    private void setTextFieldStyle(TextField aInTextField, Long aInOldValue, Long aInNewValue, Long aInDefaultValue) {
-        if (Long.valueOf(aInNewValue).equals(aInDefaultValue)) {
-            if (aInNewValue.equals(aInOldValue)) {
-                aInTextField.setId("default-value");
-            } else {
-                aInTextField.setId("default-new-value");
-            }
-        } else {
-            if (aInNewValue.equals(aInOldValue)) {
-                aInTextField.setId("");
-            } else {
-                aInTextField.setId("new-value");
-            }
-        }
-    }
-
     /**
      * Listener on changes on an boolean text field
      * @return Listener
      */
     private ChangeListener<Boolean> booleanTextFieldChangeListener(CheckBox aInCheckBox, String aInPreference, Boolean aInDefaultValue) {
+
         return (obs, oldValue, newValue) -> {
-            if (erroredFields.contains(aInCheckBox)) erroredFields.remove(aInCheckBox);
+            erroredFields.remove(aInCheckBox);
             setCheckBoxStyle(aInCheckBox, Preferences.getInstance().getBooleanValue(aInPreference, aInDefaultValue), newValue, aInDefaultValue);
             checkChanges();
             if (erroredFields.size() == 0 && hasConfigurationChanged) saveButton.setDisable(false);
-        };
-    }
 
-    private void setCheckBoxStyle(CheckBox aInCheckBox, Boolean aInOldValue, Boolean aInNewValue, Boolean aInDefaultValue) {
-        if (aInNewValue == aInDefaultValue) {
-            if (aInNewValue == aInOldValue) {
-                aInCheckBox.setId("default-value");
-            } else {
-                aInCheckBox.setId("default-new-value");
+            if (aInCheckBox.equals(periodicTestEnabledCheckBox)) {
+                if (newValue) {
+                    periodicTestPeriodTextField.setDisable(false);
+                    periodicTestOffsetTextField.setDisable(false);
+                    periodicTestEmailEnabledCheckBox.setDisable(false);
+                    periodicTestEmailPeriodTextField.setDisable(false);
+                } else {
+                    periodicTestPeriodTextField.setDisable(true);
+                    periodicTestOffsetTextField.setDisable(true);
+                    periodicTestEmailEnabledCheckBox.setDisable(true);
+                    periodicTestEmailPeriodTextField.setDisable(true);
+
+                }
+            } else if (aInCheckBox.equals(periodicTestEmailEnabledCheckBox)) {
+                if (newValue) {
+                    periodicTestEmailPeriodTextField.setDisable(false);
+                } else {
+                    periodicTestEmailPeriodTextField.setDisable(true);
+                }
             }
-        } else {
-            if (aInNewValue == aInOldValue) {
-                aInCheckBox.setId("");
-            } else {
-                aInCheckBox.setId("new-value");
-            }
-        }
+
+        };
+
     }
 
     /**
@@ -462,19 +468,19 @@ public class ConfigureSpeedTestDialog {
 
         return (observable, oldValue, newValue) -> {
 
+            // TODO
             if (newValue.equals(serverNameFilterTextField.getText()))
-                serverNameFilter = serverNameFilterTextField.getText();
+                Preferences.getInstance().saveValue(Constants.SPEED_TEST_NAME_FILTER_PREFERENCE, newValue);
             if (newValue.equals(serverCountryFilterChoiceBox.getSelectionModel().getSelectedItem()))
-                serverCountryFilter = serverCountryFilterChoiceBox.getSelectionModel().getSelectedItem();
+                Preferences.getInstance().saveValue(Constants.SPEED_TEST_COUNTRY_FILTER_PREFERENCE, newValue);
             if (newValue.equals(serverCityFilterTextField.getText()))
-                serverCityFilter = serverCityFilterTextField.getText();
+                Preferences.getInstance().saveValue(Constants.SPEED_TEST_CITY_FILTER_PREFERENCE, newValue);
             if (newValue.equals(serverDistanceFilterTextField.getText()))
-                serverDistanceFilter = serverDistanceFilterTextField.getText();
+                Preferences.getInstance().saveValue(Constants.SPEED_TEST_DISTANCE_FILTER_PREFERENCE, newValue);
 
             aInSpeedTestServers.setPredicate(speedTestServer -> {
 
                 // If filter text is empty or filter matches the server, display it.
-                String lLowerCaseFilter = newValue.toLowerCase();
                 if ((serverNameFilterTextField.getText().isEmpty() ||
                      speedTestServer.getName().toLowerCase().contains(serverNameFilterTextField.getText().toLowerCase())) &&
                     (serverCountryFilterChoiceBox.getSelectionModel().getSelectedItem() == null ||
@@ -482,7 +488,7 @@ public class ConfigureSpeedTestDialog {
                     (serverCityFilterTextField.getText().isEmpty() ||
                      speedTestServer.getCity().toLowerCase().contains(serverCityFilterTextField.getText().toLowerCase())) &&
                     (serverDistanceFilterTextField.getText().isEmpty() ||
-                     Double.valueOf(serverDistanceFilterTextField.getText()) <=  Double.valueOf(speedTestServer.getDistance()))) {
+                     Double.valueOf(serverDistanceFilterTextField.getText()) >=  Double.valueOf(speedTestServer.getDistance()))) {
                     return true;
                 }
                 return false; // Does not match.
@@ -551,13 +557,101 @@ public class ConfigureSpeedTestDialog {
 
     }
 
+    /**
+     * Sets integer text fields style depending on the value
+     * @param aInTextField    Text field to style
+     * @param aInInitialValue Initial value of the text field
+     * @param aInNewValue     New value of the text field
+     * @param aInDefaultValue Default value of the text field
+     */
+    private void setTextFieldStyle(TextField aInTextField, Integer aInInitialValue, Integer aInNewValue, Integer aInDefaultValue) {
+        if (Integer.valueOf(aInNewValue).equals(aInDefaultValue)) {
+            if (aInNewValue.equals(aInInitialValue)) {
+                aInTextField.setId("default-value");
+            } else {
+                aInTextField.setId("default-new-value");
+            }
+        } else {
+            if (aInNewValue.equals(aInInitialValue)) {
+                aInTextField.setId("");
+            } else {
+                aInTextField.setId("new-value");
+            }
+        }
+    }
+
+    /**
+     * Sets long text fields style depending on the value
+     * @param aInTextField    Text field to style
+     * @param aInInitialValue Initial value of the text field
+     * @param aInNewValue     New value of the text field
+     * @param aInDefaultValue Default value of the text field
+     */
+    private void setTextFieldStyle(TextField aInTextField, Long aInInitialValue, Long aInNewValue, Long aInDefaultValue) {
+        if (Long.valueOf(aInNewValue).equals(aInDefaultValue)) {
+            if (aInNewValue.equals(aInInitialValue)) {
+                aInTextField.setId("default-value");
+            } else {
+                aInTextField.setId("default-new-value");
+            }
+        } else {
+            if (aInNewValue.equals(aInInitialValue)) {
+                aInTextField.setId("");
+            } else {
+                aInTextField.setId("new-value");
+            }
+        }
+    }
+
+    /**
+     * Sets check boxes style depending on the value
+     * @param aInCheckBox     Check box to style
+     * @param aInInitialValue Initial value of the check box
+     * @param aInNewValue     New value of the check box
+     * @param aInDefaultValue Default value of the check box
+     */
+    private void setCheckBoxStyle(CheckBox aInCheckBox, Boolean aInInitialValue, Boolean aInNewValue, Boolean aInDefaultValue) {
+        if (aInNewValue == aInDefaultValue) {
+            if (aInNewValue == aInInitialValue) {
+                aInCheckBox.setId("default-value");
+            } else {
+                aInCheckBox.setId("default-new-value");
+            }
+        } else {
+            if (aInNewValue == aInInitialValue) {
+                aInCheckBox.setId("");
+            } else {
+                aInCheckBox.setId("new-value");
+            }
+        }
+    }
+
+    /**
+     * Set style of all controls
+     */
     private void setStyles() {
         setTextFieldStyle(socketTimeoutTextField, Integer.valueOf(socketTimeoutTextField.getText()), Integer.valueOf(socketTimeoutTextField.getText()),
                 Constants.DEFAULT_SPEED_TEST_SOCKET_TIMEOUT);
         setTextFieldStyle(downloadSetupTimeTextField, Long.valueOf(downloadSetupTimeTextField.getText()), Long.valueOf(downloadSetupTimeTextField.getText()),
                 Constants.DEFAULT_SPEED_TEST_DOWNLOAD_SETUP_TIME);
+        setTextFieldStyle(uploadSetupTimeTextField, Long.valueOf(uploadSetupTimeTextField.getText()), Long.valueOf(uploadSetupTimeTextField.getText()),
+                          Constants.DEFAULT_SPEED_TEST_UPLOAD_SETUP_TIME);
+        setTextFieldStyle(uploadFileSizeTextField, Integer.valueOf(uploadFileSizeTextField.getText()), Integer.valueOf(uploadFileSizeTextField.getText()),
+                          Constants.DEFAULT_SPEED_TEST_UPLOAD_FILE_SIZE);
+        setTextFieldStyle(repeatDurationTextField, Integer.valueOf(repeatDurationTextField.getText()), Integer.valueOf(repeatDurationTextField.getText()),
+                          Constants.DEFAULT_SPEED_TEST_REPEAT_DURATION);
+        setTextFieldStyle(reportIntervalTextField, Integer.valueOf(reportIntervalTextField.getText()), Integer.valueOf(reportIntervalTextField.getText()),
+                          Constants.DEFAULT_SPEED_TEST_REPORT_INTERVAL);
         setCheckBoxStyle(periodicTestEnabledCheckBox, periodicTestEnabledCheckBox.isSelected(), periodicTestEnabledCheckBox.isSelected(),
                 Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED);
+        setTextFieldStyle(periodicTestPeriodTextField, Integer.valueOf(periodicTestPeriodTextField.getText()), Integer.valueOf(periodicTestPeriodTextField.getText()),
+                          Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD);
+        setTextFieldStyle(periodicTestOffsetTextField, Integer.valueOf(periodicTestOffsetTextField.getText()), Integer.valueOf(periodicTestOffsetTextField.getText()),
+                          Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET);
+        setCheckBoxStyle(periodicTestEmailEnabledCheckBox, periodicTestEmailEnabledCheckBox.isSelected(), periodicTestEmailEnabledCheckBox.isSelected(),
+                         Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED);
+        setTextFieldStyle(periodicTestEmailPeriodTextField, Integer.valueOf(periodicTestEmailPeriodTextField.getText()), Integer.valueOf(periodicTestEmailPeriodTextField.getText()),
+                          Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD);
     }
 
     // FXML
@@ -591,19 +685,32 @@ public class ConfigureSpeedTestDialog {
      * Saves configuration and exits dialog box
      */
     @FXML private  void save() {
-        // TODO add listeners on values and table and activate button only if changes
+
         SpeedTestServer lSpeedTestServer = serversTableView.getSelectionModel().getSelectedItem();
         if (lSpeedTestServer != null) {
             Preferences.getInstance().saveValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE, lSpeedTestServer.getName());
             Preferences.getInstance().saveValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE, lSpeedTestServer.getUrl());
-            Cat.getInstance().getController().reloadSpeedTestConfiguration();
         }
         Preferences.getInstance().saveValue(Constants.SPEED_TEST_SOCKET_TIMEOUT_PREFERENCE, socketTimeoutTextField.getText());
         Preferences.getInstance().saveValue(Constants.SPEED_TEST_DOWNLOAD_SETUP_TIME_PREFERENCE, downloadSetupTimeTextField.getText());
+        Preferences.getInstance().saveValue(Constants.SPEED_TEST_UPLOAD_SETUP_TIME_PREFERENCE, uploadSetupTimeTextField.getText());
+        Preferences.getInstance().saveValue(Constants.SPEED_TEST_UPLOAD_FILE_SIZE_PREFERENCE, uploadFileSizeTextField.getText());
+        Preferences.getInstance().saveValue(Constants.SPEED_TEST_REPEAT_DURATION_PREFERENCE, repeatDurationTextField.getText());
+        Preferences.getInstance().saveValue(Constants.SPEED_TEST_REPORT_INTERVAL_PREFERENCE, reportIntervalTextField.getText());
         Preferences.getInstance().saveValue(Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, periodicTestEnabledCheckBox.isSelected());
+        Preferences.getInstance().saveValue(Constants.SPEED_TEST_PERIODIC_TEST_PERIOD_PREFERENCE, periodicTestPeriodTextField.getText());
+        Preferences.getInstance().saveValue(Constants.SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE, periodicTestOffsetTextField.getText());
+        Preferences.getInstance().saveValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, periodicTestEmailEnabledCheckBox.isSelected());
+        Preferences.getInstance().saveValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, periodicTestEmailPeriodTextField.getText());
+
         setStyles();
+
+        Cat.getInstance().getController().reloadSpeedTestConfiguration();
+        GlobalMonitoring.reloadSpeedTestConfiguration();
+
         hasConfigurationChanged = false;
         saveButton.setDisable(true);
+
     }
 
     /**
@@ -652,10 +759,10 @@ public class ConfigureSpeedTestDialog {
         // Retrieve current url
         String lCurrentUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE);
 
-        if (serverNameFilter != null) serverNameFilterTextField.setText(serverNameFilter);
-        if (serverCountryFilter != null) serverCountryFilterChoiceBox.getSelectionModel().select(serverCountryFilter);
-        if (serverCityFilter != null) serverCityFilterTextField.setText(serverCityFilter);
-        if (serverDistanceFilter != null) serverDistanceFilterTextField.setText(serverDistanceFilter);
+        serverNameFilterTextField.setText(Preferences.getInstance().getValue(Constants.SPEED_TEST_NAME_FILTER_PREFERENCE, ""));
+        serverCountryFilterChoiceBox.getSelectionModel().select(Preferences.getInstance().getValue(Constants.SPEED_TEST_COUNTRY_FILTER_PREFERENCE, ""));
+        serverCityFilterTextField.setText(Preferences.getInstance().getValue(Constants.SPEED_TEST_CITY_FILTER_PREFERENCE, ""));
+        serverDistanceFilterTextField.setText(Preferences.getInstance().getValue(Constants.SPEED_TEST_DISTANCE_FILTER_PREFERENCE, ""));
 
         // Select it in the table view if it exists
         for (SpeedTestServer lSpeedTestServer: sortedSpeedTestServers) {
@@ -693,6 +800,23 @@ public class ConfigureSpeedTestDialog {
                 Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED));
         periodicTestEmailPeriodTextField.setText(
                 Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD).toString());
+
+        if (periodicTestEnabledCheckBox.isSelected()) {
+            periodicTestPeriodTextField.setDisable(false);
+            periodicTestOffsetTextField.setDisable(false);
+            periodicTestEmailEnabledCheckBox.setDisable(false);
+            if (periodicTestEmailEnabledCheckBox.isSelected()) {
+                periodicTestEmailPeriodTextField.setDisable(false);
+            } else {
+                periodicTestEmailPeriodTextField.setDisable(true);
+            }
+        } else {
+            periodicTestPeriodTextField.setDisable(true);
+            periodicTestOffsetTextField.setDisable(true);
+            periodicTestEmailEnabledCheckBox.setDisable(true);
+            periodicTestEmailPeriodTextField.setDisable(true);
+
+        }
 
     }
 

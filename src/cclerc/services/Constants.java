@@ -109,6 +109,10 @@ public class Constants {
 
     // Speed test preferences
     public static final String SPEED_TEST_GET_SERVERS_URL = "http://c.speedtest.net/speedtest-servers-static.php";
+    public static final String SPEED_TEST_NAME_FILTER_PREFERENCE = "speedTest.filter.name";
+    public static final String SPEED_TEST_COUNTRY_FILTER_PREFERENCE = "speedTest.filter.country";
+    public static final String SPEED_TEST_CITY_FILTER_PREFERENCE = "speedTest.filter.city";
+    public static final String SPEED_TEST_DISTANCE_FILTER_PREFERENCE = "speedTest.filter.distance";
     public static final String SPEED_TEST_SERVER_NAME_PREFERENCE = "speedTest.server";
     public static final String SPEED_TEST_SERVER_URL_PREFERENCE = "speedTest.url";
     public static final String SPEED_TEST_SOCKET_TIMEOUT_PREFERENCE = "speedTest.socketTimeout";

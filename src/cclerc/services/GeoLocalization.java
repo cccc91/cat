@@ -3,6 +3,7 @@ package cclerc.services;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.model.CityResponse;
 
+import javax.rmi.CORBA.Util;
 import java.io.File;
 import java.net.InetAddress;
 
@@ -58,6 +59,32 @@ public class GeoLocalization {
         } else {
             System.out.println("No localization found for local ip");
         }
+
+    }
+
+    public Double computeDistanceToLocal(Double aInLatitudePoint, Double aInLongitudePoint) {
+        if (cityResponse != null && cityResponse.getLocation() != null && cityResponse.getLocation().getLatitude() != null && cityResponse.getLocation().getLongitude() != null) {
+            return computeDistance(
+                    aInLatitudePoint, aInLongitudePoint, Double.valueOf(cityResponse.getLocation().getLatitude()), Double.valueOf(cityResponse.getLocation().getLongitude()));
+        } else {
+            return 0d;
+        }
+    }
+
+    public Double computeDistance(Double aInLatitudePoint1, Double aInLongitudePoint1, Double aInLatitudePoint2, Double aInLongitudePoint2) {
+
+        final Double lRadius = 6371d;
+
+        Double lLatitudeAngle = Math.toRadians(aInLatitudePoint2 - aInLatitudePoint1);
+        Double lLongitudeAngle = Math.toRadians(aInLongitudePoint2 - aInLongitudePoint1);
+        Double a = (Math.sin(lLatitudeAngle / 2) * Math.sin(lLatitudeAngle / 2) +
+             Math.cos(Math.toRadians(aInLatitudePoint1)) *
+             Math.cos(Math.toRadians(aInLatitudePoint2)) * Math.sin(lLongitudeAngle / 2) *
+             Math.sin(lLongitudeAngle / 2));
+        Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        Double d = lRadius * c;
+
+        return Utilities.round(d, 1);
 
     }
 
