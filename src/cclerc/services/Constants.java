@@ -121,6 +121,7 @@ public class Constants {
     public static final String SPEED_TEST_REPORT_INTERVAL_PREFERENCE = "speedTest.reportInterval";
     public static final String SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE = "speedTest.emailReportEnabled";
     public static final String SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE = "speedTest.emailReportPeriod";
+    public static final String SPEED_TEST_UPLOAD_FILE_SIZE_PREFERENCE = "speedTest.uploadFileSize";
 
     public static final Integer DEFAULT_SPEED_TEST_SOCKET_TIMEOUT = 10000;
     public static final Long DEFAULT_SPEED_TEST_DOWNLOAD_SETUP_TIME = 100L;

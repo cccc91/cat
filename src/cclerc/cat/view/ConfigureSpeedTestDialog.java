@@ -41,6 +41,7 @@ public class ConfigureSpeedTestDialog {
     private SpeedTestServer selectedSpeedTestServer;
     private SortedList<SpeedTestServer> sortedSpeedTestServers;
     private boolean hasConfigurationChanged = false;
+    private List<Object> erroredFields = new ArrayList<>();
 
     private static ObservableList<SpeedTestServer> speedTestServers = FXCollections.observableArrayList();
     private static boolean firstDisplay = true;
@@ -68,17 +69,17 @@ public class ConfigureSpeedTestDialog {
     @FXML Button refreshButton;
     @FXML Button saveButton;
     @FXML Button closeButton;
-    @FXML TextField socketTimeout;
-    @FXML TextField downloadSetupTime;
-    @FXML TextField uploadSetupTime;
-    @FXML TextField uploadFileSize;
-    @FXML TextField repeatDuration;
-    @FXML TextField reportInterval;
-    @FXML TextField periodicTestEnabled;
-    @FXML TextField periodicTestPeriod;
-    @FXML TextField periodicTestOffset;
-    @FXML TextField periodicTestEmailEnabled;
-    @FXML TextField periodicTestEmailPeriod;
+    @FXML TextField socketTimeoutTextField;
+    @FXML TextField downloadSetupTimeTextField;
+    @FXML TextField uploadSetupTimeTextField;
+    @FXML TextField uploadFileSizeTextField;
+    @FXML TextField repeatDurationTextField;
+    @FXML TextField reportIntervalTextField;
+    @FXML CheckBox periodicTestEnabledCheckBox;
+    @FXML TextField periodicTestPeriodTextField;
+    @FXML TextField periodicTestOffsetTextField;
+    @FXML CheckBox periodicTestEmailEnabledCheckBox;
+    @FXML TextField periodicTestEmailPeriodTextField;
 
     /**
      * Creates instance of ConfigureSpeedTestDialog controller
@@ -196,7 +197,10 @@ public class ConfigureSpeedTestDialog {
 
     }
 
-    public void addTooltips() {
+    /**
+     * Creates tooltips
+     */
+    private void addTooltips() {
 
         String lTooltipText;
         Tooltip lTooltip;
@@ -232,6 +236,50 @@ public class ConfigureSpeedTestDialog {
         lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.close");
         lTooltip = new Tooltip(lTooltipText);
         Tooltip.install(closeButton, lTooltip);
+
+        lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.socketTimeout");
+        lTooltip = new Tooltip(lTooltipText);
+        Tooltip.install(socketTimeoutTextField, lTooltip);
+
+        lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.downloadSetupTime");
+        lTooltip = new Tooltip(lTooltipText);
+        Tooltip.install(downloadSetupTimeTextField, lTooltip);
+
+        lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.uploadSetupTime");
+        lTooltip = new Tooltip(lTooltipText);
+        Tooltip.install(uploadSetupTimeTextField, lTooltip);
+
+        lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.uploadFileSize");
+        lTooltip = new Tooltip(lTooltipText);
+        Tooltip.install(uploadFileSizeTextField, lTooltip);
+
+        lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.repeatDuration");
+        lTooltip = new Tooltip(lTooltipText);
+        Tooltip.install(repeatDurationTextField, lTooltip);
+
+        lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.reportInterval");
+        lTooltip = new Tooltip(lTooltipText);
+        Tooltip.install(reportIntervalTextField, lTooltip);
+
+        lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.periodicTest.enabled");
+        lTooltip = new Tooltip(lTooltipText);
+        Tooltip.install(periodicTestEnabledCheckBox, lTooltip);
+
+        lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.periodicTest.period");
+        lTooltip = new Tooltip(lTooltipText);
+        Tooltip.install(periodicTestPeriodTextField, lTooltip);
+
+        lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.periodicTest.offset");
+        lTooltip = new Tooltip(lTooltipText);
+        Tooltip.install(periodicTestOffsetTextField, lTooltip);
+
+        lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.periodicTest.email.enabled");
+        lTooltip = new Tooltip(lTooltipText);
+        Tooltip.install(periodicTestEmailEnabledCheckBox, lTooltip);
+
+        lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.periodicTest.email.period");
+        lTooltip = new Tooltip(lTooltipText);
+        Tooltip.install(periodicTestEmailPeriodTextField, lTooltip);
 
     }
 
@@ -280,6 +328,113 @@ public class ConfigureSpeedTestDialog {
                 checkChanges();
             }
         });
+        socketTimeoutTextField.textProperty().addListener(integerTextFieldChangeListener(
+                socketTimeoutTextField, Constants.SPEED_TEST_SOCKET_TIMEOUT_PREFERENCE, Constants.DEFAULT_SPEED_TEST_SOCKET_TIMEOUT));
+        downloadSetupTimeTextField.textProperty().addListener(longTextFieldChangeListener(
+                downloadSetupTimeTextField, Constants.SPEED_TEST_DOWNLOAD_SETUP_TIME_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DOWNLOAD_SETUP_TIME));
+        periodicTestEnabledCheckBox.selectedProperty().addListener(booleanTextFieldChangeListener(
+                periodicTestEnabledCheckBox, Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED));
+    }
+
+    /**
+     * Listener on changes on an integer text field
+     * @return Listener
+     */
+    private ChangeListener<String> integerTextFieldChangeListener(TextField aInTextField, String aInPreference, Integer aInDefaultValue) {
+        return (obs, oldValue, newValue) -> {
+            try {
+                Integer.valueOf(newValue);
+                if (erroredFields.contains(aInTextField)) erroredFields.remove(aInTextField);
+                setTextFieldStyle(aInTextField, Preferences.getInstance().getIntegerValue(aInPreference, aInDefaultValue), Integer.valueOf(newValue), aInDefaultValue);
+                checkChanges();
+                if (erroredFields.size() == 0 && hasConfigurationChanged) saveButton.setDisable(false);
+            } catch (NumberFormatException e) {
+                aInTextField.setId("bad-value");
+                erroredFields.add(aInTextField);
+                saveButton.setDisable(true);
+            }
+        };
+    }
+
+    private void setTextFieldStyle(TextField aInTextField, Integer aInOldValue, Integer aInNewValue, Integer aInDefaultValue) {
+        if (Integer.valueOf(aInNewValue).equals(aInDefaultValue)) {
+            if (aInNewValue.equals(aInOldValue)) {
+                aInTextField.setId("default-value");
+            } else {
+                aInTextField.setId("default-new-value");
+            }
+        } else {
+            if (aInNewValue.equals(aInOldValue)) {
+                aInTextField.setId("");
+            } else {
+                aInTextField.setId("new-value");
+            }
+        }
+    }
+
+    /**
+     * Listener on changes on an long text field
+     * @return Listener
+     */
+    private ChangeListener<String> longTextFieldChangeListener(TextField aInTextField, String aInPreference, Long aInDefaultValue) {
+        return (obs, oldValue, newValue) -> {
+            try {
+                Long.valueOf(newValue);
+                if (erroredFields.contains(aInTextField)) erroredFields.remove(aInTextField);
+                setTextFieldStyle(aInTextField, Preferences.getInstance().getLongValue(aInPreference, aInDefaultValue), Long.valueOf(newValue), aInDefaultValue);
+                checkChanges();
+                if (erroredFields.size() == 0 && hasConfigurationChanged) saveButton.setDisable(false);
+            } catch (NumberFormatException e) {
+                aInTextField.setId("bad-value");
+                erroredFields.add(aInTextField);
+                saveButton.setDisable(true);
+            }
+        };
+    }
+
+    private void setTextFieldStyle(TextField aInTextField, Long aInOldValue, Long aInNewValue, Long aInDefaultValue) {
+        if (Long.valueOf(aInNewValue).equals(aInDefaultValue)) {
+            if (aInNewValue.equals(aInOldValue)) {
+                aInTextField.setId("default-value");
+            } else {
+                aInTextField.setId("default-new-value");
+            }
+        } else {
+            if (aInNewValue.equals(aInOldValue)) {
+                aInTextField.setId("");
+            } else {
+                aInTextField.setId("new-value");
+            }
+        }
+    }
+
+    /**
+     * Listener on changes on an boolean text field
+     * @return Listener
+     */
+    private ChangeListener<Boolean> booleanTextFieldChangeListener(CheckBox aInCheckBox, String aInPreference, Boolean aInDefaultValue) {
+        return (obs, oldValue, newValue) -> {
+            if (erroredFields.contains(aInCheckBox)) erroredFields.remove(aInCheckBox);
+            setCheckBoxStyle(aInCheckBox, Preferences.getInstance().getBooleanValue(aInPreference, aInDefaultValue), newValue, aInDefaultValue);
+            checkChanges();
+            if (erroredFields.size() == 0 && hasConfigurationChanged) saveButton.setDisable(false);
+        };
+    }
+
+    private void setCheckBoxStyle(CheckBox aInCheckBox, Boolean aInOldValue, Boolean aInNewValue, Boolean aInDefaultValue) {
+        if (aInNewValue == aInDefaultValue) {
+            if (aInNewValue == aInOldValue) {
+                aInCheckBox.setId("default-value");
+            } else {
+                aInCheckBox.setId("default-new-value");
+            }
+        } else {
+            if (aInNewValue == aInOldValue) {
+                aInCheckBox.setId("");
+            } else {
+                aInCheckBox.setId("new-value");
+            }
+        }
     }
 
     /**
@@ -396,6 +551,14 @@ public class ConfigureSpeedTestDialog {
 
     }
 
+    private void setStyles() {
+        setTextFieldStyle(socketTimeoutTextField, Integer.valueOf(socketTimeoutTextField.getText()), Integer.valueOf(socketTimeoutTextField.getText()),
+                Constants.DEFAULT_SPEED_TEST_SOCKET_TIMEOUT);
+        setTextFieldStyle(downloadSetupTimeTextField, Long.valueOf(downloadSetupTimeTextField.getText()), Long.valueOf(downloadSetupTimeTextField.getText()),
+                Constants.DEFAULT_SPEED_TEST_DOWNLOAD_SETUP_TIME);
+        setCheckBoxStyle(periodicTestEnabledCheckBox, periodicTestEnabledCheckBox.isSelected(), periodicTestEnabledCheckBox.isSelected(),
+                Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED);
+    }
 
     // FXML
 
@@ -435,7 +598,50 @@ public class ConfigureSpeedTestDialog {
             Preferences.getInstance().saveValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE, lSpeedTestServer.getUrl());
             Cat.getInstance().getController().reloadSpeedTestConfiguration();
         }
-        dialogStage.close();
+        Preferences.getInstance().saveValue(Constants.SPEED_TEST_SOCKET_TIMEOUT_PREFERENCE, socketTimeoutTextField.getText());
+        Preferences.getInstance().saveValue(Constants.SPEED_TEST_DOWNLOAD_SETUP_TIME_PREFERENCE, downloadSetupTimeTextField.getText());
+        Preferences.getInstance().saveValue(Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, periodicTestEnabledCheckBox.isSelected());
+        setStyles();
+        hasConfigurationChanged = false;
+        saveButton.setDisable(true);
+    }
+
+    /**
+     * Checks if configuration has changed
+     */
+    private void checkChanges() {
+        if (erroredFields.size() == 0 &&
+                serversTableView.getSelectionModel().getSelectedItem() != null &&
+                serversTableView.getSelectionModel().getSelectedItem().getName().equals(Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE)) &&
+                Integer.valueOf(socketTimeoutTextField.getText()).equals(
+                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_SOCKET_TIMEOUT_PREFERENCE, Constants.DEFAULT_SPEED_TEST_SOCKET_TIMEOUT)) &&
+                Long.valueOf(downloadSetupTimeTextField.getText()).equals(
+                        Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DOWNLOAD_SETUP_TIME_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DOWNLOAD_SETUP_TIME)) &&
+                Long.valueOf(uploadSetupTimeTextField.getText()).equals(
+                        Preferences.getInstance().getLongValue(Constants.SPEED_TEST_UPLOAD_SETUP_TIME_PREFERENCE, Constants.DEFAULT_SPEED_TEST_UPLOAD_SETUP_TIME)) &&
+                Integer.valueOf(uploadFileSizeTextField.getText()).equals(
+                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_UPLOAD_FILE_SIZE_PREFERENCE, Constants.DEFAULT_SPEED_TEST_UPLOAD_FILE_SIZE)) &&
+                Integer.valueOf(repeatDurationTextField.getText()).equals(
+                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPEAT_DURATION_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPEAT_DURATION)) &&
+                Integer.valueOf(reportIntervalTextField.getText()).equals(
+                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPORT_INTERVAL_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPORT_INTERVAL)) &&
+                periodicTestEnabledCheckBox.isSelected() ==
+                        Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED) &&
+                Integer.valueOf(periodicTestPeriodTextField.getText()).equals(
+                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_PERIODIC_TEST_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD)) &&
+                Integer.valueOf(periodicTestOffsetTextField.getText()).equals(
+                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET)) &&
+                periodicTestEmailEnabledCheckBox.isSelected() ==
+                        Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED) &&
+                Integer.valueOf(periodicTestEmailPeriodTextField.getText()).equals(
+                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD))
+                ) {
+            hasConfigurationChanged = false;
+            saveButton.setDisable(true);
+        } else {
+            hasConfigurationChanged = true;
+            saveButton.setDisable(false);
+        }
     }
 
     /**
@@ -464,6 +670,29 @@ public class ConfigureSpeedTestDialog {
             }
         }
 
+        // Initialize different fields
+        socketTimeoutTextField.setText(
+                Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_SOCKET_TIMEOUT_PREFERENCE, Constants.DEFAULT_SPEED_TEST_SOCKET_TIMEOUT).toString());
+        downloadSetupTimeTextField.setText(
+                Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DOWNLOAD_SETUP_TIME_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DOWNLOAD_SETUP_TIME).toString());
+        uploadSetupTimeTextField.setText(
+                Preferences.getInstance().getLongValue(Constants.SPEED_TEST_UPLOAD_SETUP_TIME_PREFERENCE, Constants.DEFAULT_SPEED_TEST_UPLOAD_SETUP_TIME).toString());
+        uploadFileSizeTextField.setText(
+                Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_UPLOAD_FILE_SIZE_PREFERENCE, Constants.DEFAULT_SPEED_TEST_UPLOAD_FILE_SIZE).toString());
+        repeatDurationTextField.setText(
+                Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPEAT_DURATION_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPEAT_DURATION).toString());
+        reportIntervalTextField.setText(
+                Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPORT_INTERVAL_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPORT_INTERVAL).toString());
+        periodicTestEnabledCheckBox.setSelected(
+                Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED));
+        periodicTestPeriodTextField.setText(
+                Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_PERIODIC_TEST_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD).toString());
+        periodicTestOffsetTextField.setText(
+                Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET).toString());
+        periodicTestEmailEnabledCheckBox.setSelected(
+                Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED));
+        periodicTestEmailPeriodTextField.setText(
+                Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD).toString());
 
     }
 
@@ -474,17 +703,8 @@ public class ConfigureSpeedTestDialog {
      */
     public void show() {
         prepareDisplay();
+        setStyles();
         dialogStage.showAndWait();
-    }
-
-    public void checkChanges() {
-        if (serversTableView.getSelectionModel().getSelectedItem().getName().equals(Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE))) {
-            hasConfigurationChanged = false;
-            saveButton.setDisable(true);
-        } else {
-            hasConfigurationChanged = true;
-            saveButton.setDisable(false);
-        }
     }
 
 }

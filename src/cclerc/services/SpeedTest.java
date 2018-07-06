@@ -188,7 +188,7 @@ public class SpeedTest {
                                 aInUploadUrl,
                                 Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPEAT_DURATION_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPEAT_DURATION),
                                 Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPORT_INTERVAL_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPORT_INTERVAL),
-                                Constants.DEFAULT_SPEED_TEST_UPLOAD_FILE_SIZE,
+                                Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_UPLOAD_FILE_SIZE_PREFERENCE, Constants.DEFAULT_SPEED_TEST_UPLOAD_FILE_SIZE),
                                 new IRepeatListener() {
                                     @Override
                                     public void onReport(SpeedTestReport aInReport) {

@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
@@ -16,7 +17,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cclerc.cat.view.ConfigureSpeedTestDialog">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cclerc.cat.view.ConfigureSpeedTestDialog">
     <children>
       <Label styleClass="attributeValueMain" text="%configureSpeedTestDialog.server">
          <VBox.margin>
@@ -54,9 +55,9 @@
                         <Insets bottom="10.0" />
                      </padding>
                   </Label>
-                  <GridPane maxWidth="1.7976931348623157E308" styleClass="attributesListGrid">
+                  <GridPane hgap="10.0" maxWidth="1.7976931348623157E308" styleClass="attributesListGrid">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
                     <rowConstraints>
@@ -121,9 +122,9 @@
                      <children>
                         <Label styleClass="attributeName" text="%configureSpeedTestDialog.socketTimeout" GridPane.rowIndex="1" />
                         <Label styleClass="attributeName" text="%configureSpeedTestDialog.downloadSetupTime" GridPane.rowIndex="2" />
-                        <TextField fx:id="socketTimeout" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <TextField fx:id="downloadSetupTime" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <TextField fx:id="uploadSetupTime" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <TextField fx:id="socketTimeoutTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="downloadSetupTimeTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <TextField fx:id="uploadSetupTimeTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <Label styleClass="attributeName" text="%configureSpeedTestDialog.uploadSetupTime" GridPane.rowIndex="3" />
                         <Label styleClass="attributeName" text="%configureSpeedTestDialog.uploadFileSize" GridPane.rowIndex="4" />
                         <Label styleClass="attributeName" text="%configureSpeedTestDialog.repeatDuration" GridPane.rowIndex="5" />
@@ -143,6 +144,14 @@
                               <Label styleClass="attributeValueMain" text="%configureSpeedTestDialog.periodicTest" />
                            </children>
                         </HBox>
+                        <TextField fx:id="uploadFileSizeTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <TextField fx:id="repeatDurationTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <TextField fx:id="reportIntervalTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <TextField fx:id="periodicTestPeriodTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                        <TextField fx:id="periodicTestOffsetTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                        <TextField fx:id="periodicTestEmailPeriodTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                        <CheckBox fx:id="periodicTestEnabledCheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                        <CheckBox fx:id="periodicTestEmailEnabledCheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="11" />
                      </children>
                      <BorderPane.margin>
                         <Insets left="50.0" right="50.0" />
