@@ -5,6 +5,7 @@ import fr.bmartel.speedtest.SpeedTestSocket;
 import fr.bmartel.speedtest.inter.IRepeatListener;
 import fr.bmartel.speedtest.inter.ISpeedTestListener;
 import fr.bmartel.speedtest.model.SpeedTestError;
+import fr.bmartel.speedtest.model.UploadStorageType;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -31,7 +32,7 @@ public class SpeedTest {
     /**
      * Speed test constructor
      * @param aInSpeedTestInterface Interface to be called for reporting progress, completion and error
-     * @param aInUseProxy           // TODO: use configuration
+     * @param aInUseProxy           // TODO: use configuration ?
      */
     public SpeedTest(SpeedTestInterface aInSpeedTestInterface, boolean aInUseProxy) {
 
@@ -197,7 +198,7 @@ public class SpeedTest {
                                     @Override
                                     public void onCompletion(SpeedTestReport aInReport) {
                                         processCompletionReport(aInReport);
-                                        speedTestInterface.reportFinalResult(bitRates, octetRates);
+                                         speedTestInterface.reportFinalResult(bitRates, octetRates);
                                         bitRates.clear(); octetRates.clear();
                                         speedTestInterface.reportStopTest();
                                     }

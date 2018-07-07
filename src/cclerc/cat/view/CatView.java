@@ -21,8 +21,10 @@ import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Side;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
@@ -326,10 +328,18 @@ public class CatView {
     @FXML private Slider pingLineChartHorizontalMoveSlider;
     @FXML private Slider pingLineChartHorizontalZoomSlider;
 
+    @FXML private HBox liveSpeedTestChartContainer;
+
     // Ping chart
     private NumberAxis pingLineChartXAxis = new NumberAxis();
     private NumberAxis pingLineChartYAxis = new NumberAxis();
     private LineChartWithMarkers<Number,Number> pingLineChart = new LineChartWithMarkers<>(pingLineChartXAxis, pingLineChartYAxis);
+
+    // Speed test live chart
+    private NumberAxis liveSpeedTestChartXAxis = new NumberAxis();
+    private NumberAxis liveSpeedTestChartYAxis = new NumberAxis();
+    private LineChart<Number,Number> liveSpeedTestChart = new LineChart<>(liveSpeedTestChartXAxis, liveSpeedTestChartYAxis);
+
 
     @FXML private void initialize() {
 
@@ -435,8 +445,6 @@ public class CatView {
         if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE))
             Tooltip.install(clearConsoleButtonImageView, lClearConsoleTooltip);
 
-// TODO        configureSpeedTestDialogController = ConfigureSpeedTestDialog.getInstance(Cat.getInstance().getMainStage());
-
        // Initialize ping chart
         pingLineFilterCheckBoxes.add(pingLineInterface1FilterCheckBox);
         pingLineInterface1FilterCheckBox.setVisible(false);
@@ -493,6 +501,23 @@ public class CatView {
             pingLineChartVerticalZoomSlider.setTooltip(lVerticalZoomSliderTooltip);
         }
         checkPingChartState();
+
+        // Initialize live speed test chart
+        liveSpeedTestChart.getYAxis().setLabel(Display.getViewResourceBundle().getString("catView.liveSpeedTestChartView.lineChart.yAxis.title"));
+        liveSpeedTestChart.setAnimated(false);
+        HBox.setHgrow(liveSpeedTestChart, Priority.ALWAYS);
+        //liveSpeedTestChart.setMaxHeight(liveSpeedTestChartContainer.getMaxHeight() - 10d);
+        liveSpeedTestChart.setLegendSide(Side.LEFT);
+        liveSpeedTestChartContainer.getChildren().add(liveSpeedTestChart);
+        liveSpeedTestChartXAxis.setAutoRanging(false);
+        liveSpeedTestChartXAxis.setUpperBound(100);
+        liveSpeedTestChartXAxis.setTickMarkVisible(false);
+        liveSpeedTestChartXAxis.setTickLabelsVisible(false);
+        liveSpeedTestChartXAxis.setMinorTickVisible(false);
+        liveSpeedTestChart.setVerticalGridLinesVisible(false);
+        liveSpeedTestChartYAxis.setAutoRanging(true);
+        liveSpeedTestChartYAxis.setMinorTickVisible(false);
+
 
         reloadSpeedTestConfiguration();
         switchStopStartSpeedTestButton();

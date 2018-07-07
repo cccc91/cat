@@ -113,6 +113,7 @@ public class SpeedTestFactory {
                         aInBitRates.get(1).values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + aInBitRates.get(1).keySet().iterator().next()));
                 Cat.getInstance().getController().printConsole(new Message(lMessage, EnumTypes.MessageLevel.INFO));
                 Display.getLogger().info(lMessage);
+                buildSpeedTest(aInType);
             }
 
             @Override
