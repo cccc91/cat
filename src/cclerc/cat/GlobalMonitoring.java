@@ -22,6 +22,11 @@ public class GlobalMonitoring {
     private static Long nextSpeedTestExecutionTime;
     private static String speedTestUploadUrl;
     private static String speedTestDownloadUrl;
+    private static SpeedTest speedTest;
+
+    public static SpeedTest getSpeedTest() {
+        return speedTest;
+    }
 
     public static void reloadSpeedTestConfiguration() {
 
@@ -280,14 +285,15 @@ public class GlobalMonitoring {
                 // Run speed test if needed
                 if (speedTestEnabled && speedTestDownloadUrl != null && speedTestUploadUrl != null && lNow >= nextSpeedTestExecutionTime) {
                     nextSpeedTestExecutionTime = Utilities.nextExecutionTime(nextSpeedTestExecutionTime, speedTestPeriod, speedTestOffset);
-                    if (SpeedTestFactory.getInstance().getSpeedTest("onRequest").isTestRunning() || SpeedTestFactory.getInstance().getSpeedTest("periodic").isTestRunning()) {
-                        Cat.getInstance().getController().replaceLastSpeedTestMessage(
+                    if ((Cat.getInstance().getController().getSpeedTest() != null && Cat.getInstance().getController().getSpeedTest().isTestRunning()) ||
+                        (speedTest != null && speedTest.isTestRunning())) {
+                        Cat.getInstance().getController().printSpeedTest(
                                 new Message(String.format(
                                         Display.getViewResourceBundle().getString("speedTest.running"),
                                         LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(new Date(nextSpeedTestExecutionTime))), EnumTypes.MessageLevel.WARNING));
-                        SpeedTestFactory.getInstance().resetFirstReports();
                     } else {
-                        SpeedTestFactory.getInstance().getSpeedTest("periodic").start(speedTestDownloadUrl, speedTestUploadUrl);
+                        speedTest = SpeedTestFactory.getInstance("periodic");
+                        speedTest.start(speedTestDownloadUrl, speedTestUploadUrl);
                     }
                 }
 

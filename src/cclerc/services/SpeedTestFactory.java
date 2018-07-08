@@ -12,36 +12,22 @@ import java.util.Map;
 
 public class SpeedTestFactory {
 
-    private Map<String, SpeedTest> speedTests = new HashMap<>();
-
     private static SpeedTestFactory speedTestFactoryInstance = new SpeedTestFactory();
 
     // CONSTRUCTOR
 
     private SpeedTestFactory() {
-        buildSpeedTest("periodic");
-        buildSpeedTest("onRequest");
     }
 
     // SINGLETON
 
     /**
      * Returns the singleton
+     * @param aInType Type of speed test
      * @return SpeedTestFactory singleton instance
      */
-    public static SpeedTestFactory getInstance() {
-        return speedTestFactoryInstance;
-    }
-
-    // PRIVATE
-
-    /**
-     * Builds periodic speed test
-     * @param aInType Type of speed test (onRequest or periodic)
-     */
-    private void buildSpeedTest(String aInType) {
-
-        speedTests.put(aInType, new SpeedTest(new SpeedTestInterface() {
+    public static SpeedTest getInstance(String aInType) {
+        return new SpeedTest(new SpeedTestInterface() {
 
             @Override
             public void reportStartTest() {
@@ -50,6 +36,7 @@ public class SpeedTestFactory {
                         new Message(
                                 String.format(Display.getViewResourceBundle().getString("speedTest.start"),
                                               Display.getViewResourceBundle().getString("speedtest.type." + aInType).toUpperCase()), EnumTypes.MessageLevel.INFO));
+                Cat.getInstance().getController().printSpeedTest(new Message("", EnumTypes.MessageLevel.INFO));
             }
 
             @Override
@@ -71,7 +58,6 @@ public class SpeedTestFactory {
                         new Message(
                                 String.format(Display.getViewResourceBundle().getString("speedTest.end"),
                                               Display.getViewResourceBundle().getString("speedtest.type." + aInType).toUpperCase()), EnumTypes.MessageLevel.INFO));
-                buildSpeedTest(aInType);
             }
 
             @Override
@@ -83,11 +69,7 @@ public class SpeedTestFactory {
                         aInProgress,
                         aInOctetRate.values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + aInOctetRate.keySet().iterator().next()),
                         aInBitRate.values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + aInBitRate.keySet().iterator().next()));
-                if (!speedTests.get(aInType).isFirstReport()) {
                     Cat.getInstance().getController().replaceLastSpeedTestMessage(new Message(lMessage, EnumTypes.MessageLevel.INFO));
-                } else {
-                    Cat.getInstance().getController().printSpeedTest(new Message(lMessage, EnumTypes.MessageLevel.INFO));
-                }
             }
 
             @Override
@@ -99,6 +81,7 @@ public class SpeedTestFactory {
                         aInOctetRate.values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + aInOctetRate.keySet().iterator().next()),
                         aInBitRate.values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + aInBitRate.keySet().iterator().next()));
                 Cat.getInstance().getController().replaceLastSpeedTestMessage(new Message(lMessage, EnumTypes.MessageLevel.INFO));
+                if (aInTransferMode.equals("download")) Cat.getInstance().getController().printSpeedTest(new Message("", EnumTypes.MessageLevel.INFO));
             }
 
             @Override
@@ -113,7 +96,6 @@ public class SpeedTestFactory {
                         aInBitRates.get(1).values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + aInBitRates.get(1).keySet().iterator().next()));
                 Cat.getInstance().getController().printConsole(new Message(lMessage, EnumTypes.MessageLevel.INFO));
                 Display.getLogger().info(lMessage);
-                buildSpeedTest(aInType);
             }
 
             @Override
@@ -124,7 +106,6 @@ public class SpeedTestFactory {
                                                              aInSpeedTestError + " - " + aInErrorMessage), EnumTypes.MessageLevel.ERROR);
                 Cat.getInstance().getController().printConsole(lMessage);
                 Cat.getInstance().getController().printSpeedTest(lMessage);
-                buildSpeedTest(aInType);
             }
 
             @Override
@@ -133,33 +114,8 @@ public class SpeedTestFactory {
             }
 
         },  (Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkConfiguration(EnumTypes.AddressType.WAN) == null) ? true :
-            Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkConfiguration(EnumTypes.AddressType.WAN).getUseProxy()));
+            Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkConfiguration(EnumTypes.AddressType.WAN).getUseProxy());
     }
 
-    // PUBLIC
-
-    /**
-     * Gets speed test of the required type
-     * @param aInType Type of speed test (onRequest or periodic)
-     * @return Speed test
-     */
-    public SpeedTest getSpeedTest(String aInType) {
-        return speedTests.get(aInType);
-    }
-
-    /**
-     * Stops all on-going speed tests
-     */
-    public void stopOnGoingSpeedTest() {
-        for (SpeedTest lSpeedTest: speedTests.values()) {
-            if (lSpeedTest.isTestRunning()) lSpeedTest.stop();
-        }
-    }
-
-    public void resetFirstReports() {
-        for (SpeedTest lSpeedTest: speedTests.values()) {
-            lSpeedTest.resetFirstReport();
-        }
-    }
 
 }

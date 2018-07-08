@@ -226,6 +226,7 @@ public class CatView {
     private long pingLineMaxTime = MAX_DISPLAYED_PING_DURATION;
 
     // Speed test
+    private SpeedTest speedTest;
     private boolean speedTestStartState = false;
     private String speedTestServer;
     private String speedTestDownloadUrl;
@@ -559,12 +560,14 @@ public class CatView {
 
         if (speedTestStartState) {
             if (speedTestDownloadUrl != null && speedTestUploadUrl != null) {
-                SpeedTestFactory.getInstance().getSpeedTest("onRequest").start(speedTestDownloadUrl, speedTestUploadUrl);
+                speedTest = SpeedTestFactory.getInstance("onRequest");
+                speedTest.start(speedTestDownloadUrl, speedTestUploadUrl);
             }
 
         } else {
             // Stops current speed test (only one is potentially on-going, nothing is done if trying to stop a not on-going test)
-            SpeedTestFactory.getInstance().stopOnGoingSpeedTest();
+            speedTest.stop();
+            if (GlobalMonitoring.getSpeedTest() != null) GlobalMonitoring.getSpeedTest().stop();
         }
     }
 
@@ -1266,6 +1269,14 @@ public class CatView {
     };
 
     // GETTERS
+
+    /**
+     * Gets the speed test instance
+     * @return Speed test instance
+     */
+    public SpeedTest getSpeedTest() {
+        return speedTest;
+    }
 
     /**
      * Gets the grid pane for displaying the summaries by interface type (eth, wifi)

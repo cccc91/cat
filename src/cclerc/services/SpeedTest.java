@@ -22,7 +22,6 @@ public class SpeedTest {
     private SpeedTestSocket speedTestSocket = new SpeedTestSocket();
     private SpeedTestInterface speedTestInterface;
     private boolean interrupted;
-    private boolean firstReport = true;
     private BigDecimal bitRate = new BigDecimal(0);
     private BigDecimal octetRate = new BigDecimal(0);
     private List<Map<Integer, BigDecimal>> bitRates = new ArrayList<>();
@@ -66,7 +65,6 @@ public class SpeedTest {
                 if (!interrupted) {
                     aInSpeedTestInterface.reportError(speedTestSocket.getSpeedTestMode().toString().toLowerCase(), aInSpeedTestError, aInErrorMessage);
                     testRunning = false;
-                    firstReport = true;
                     speedTestSocket.forceStopTask();
                     speedTestSocket.closeSocket();
                     speedTestInterface.reportStopTest();
@@ -95,7 +93,6 @@ public class SpeedTest {
         bitRate = bitRate.add(aInReport.getTransferRateBit());
         octetRate = octetRate.add(aInReport.getTransferRateOctet());
         speedTestInterface.reportProgress(aInReport.getSpeedTestMode().toString().toLowerCase(), aInReport.getProgressPercent(), lBitRate, lOctetRate);
-        firstReport = false;
 
     }
 
@@ -114,7 +111,6 @@ public class SpeedTest {
         speedTestInterface.reportResult(aInReport.getSpeedTestMode().toString().toLowerCase(), lBitRate, lOctetRate);
         speedTestInterface.storeResult(aInReport);
         testRunning = false;
-        firstReport = true;
 
     }
 
@@ -133,24 +129,7 @@ public class SpeedTest {
 
     }
 
-    // GETTERS
-
-    /**
-     * Indicates if the report of the progress if the first one
-     * @return true if the progress report is the first one, false otherwise
-     */
-    public boolean isFirstReport() {
-        return firstReport;
-    }
-
     // PUBLIC METHODS
-
-    /**
-     * Resets first report
-     */
-    public void resetFirstReport() {
-        firstReport = true;
-    }
 
     /**
      * Start a speed test task, first download then upload speed test
@@ -198,7 +177,7 @@ public class SpeedTest {
                                     @Override
                                     public void onCompletion(SpeedTestReport aInReport) {
                                         processCompletionReport(aInReport);
-                                         speedTestInterface.reportFinalResult(bitRates, octetRates);
+                                        speedTestInterface.reportFinalResult(bitRates, octetRates);
                                         bitRates.clear(); octetRates.clear();
                                         speedTestInterface.reportStopTest();
                                     }

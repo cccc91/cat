@@ -443,7 +443,7 @@
                            <content>
                               <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                  <children>
-                                    <GridPane hgap="10.0">
+                                    <GridPane hgap="10.0" VBox.vgrow="NEVER">
                                        <columnConstraints>
                                           <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
                                           <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
@@ -470,7 +470,7 @@
                                           <Insets left="10.0" right="10.0" />
                                        </VBox.margin>
                                     </GridPane>
-                                    <ScrollPane fx:id="speedTestScrollPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                    <ScrollPane fx:id="speedTestScrollPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="SOMETIMES">
                                        <content>
                                           <TextFlow fx:id="speedTestTextFlow" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                                        </content>
