@@ -560,7 +560,7 @@ public class CatView {
 
         if (speedTestStartState) {
             if (speedTestDownloadUrl != null && speedTestUploadUrl != null) {
-                speedTest = SpeedTestFactory.getInstance("onRequest");
+                if (speedTest == null || speedTest.isInterrupted()) speedTest = SpeedTestFactory.getInstance("onRequest");
                 speedTest.start(speedTestDownloadUrl, speedTestUploadUrl);
             }
 
@@ -569,53 +569,6 @@ public class CatView {
             speedTest.stop();
             if (GlobalMonitoring.getSpeedTest() != null) GlobalMonitoring.getSpeedTest().stop();
         }
-    }
-
-    /**
-     * Builds the speed test servers list
-     */
-    public void buildSpeedTestServersList() {
-
-        try {
-
-            speedTestServers = FXCollections.observableArrayList();
-            Proxy lProxy = Proxy.NO_PROXY;
-            if ((Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkConfiguration(EnumTypes.AddressType.WAN) == null) ||
-                Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkConfiguration(EnumTypes.AddressType.WAN).getUseProxy()) {
-                lProxy = Network.findHttpProxy(Constants.SPEED_TEST_GET_SERVERS_URL);
-            }
-
-            // Build HTTP GET request to retrieve servers list from speedtest.net
-            URL lUrl = new URL(Constants.SPEED_TEST_GET_SERVERS_URL);
-            HttpURLConnection lConnection = (HttpURLConnection) lUrl.openConnection(lProxy);
-            lConnection.setRequestMethod("GET");
-            lConnection.setRequestProperty("Accept", "application/json");
-
-            if (lConnection.getResponseCode() != 200) {
-                throw new ConnectException(lConnection.getResponseCode() + ": " + lConnection.getResponseMessage());
-            }
-
-            SAXBuilder lBuilder = new SAXBuilder();
-            Document lDocument = (Document) lBuilder.build(lConnection.getInputStream());
-            Element lRoot = lDocument.getRootElement();
-
-            // Build speed test servers list
-            List<Element> lSpeedTestServers = lRoot.getChild("servers").getChildren("server");
-            if (lSpeedTestServers != null) {
-
-                // Parse speed test servers
-                for (Element lSpeedTestServer: lSpeedTestServers) {
-                    speedTestServers.add(new SpeedTestServer(lSpeedTestServer));
-                }
-
-            }
-
-            lConnection.disconnect();
-
-        } catch (Exception e) {
-            Display.logUnexpectedError(e);
-        }
-
     }
 
     @FXML private void configureSpeedTest() {

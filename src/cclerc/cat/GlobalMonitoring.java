@@ -292,7 +292,7 @@ public class GlobalMonitoring {
                                         Display.getViewResourceBundle().getString("speedTest.running"),
                                         LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(new Date(nextSpeedTestExecutionTime))), EnumTypes.MessageLevel.WARNING));
                     } else {
-                        speedTest = SpeedTestFactory.getInstance("periodic");
+                        if (speedTest == null || speedTest.isInterrupted()) speedTest = SpeedTestFactory.getInstance("periodic");
                         speedTest.start(speedTestDownloadUrl, speedTestUploadUrl);
                     }
                 }
