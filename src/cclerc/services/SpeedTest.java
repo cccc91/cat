@@ -52,6 +52,7 @@ public class SpeedTest {
                 Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DOWNLOAD_SETUP_TIME_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DOWNLOAD_SETUP_TIME));
         speedTestSocket.setUploadSetupTime(
                 Preferences.getInstance().getLongValue(Constants.SPEED_TEST_UPLOAD_SETUP_TIME_PREFERENCE, Constants.DEFAULT_SPEED_TEST_UPLOAD_SETUP_TIME));
+        speedTestSocket.setUploadStorageType(UploadStorageType.FILE_STORAGE);
 
         // Add a listener to wait for speed test completion and progress
         speedTestSocket.addSpeedTestListener(new ISpeedTestListener() {
@@ -77,6 +78,10 @@ public class SpeedTest {
 
         });
 
+    }
+
+    public boolean isInterrupted() {
+        return interrupted;
     }
 
     // PRIVATE METHODS
