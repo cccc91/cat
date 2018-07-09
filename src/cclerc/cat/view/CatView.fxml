@@ -452,8 +452,8 @@
                                           <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
                                        </columnConstraints>
                                        <rowConstraints>
-                                          <RowConstraints minHeight="10.0" prefHeight="60.0" vgrow="ALWAYS" />
-                                          <RowConstraints minHeight="10.0" prefHeight="60.0" valignment="TOP" vgrow="ALWAYS" />
+                                          <RowConstraints minHeight="60.0" prefHeight="60.0" vgrow="ALWAYS" />
+                                          <RowConstraints minHeight="60.0" prefHeight="60.0" valignment="TOP" vgrow="ALWAYS" />
                                        </rowConstraints>
                                        <children>
                                           <Button fx:id="speedTestStartStopButton" minWidth="100.0" mnemonicParsing="false" onAction="#startStopSpeedTest" text="%catView.speedTest.start" GridPane.columnIndex="4" GridPane.hgrow="NEVER" GridPane.rowSpan="2" />
@@ -470,13 +470,10 @@
                                           <Insets left="10.0" right="10.0" />
                                        </VBox.margin>
                                     </GridPane>
-                                    <ScrollPane fx:id="speedTestScrollPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="SOMETIMES">
+                                    <ScrollPane fx:id="speedTestScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="100.0" VBox.vgrow="ALWAYS">
                                        <content>
-                                          <TextFlow fx:id="speedTestTextFlow" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                                          <TextFlow fx:id="speedTestTextFlow" />
                                        </content>
-                                       <VBox.margin>
-                                          <Insets bottom="5.0" left="5.0" right="5.0" />
-                                       </VBox.margin>
                                     </ScrollPane>
                                  </children>
                                  <padding>
