@@ -218,7 +218,7 @@ public class GlobalMonitoring {
          */
         private void sendMail(EnumTypes.ConnectionType aInConnectionType, Alarm aInAlarm, boolean aInStart) {
 
-            Email email = new Email((!displayGraphicalInterface || Cat.getInstance().getController().isButtonGeneralEmailEnabled()),
+            Email email = new Email((!Cat.getInstance().displayGraphicalInterface() || Cat.getInstance().getController().isButtonGeneralEmailEnabled()),
                                     Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getPreferredSmtpServer());
 
             String lLocalHostName = "";
@@ -351,19 +351,19 @@ public class GlobalMonitoring {
                             if (lStatsPerConnectionType.get(lConnectionType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold3()) {
                                 if (!connectionTypeUnstableAlarm.get(lConnectionType).getSeverity().equals(EnumTypes.AlarmSeverity.MAJOR)) {
                                     changeSeverity(connectionTypeUnstableAlarm.get(lConnectionType), EnumTypes.AlarmSeverity.MAJOR);
-                                    if (displayGraphicalInterface) Cat.getInstance().getController().refreshActiveAlarmsListAndRemoveSelection();
+                                    if (Cat.getInstance().displayGraphicalInterface()) Cat.getInstance().getController().refreshActiveAlarmsListAndRemoveSelection();
                                     sendMail(lConnectionType, connectionTypeUnstableAlarm.get(lConnectionType), true);
                                 }
                             } else if (lStatsPerConnectionType.get(lConnectionType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold2()) {
                                 if (!connectionTypeUnstableAlarm.get(lConnectionType).getSeverity().equals(EnumTypes.AlarmSeverity.MINOR)) {
                                     changeSeverity(connectionTypeUnstableAlarm.get(lConnectionType), EnumTypes.AlarmSeverity.MINOR);
-                                    if (displayGraphicalInterface) Cat.getInstance().getController().refreshActiveAlarmsListAndRemoveSelection();
+                                    if (Cat.getInstance().displayGraphicalInterface()) Cat.getInstance().getController().refreshActiveAlarmsListAndRemoveSelection();
                                     sendMail(lConnectionType, connectionTypeUnstableAlarm.get(lConnectionType), true);
                                 }
                             } else if (lStatsPerConnectionType.get(lConnectionType) <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold1()) {
                                 if (!connectionTypeUnstableAlarm.get(lConnectionType).getSeverity().equals(EnumTypes.AlarmSeverity.WARNING)) {
                                     changeSeverity(connectionTypeUnstableAlarm.get(lConnectionType), EnumTypes.AlarmSeverity.WARNING);
-                                    if (displayGraphicalInterface) Cat.getInstance().getController().refreshActiveAlarmsListAndRemoveSelection();
+                                    if (Cat.getInstance().displayGraphicalInterface()) Cat.getInstance().getController().refreshActiveAlarmsListAndRemoveSelection();
                                     sendMail(lConnectionType, connectionTypeUnstableAlarm.get(lConnectionType), true);
                                 }
                             }
@@ -388,17 +388,17 @@ public class GlobalMonitoring {
                     if (lNetworkStats <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold3()) {
                         if (!networkUnstableAlarm.getSeverity().equals(EnumTypes.AlarmSeverity.MAJOR)) {
                             changeSeverity(networkUnstableAlarm, EnumTypes.AlarmSeverity.MAJOR);
-                            if (displayGraphicalInterface) Cat.getInstance().getController().refreshActiveAlarmsListAndRemoveSelection();
+                            if (Cat.getInstance().displayGraphicalInterface()) Cat.getInstance().getController().refreshActiveAlarmsListAndRemoveSelection();
                         }
                     } else if (lNetworkStats <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold2()) {
                         if (!networkUnstableAlarm.getSeverity().equals(EnumTypes.AlarmSeverity.MINOR)) {
                             changeSeverity(networkUnstableAlarm, EnumTypes.AlarmSeverity.MINOR);
-                            if (displayGraphicalInterface) Cat.getInstance().getController().refreshActiveAlarmsListAndRemoveSelection();
+                            if (Cat.getInstance().displayGraphicalInterface()) Cat.getInstance().getController().refreshActiveAlarmsListAndRemoveSelection();
                         }
                     } else if (lNetworkStats <= lConfiguration.getMeanTimeBetweenTwoConnectionsLostThreshold1()) {
                         if (!networkUnstableAlarm.getSeverity().equals(EnumTypes.AlarmSeverity.WARNING)) {
                             changeSeverity(networkUnstableAlarm, EnumTypes.AlarmSeverity.WARNING);
-                            if (displayGraphicalInterface) Cat.getInstance().getController().refreshActiveAlarmsListAndRemoveSelection();
+                            if (Cat.getInstance().displayGraphicalInterface()) Cat.getInstance().getController().refreshActiveAlarmsListAndRemoveSelection();
                         }
                     }
 
@@ -419,7 +419,6 @@ public class GlobalMonitoring {
     }
 
     // Class variables
-    private static boolean displayGraphicalInterface;
 
     // Global monitoring instance
     private static GlobalMonitoring globalMonitoringInstance = new GlobalMonitoring();
@@ -487,15 +486,6 @@ public class GlobalMonitoring {
 
     // SETTERS
 
-    /**
-     * Sets display of graphical interface flag
-     *
-     * @param aInDisplayGraphicalInterface Display of graphical interface flag
-     */
-    public static void setDisplayGraphicalInterface(boolean aInDisplayGraphicalInterface) {
-        displayGraphicalInterface = aInDisplayGraphicalInterface;
-    }
-
     // METHODS
 
     /**
@@ -519,7 +509,7 @@ public class GlobalMonitoring {
         }
 
         // Display
-        if (displayGraphicalInterface) {
+        if (Cat.getInstance().displayGraphicalInterface()) {
             Cat.getInstance().getController().setInterfaceTypeImageView(aInMonitoringJob.getInterfaceType(), true);
             Cat.getInstance().getController().setAddressTypeStateImageView(aInMonitoringJob.getAddressType(), true);
             Cat.getInstance().getController().setGlobalStateImageView(true);
@@ -603,7 +593,7 @@ public class GlobalMonitoring {
         }
 
         if (lAllAddressTypesHaveSameState && aInState == EnumTypes.HostState.UNREACHABLE) {
-            if (displayGraphicalInterface) Cat.getInstance().getController().setAddressTypeStateImageView(aInMonitoringJob.getAddressType(), false);
+            if (Cat.getInstance().displayGraphicalInterface()) Cat.getInstance().getController().setAddressTypeStateImageView(aInMonitoringJob.getAddressType(), false);
             Alarm lCurrentAlarm;
             if (aInMonitoringJob.getAddressType().equals(EnumTypes.AddressType.WAN)) {
                 wanDownAlarm = raiseAlarm(EnumTypes.AlarmId.INTERNET_DOWN, null, String.valueOf(aInMonitoringJob.getAddressType()));
@@ -634,7 +624,7 @@ public class GlobalMonitoring {
         }
 
         if (lAllInterfaceTypesHaveSameState && aInState == EnumTypes.HostState.UNREACHABLE) {
-            if (displayGraphicalInterface) Cat.getInstance().getController().setInterfaceTypeImageView(aInMonitoringJob.getInterfaceType(), false);
+            if (Cat.getInstance().displayGraphicalInterface()) Cat.getInstance().getController().setInterfaceTypeImageView(aInMonitoringJob.getInterfaceType(), false);
             Alarm lCurrentAlarm;
             if (aInMonitoringJob.getInterfaceType().equals(EnumTypes.InterfaceType.ETH)) {
                 ethernetDownAlarm = raiseAlarm(EnumTypes.AlarmId.ETHERNET_DOWN, null, String.valueOf(aInMonitoringJob.getInterfaceType()));
@@ -664,10 +654,9 @@ public class GlobalMonitoring {
         }
 
         if (lAllDown) {
-//        if (lAllDown && wifiMonitored && ethernetMonitored && lanMonitored && wanMonitored) {
 
             // Raise network down alarm
-            if (displayGraphicalInterface) Cat.getInstance().getController().setGlobalStateImageView(false);
+            if (Cat.getInstance().displayGraphicalInterface()) Cat.getInstance().getController().setGlobalStateImageView(false);
             networkDownAlarm = raiseAlarm(EnumTypes.AlarmId.NETWORK_DOWN);
 
             // Clear connection lost alarm on jobs of the same interface type
@@ -694,13 +683,13 @@ public class GlobalMonitoring {
         // If the site becomes reachable, clear any alarm raised on the interface/address type of this site
         if (aInState == EnumTypes.HostState.REACHABLE) {
 
-            if (displayGraphicalInterface) Cat.getInstance().getController().setGlobalStateImageView(true);
+            if (Cat.getInstance().displayGraphicalInterface()) Cat.getInstance().getController().setGlobalStateImageView(true);
             if (networkDownAlarm != null) {
                 sendMail("network", networkDownAlarm);
                 clearAlarm(networkDownAlarm, Display.getViewResourceBundle().getString("globalMonitoring.alarms.autoClear.siteRecovered.networkDown"));
             }
 
-            if (displayGraphicalInterface) Cat.getInstance().getController().setInterfaceTypeImageView(aInMonitoringJob.getInterfaceType(), true);
+            if (Cat.getInstance().displayGraphicalInterface()) Cat.getInstance().getController().setInterfaceTypeImageView(aInMonitoringJob.getInterfaceType(), true);
             if (aInMonitoringJob.getInterfaceType().equals(EnumTypes.InterfaceType.ETH)) {
                 if (ethernetDownAlarm != null) {
                     sendMail("ethernet", ethernetDownAlarm);
@@ -714,7 +703,7 @@ public class GlobalMonitoring {
                             String.format(Display.getViewResourceBundle().getString("globalMonitoring.alarms.autoClear.siteRecovered.interfaceOrAddressTypeDown"), aInMonitoringJob.getInterfaceType()));
                 }
             }
-            if (displayGraphicalInterface) Cat.getInstance().getController().setAddressTypeStateImageView(aInMonitoringJob.getAddressType(), true);
+            if (Cat.getInstance().displayGraphicalInterface()) Cat.getInstance().getController().setAddressTypeStateImageView(aInMonitoringJob.getAddressType(), true);
             if (aInMonitoringJob.getAddressType().equals(EnumTypes.AddressType.WAN)) {
                 if (wanDownAlarm != null) {
                     sendMail("wan", wanDownAlarm);
@@ -747,7 +736,7 @@ public class GlobalMonitoring {
      */
     private void sendMail(String aInType, Alarm aInAlarm) {
 
-        Email email = new Email((!displayGraphicalInterface || Cat.getInstance().getController().isButtonGeneralEmailEnabled()) &&
+        Email email = new Email((!Cat.getInstance().displayGraphicalInterface() || Cat.getInstance().getController().isButtonGeneralEmailEnabled()) &&
                                 Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getSmtpServerConfigurations().size() != 0 &&
                                 !Configuration.getCurrentConfiguration().getEmailConfiguration().getRecipientList().isEmpty(),
                                 Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getPreferredSmtpServer());

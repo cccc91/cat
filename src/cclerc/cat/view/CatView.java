@@ -12,7 +12,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -22,7 +21,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Side;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -40,9 +38,6 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.input.SAXBuilder;
 
 import java.net.*;
 import java.text.NumberFormat;
@@ -340,6 +335,8 @@ public class CatView {
     private NumberAxis liveSpeedTestChartXAxis = new NumberAxis();
     private NumberAxis liveSpeedTestChartYAxis = new NumberAxis();
     private LineChart<Number,Number> liveSpeedTestChart = new LineChart<>(liveSpeedTestChartXAxis, liveSpeedTestChartYAxis);
+    private XYChart.Series<Number, Number> liveSpeedTestDownloadSeries = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> liveSpeedTestUploadSeries = new XYChart.Series<>();
 
 
     @FXML private void initialize() {
@@ -507,8 +504,7 @@ public class CatView {
         liveSpeedTestChart.getYAxis().setLabel(Display.getViewResourceBundle().getString("catView.liveSpeedTestChartView.lineChart.yAxis.title"));
         liveSpeedTestChart.setAnimated(false);
         HBox.setHgrow(liveSpeedTestChart, Priority.ALWAYS);
-        //liveSpeedTestChart.setMaxHeight(liveSpeedTestChartContainer.getMaxHeight() - 10d);
-        liveSpeedTestChart.setLegendSide(Side.LEFT);
+        liveSpeedTestChart.setLegendSide(Side.RIGHT);
         liveSpeedTestChartContainer.getChildren().add(liveSpeedTestChart);
         liveSpeedTestChartXAxis.setAutoRanging(false);
         liveSpeedTestChartXAxis.setUpperBound(100);
@@ -518,7 +514,21 @@ public class CatView {
         liveSpeedTestChart.setVerticalGridLinesVisible(false);
         liveSpeedTestChartYAxis.setAutoRanging(true);
         liveSpeedTestChartYAxis.setMinorTickVisible(false);
+        liveSpeedTestChart.getData().add(liveSpeedTestDownloadSeries);
+        liveSpeedTestChart.getData().add(liveSpeedTestUploadSeries);
+        liveSpeedTestDownloadSeries.getNode().getStyleClass().add("chart-download");
+        liveSpeedTestDownloadSeries.setName(Display.getViewResourceBundle().getString("speedtest.mode.download"));
+        liveSpeedTestUploadSeries.getNode().getStyleClass().add("chart-upload");
+        liveSpeedTestUploadSeries.setName(Display.getViewResourceBundle().getString("speedtest.mode.upload"));
 
+        for (Node lNode : liveSpeedTestChart.getChildrenUnmodifiable()) {
+            if (lNode instanceof Legend) {
+                int i = 0;
+                for (Legend.LegendItem lLegendItem: ((Legend) lNode).getItems()) {
+                    lLegendItem.getSymbol().getStyleClass().add("chart-legend-speedtest-" + i++);
+                }
+            }
+        }
 
         reloadSpeedTestConfiguration();
         switchStopStartSpeedTestButton();
@@ -1229,6 +1239,22 @@ public class CatView {
      */
     public SpeedTest getSpeedTest() {
         return speedTest;
+    }
+
+    /**
+     * Gets the live speed test download series
+     * @return Live speed test download series
+     */
+    public XYChart.Series<Number, Number> getLiveSpeedTestDownloadSeries() {
+        return liveSpeedTestDownloadSeries;
+    }
+
+    /**
+     * Gets the live speed test upload series
+     * @return Live speed test upload series
+     */
+    public XYChart.Series<Number, Number> getLiveSpeedTestUploadSeries() {
+        return liveSpeedTestUploadSeries;
     }
 
     /**

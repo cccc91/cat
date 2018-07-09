@@ -54,9 +54,6 @@ public class MonitoringJob implements Runnable {
 
     }
 
-    // Class variables
-    private static boolean displayGraphicalInterface;
-
     // Semaphore
     private final Object lock = new Object();
 
@@ -235,7 +232,7 @@ public class MonitoringJob implements Runnable {
                     GlobalMonitoring.getInstance().addMonitoringJob(this);
 
                     // Display initializations
-                    if (displayGraphicalInterface && controller == null) {
+                    if (Cat.getInstance().displayGraphicalInterface() && controller == null) {
 
                         // Attach current monitoring job to the monitoring job view for further back reference
                         controller = aInMonitoringJobController;
@@ -246,7 +243,7 @@ public class MonitoringJob implements Runnable {
                         controller.setDetailsScrollPolicy();
 
                     }
-                    if (displayGraphicalInterface) controller.getCat().getController().setMonitoringJobTooltip(addressType, networkInterfaceIndex + 1, networkInterface, lServerParameters.remoteIp);
+                    if (Cat.getInstance().displayGraphicalInterface()) controller.getCat().getController().setMonitoringJobTooltip(addressType, networkInterfaceIndex + 1, networkInterface, lServerParameters.remoteIp);
 
                     serverParameters.put(lServerIndex, lServerParameters);
 
@@ -256,7 +253,7 @@ public class MonitoringJob implements Runnable {
                 }
 
                 // Case no job can be created, controller must be created anyway if this is the last server of the list
-                if (controller == null && lServerIndex == 1 && displayGraphicalInterface) {
+                if (controller == null && lServerIndex == 1 && Cat.getInstance().displayGraphicalInterface()) {
                     interfaceType = Network.getInterfaceType(networkInterface.getName());
                     addressType = (lInetAddress != null && lInetAddress.isSiteLocalAddress()) ? EnumTypes.AddressType.LAN : EnumTypes.AddressType.WAN;
                     controller = aInMonitoringJobController;
@@ -273,7 +270,7 @@ public class MonitoringJob implements Runnable {
             email = new Email(isEmailAllowed() && States.getInstance().getBooleanValue(BuildStatePropertyName(Constants.SEND_MAIL_STATE), true),
                               Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getPreferredSmtpServer());
             email.setRecipients(Arrays.asList(Configuration.getCurrentConfiguration().getEmailConfiguration().getRecipientList().split(";")));
-            if (!isEmailAllowed() && displayGraphicalInterface) controller.disableEmailButton();
+            if (!isEmailAllowed() && Cat.getInstance().displayGraphicalInterface()) controller.disableEmailButton();
 
             // Set active server to primary if no reachable server has been found
             if (activeServer == -1) activeServer = serverParameters.keySet().iterator().next();
@@ -281,7 +278,7 @@ public class MonitoringJob implements Runnable {
 
         } else {
             // Monitoring job cannot be created, disable the related tab
-            if (displayGraphicalInterface) aInMonitoringJobController.disableMonitoringJobTab();
+            if (Cat.getInstance().displayGraphicalInterface()) aInMonitoringJobController.disableMonitoringJobTab();
         }
 
     }
@@ -300,7 +297,7 @@ public class MonitoringJob implements Runnable {
         if (serverParameters.keySet().size() == 0) return;
 
         // Initialize charts
-        if (displayGraphicalInterface) Platform.runLater(() -> {catController.addPingSeries(addressType, networkInterface);});
+        if (Cat.getInstance().displayGraphicalInterface()) Platform.runLater(() -> {catController.addPingSeries(addressType, networkInterface);});
 
         // Wait for cat end of initialization
         while (Cat.getInstance() == null || Cat.getInstance().isInitializationInProgress()) {
@@ -685,15 +682,6 @@ public class MonitoringJob implements Runnable {
     // SETTERS
 
     /**
-     * Sets display of graphical interface flag
-     *
-     * @param aInDisplayGraphicalInterface Display of graphical interface flag
-     */
-    public static void setDisplayGraphicalInterface(boolean aInDisplayGraphicalInterface) {
-        displayGraphicalInterface = aInDisplayGraphicalInterface;
-    }
-
-    /**
      * Forces to notify current job state to global monitoring
      */
     public void forceNotifyCurrentJobState() {
@@ -771,7 +759,7 @@ public class MonitoringJob implements Runnable {
     private void refreshDisplay() {
 
         // Refresh only if display is audibleEnabled and this job is active
-        if (displayGraphicalInterface) {
+        if (Cat.getInstance().displayGraphicalInterface()) {
 
             Platform.runLater(() -> {
 
@@ -826,7 +814,7 @@ public class MonitoringJob implements Runnable {
      */
     private void refreshGeneralDisplay(GeneralDisplayNotification aInGeneralDisplayNotification) {
 
-        if (displayGraphicalInterface) {
+        if (Cat.getInstance().displayGraphicalInterface()) {
 
             Platform.runLater(() -> {
                 switch (aInGeneralDisplayNotification) {
@@ -879,7 +867,7 @@ public class MonitoringJob implements Runnable {
      */
     public void changeActiveServer(int aInActiveServer, String aInSwitchType) {
         if (serverParameters.get(aInActiveServer) == null) {
-            if (displayGraphicalInterface) controller.setActiveServerSliderValue(activeServer);
+            if (Cat.getInstance().displayGraphicalInterface()) controller.setActiveServerSliderValue(activeServer);
         } else {
             //String lServerType = (aInActiveServer == 0) ? "primary" : "backup";
             if (!aInSwitchType.equals("startup")) serverType = serverType.toggle();
@@ -894,9 +882,9 @@ public class MonitoringJob implements Runnable {
                             Display.getViewResourceBundle().getString("monitoringJob.message." + serverType.toString() + "." + aInSwitchType),
                             serverParameters.get(aInActiveServer).remoteHostname, serverParameters.get(aInActiveServer).remoteIp), EnumTypes.MessageLevel.INFO, new Date()));
             activeServer = aInActiveServer;
-            if (displayGraphicalInterface) controller.setActiveServerSliderValue(activeServer);
+            if (Cat.getInstance().displayGraphicalInterface()) controller.setActiveServerSliderValue(activeServer);
             refreshDisplay();
-            if (displayGraphicalInterface)
+            if (Cat.getInstance().displayGraphicalInterface())
                 controller.getCat().getController().setMonitoringJobTooltip(addressType, networkInterfaceIndex + 1, networkInterface, serverParameters.get(activeServer).remoteIp);
         }
     }

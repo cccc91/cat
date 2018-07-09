@@ -526,6 +526,33 @@
      -fx-stroke-dash-array: 2 12 12 2;
 }
 
+.chart-line-symbol-download {
+    -fx-background-insets: 0 5 ;
+    -fx-background-color: blue;
+}
+.chart-download {
+    -fx-stroke: blue;
+    -fx-stroke-width: 2px
+}
+
+.chart-legend-speedtest-0 {
+    -fx-background-color: blue;
+}
+
+.chart-line-symbol-upload {
+    -fx-background-insets: 0 5;
+    -fx-background-color: purple;
+}
+.chart-upload {
+    -fx-stroke: purple;
+    -fx-stroke-width: 2px
+}
+
+.chart-legend-speedtest-1 {
+    -fx-background-color: purple;
+
+}
+
 .textFlowWithBorder {
      -fx-border-color: lightgrey;
 }

@@ -545,6 +545,14 @@ public class Cat extends Application {
     }
 
     /**
+     * Indicates if graphical interface must be displayed
+     * @return Display graphical interface indicator
+     */
+    public boolean displayGraphicalInterface() {
+        return displayGraphicalInterface;
+    }
+
+    /**
      * Indicates if initialization is in progress
      * @return Initialization in progress indicator
      */
@@ -623,10 +631,6 @@ public class Cat extends Application {
 
         // Check if graphical interface must be displayed
         displayGraphicalInterface = !lCommandLine.hasOption("nogui");
-
-        // Set display of graphical interface for other classes
-        MonitoringJob.setDisplayGraphicalInterface(displayGraphicalInterface);
-        GlobalMonitoring.setDisplayGraphicalInterface(displayGraphicalInterface);
 
         // Load language bundles
         if (lCommandLine.hasOption("loc")) {
