@@ -17,4 +17,4 @@ CAT_CP=$CAT_CP:$THIRDPARTIES/geoip2-2.12.0/lib/jackson-core-2.9.5.jar        # G
 CAT_CP=$CAT_CP:$THIRDPARTIES/geoip2-2.12.0/lib/jackson-databind-2.9.5.jar    # GitHub (MaxMind) library for geographic localization
 CAT_CP=$CAT_CP:$THIRDPARTIES/geoip2-2.12.0/lib/maxmind-db-1.2.2.jar          # GitHub (MaxMind) library for geographic localization
 
-$JAVA_HOME/java -Dlog4j.skipJansi=true -Dprism.forceGPU=true -Dprism.order=sw -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -cp $CAT_CP cclerc.cat.Cat $*
+$JAVA_HOME/java -Dlog4j.skipJansi=true -Dprism.forceGPU=true -Dprism.order=sw -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Xms512m -Xmx1g -cp $CAT_CP cclerc.cat.Cat $*

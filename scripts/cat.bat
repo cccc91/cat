@@ -29,6 +29,6 @@ set CAT_CP=%CAT_CP%;%THIRDPARTIES%/geoip2-2.12.0/lib/maxmind-db-1.2.2.jar
 
 REM To display special characters
 chcp 1252 > NUL
-java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -cp "%CAT_CP%" -Dlog4j.skipJansi=true cclerc.cat.Cat %*
+java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Xms512m -Xmx1g -cp "%CAT_CP%" -Dlog4j.skipJansi=true cclerc.cat.Cat %*
 
 
