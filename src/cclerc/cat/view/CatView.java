@@ -275,10 +275,15 @@ public class CatView {
 
     }
     class SpeedTestPoint {
+
+        private long x;
+        private String category;
         private XYChart.Data point;
 
         SpeedTestPoint(long aInX, long aInY, boolean aInReachable) {
-            point = new XYChart.Data(aInX, aInY);
+            x = aInX;
+            category = (LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(aInX).replaceAll("\\d{4} ", "\\\n"));
+            point = new XYChart.Data(category, aInY);
         }
 
         public XYChart.Data getPoint() {
