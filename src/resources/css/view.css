@@ -448,11 +448,11 @@
 
 // Internet/Ethernet
 .chart-line-symbol-1-PRIMARY {
-    -fx-background-insets: 2, 2;
+    -fx-background-insets: 3, 3;
     -fx-background-color: #006600, #006600;
 }
 .chart-line-symbol-1-BACKUP {
-    -fx-background-insets: 0, 2;
+    -fx-background-insets: 2, 3;
     -fx-background-color: #006600, white;
 }
 .chart-1 {
@@ -468,11 +468,11 @@
 
 // Internet/Wifi
 .chart-line-symbol-2-PRIMARY {
-    -fx-background-insets: 2, 2;
+    -fx-background-insets: 3, 3;
     -fx-background-color: #3366cc, #3366cc;
 }
 .chart-line-symbol-2-BACKUP {
-    -fx-background-insets: 0, 2;
+    -fx-background-insets: 2, 3;
     -fx-background-color: #3366cc, white;
 }
 .chart-2 {
@@ -488,11 +488,11 @@
 
 // Local/Ethernet
 .chart-line-symbol-3-PRIMARY {
-    -fx-background-insets: 2, 2;
+    -fx-background-insets: 3, 3;
     -fx-background-color: #990000, #990000;
 }
 .chart-line-symbol-3-BACKUP {
-    -fx-background-insets: 0, 2;
+    -fx-background-insets: 2, 3;
     -fx-background-color: #990000, white;
 }
 .chart-3 {
@@ -508,11 +508,11 @@
 
 // Local/Wifi
 .chart-line-symbol-4-PRIMARY {
-    -fx-background-insets: 2, 2;
+    -fx-background-insets: 3, 3;
     -fx-background-color: #ff9900, #ff9900;
 }
 .chart-line-symbol-4-BACKUP {
-    -fx-background-insets: 0, 2;
+    -fx-background-insets: 2, 3;
     -fx-background-color: #ff9900, white;
 }
 .chart-4 {
