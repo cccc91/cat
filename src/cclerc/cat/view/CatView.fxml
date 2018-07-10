@@ -487,20 +487,95 @@
                               <TabPane fx:id="chartTabPane" side="LEFT">
                                  <tabs>
                                     <Tab closable="false" text="%catView.charts.speedTest">
-                                      <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <content>
+                                          <HBox>
                                              <children>
-                                                <HBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <HBox HBox.hgrow="NEVER">
+                                                   <HBox.margin>
+                                                      <Insets bottom="10.0" left="10.0" top="10.0" />
+                                                   </HBox.margin>
                                                    <children>
-                                                      <ImageView fitHeight="163.0" fitWidth="236.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../../../resources/images/big-plans.jpg" />
-                                                         </image>
-                                                      </ImageView>
+                                                      <VBox spacing="20.0" HBox.hgrow="ALWAYS">
+                                                         <children>
+                                                            <HBox spacing="10.0" VBox.vgrow="ALWAYS">
+                                                               <children>
+                                                                  <HBox HBox.hgrow="ALWAYS">
+                                                                     <children>
+                                                                        <VBox alignment="CENTER_LEFT" spacing="5.0">
+                                                                           <children>
+                                                                              <CheckBox fx:id="speedTestManageCheckBox" mnemonicParsing="false" onAction="#refreshAllPingSeries" selected="true" text="%catView.speedTestChart.manage" />
+                                                                              <Separator />
+                                                                              <CheckBox fx:id="speedTestDownloadFilterCheckBox" mnemonicParsing="false" onAction="#refreshAllPingSeries" selected="true" text="%catView.speedTestChart.download" />
+                                                                              <CheckBox fx:id="speedTestUploadFilterCheckBox" mnemonicParsing="false" onAction="#refreshAllPingSeries" selected="true" text="%catView.speedTestChart.upload" />
+                                                                           </children>
+                                                                        </VBox>
+                                                                     </children>
+                                                                  </HBox>
+                                                                  <VBox alignment="BOTTOM_RIGHT">
+                                                                     <HBox.margin>
+                                                                        <Insets />
+                                                                     </HBox.margin>
+                                                                     <children>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                           <image>
+                                                                              <Image url="@../../../resources/images/Magnifying_glass.png" />
+                                                                           </image>
+                                                                        </ImageView>
+                                                                     </children>
+                                                                  </VBox>
+                                                                  <Slider fx:id="speedTestBarChartVerticalZoomSlider" majorTickUnit="20.0" minorTickCount="1" nodeOrientation="LEFT_TO_RIGHT" orientation="VERTICAL" showTickMarks="true" value="100.0" HBox.hgrow="ALWAYS" />
+                                                               </children>
+                                                               <VBox.margin>
+                                                                  <Insets />
+                                                               </VBox.margin>
+                                                               <padding>
+                                                                  <Insets top="10.0" />
+                                                               </padding>
+                                                            </HBox>
+                                                            <VBox spacing="10.0" VBox.vgrow="NEVER">
+                                                               <children>
+                                                                  <HBox spacing="10.0">
+                                                                     <children>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                           <image>
+                                                                              <Image url="@../../../resources/images/horizontal_move.png" />
+                                                                           </image>
+                                                                        </ImageView>
+                                                                        <Slider fx:id="speedTestBarChartHorizontalMoveSlider" majorTickUnit="20.0" minorTickCount="1" showTickMarks="true" value="100.0" HBox.hgrow="ALWAYS">
+                                                                           <padding>
+                                                                              <Insets right="15.0" />
+                                                                           </padding>
+                                                                        </Slider>
+                                                                     </children>
+                                                                  </HBox>
+                                                                  <HBox spacing="10.0">
+                                                                     <children>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                           <image>
+                                                                              <Image url="@../../../resources/images/Magnifying_glass.png" />
+                                                                           </image>
+                                                                        </ImageView>
+                                                                        <Slider fx:id="speedTestBarChartHorizontalZoomSlider" majorTickUnit="20.0" minorTickCount="1" nodeOrientation="LEFT_TO_RIGHT" showTickMarks="true" value="100.0" HBox.hgrow="ALWAYS">
+                                                                           <padding>
+                                                                              <Insets right="15.0" />
+                                                                           </padding>
+                                                                        </Slider>
+                                                                     </children>
+                                                                  </HBox>
+                                                               </children>
+                                                            </VBox>
+                                                         </children>
+                                                      </VBox>
                                                    </children>
                                                 </HBox>
-                                             </children></AnchorPane>
-                                      </content>
+                                                <HBox fx:id="speedTestBarChartContainer" HBox.hgrow="ALWAYS">
+                                                   <HBox.margin>
+                                                      <Insets bottom="10.0" left="10.0" right="30.0" top="10.0" />
+                                                   </HBox.margin>
+                                                </HBox>
+                                             </children>
+                                          </HBox>
+                                       </content>
                                     </Tab>
                                     <Tab closable="false" text="%catView.charts.pings">
                                        <content>

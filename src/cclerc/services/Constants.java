@@ -68,6 +68,11 @@ public class Constants {
     public static final String PING_CHART_HORIZONTAL_MOVE_SLIDER_STATE = "pingChart.horizontalMoveSliderPosition";
     public static final String PING_CHART_HORIZONTAL_ZOOM_SLIDER_STATE = "pingChart.horizontalZoomSliderPosition";
     public static final String PING_CHART_VERTICAL_ZOOM_SLIDER_STATE = "pingChart.verticalZoomSliderPosition";
+    public static final String SPEED_TEST_CHART_ENABLE_STATE = "speedTestChart.enable";
+    public static final String SPEED_TEST_CHART_DISPLAY_DOWNLOAD_STATE = "speedTestChart.displayDownloadSpeedBar";
+    public static final String SPEED_TEST_CHART_DISPLAY_UPLOAD_STATE = "speedTestChart.displayUploadSpeedBar";
+    public static final String SPEED_TEST_CHART_HORIZONTAL_ZOOM_SLIDER_STATE = "speedTestChart.horizontalZoomSliderPosition";
+    public static final String SPEED_TEST_CHART_VERTICAL_ZOOM_SLIDER_STATE = "speedTestChart.verticalZoomSliderPosition";
 
     // Graphics
     public final static double DISABLED_IMAGE_TRANSPARENCY = 0.2d;

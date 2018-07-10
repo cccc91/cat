@@ -22,9 +22,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Side;
 import javafx.scene.Node;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
+import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -33,7 +31,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.util.Callback;
@@ -57,6 +54,7 @@ public class CatView {
     private Map<EnumTypes.AddressType, List<Tab>> monitoringTabs = new HashMap<>();
     private Map<EnumTypes.AddressType, List<GridPane>> monitoringGridPanes = new HashMap<>();
     private List<CheckBox> pingLineFilterCheckBoxes = new ArrayList<>();
+    private List<CheckBox> speedTestBarFilterCheckBoxes = new ArrayList<>();
     private List<String> networkInterfacesNames = new ArrayList<>();
     private Map<TextFlow, Boolean> firstDisplay = new HashMap<>();
     private Map<TextFlow, Tab> tabs = new HashMap<>();
@@ -93,13 +91,11 @@ public class CatView {
     class PingLine {
 
         private int id;
-        private EnumTypes.ServerType serverType;
         private NetworkInterface networkInterface;
         private String interfaceName;
         private EnumTypes.AddressType addressType;
         private EnumTypes.InterfaceType interfaceType;
         private XYChart.Series<Number, Number> series = new XYChart.Series<>();
-        private List<Line> lines = new ArrayList<>();
         private Number minX = Long.MAX_VALUE;
         private Number maxX = 0;
         private Number minY = Long.MAX_VALUE;
@@ -132,10 +128,6 @@ public class CatView {
             return interfaceName;
         }
 
-        public EnumTypes.ServerType getServerType() {
-            return serverType;
-        }
-
         public EnumTypes.AddressType getAddressType() {
             return addressType;
         }
@@ -146,10 +138,6 @@ public class CatView {
 
         public XYChart.Series<Number, Number> getSeries() {
             return series;
-        }
-
-        public List<Line> getLines() {
-            return lines;
         }
 
         public Number getMinX() {
@@ -219,6 +207,88 @@ public class CatView {
     private long pingLineDuration = MAX_DISPLAYED_PING_DURATION;
     private long pingLineMinTime = 0L;
     private long pingLineMaxTime = MAX_DISPLAYED_PING_DURATION;
+
+    class SpeedTestBar {
+
+        private int id;
+        private String name;
+        private XYChart.Series<String, Number> series = new XYChart.Series<>();
+        private Number minX = Long.MAX_VALUE;
+        private Number maxX = 0;
+        private Number minY = Long.MAX_VALUE;
+        private Number maxY = 0;
+
+        SpeedTestBar(int aInId, String aInName) {
+            id = aInId;
+            name = aInName;
+            String lTitle = Display.getViewResourceBundle().getString("catView.speedTestChart." + aInName);
+            series.setName(lTitle);
+            speedTestBarChart.getData().add(series);
+        }
+
+        public void delete() {
+            speedTestBarChart.getData().remove(series);
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public XYChart.Series<String, Number> getSeries() {
+            return series;
+        }
+
+        public Number getMinX() {
+            return minX;
+        }
+
+        public Number getMaxX() {
+            return maxX;
+        }
+
+        public Number getMinY() {
+            return minY;
+        }
+
+        public Number getMaxY() {
+            return maxY;
+        }
+
+        public void setMinX(Number minX) {
+            this.minX = minX;
+        }
+        public void setMaxX(Number maxX) {
+            this.maxX = maxX;
+        }
+
+        public void setMinY(Number minY) {
+            this.minY = minY;
+        }
+
+        public void setMaxY(Number maxY) {
+            this.maxY = maxY;
+        }
+
+    }
+    class SpeedTestPoint {
+        private XYChart.Data point;
+
+        SpeedTestPoint(long aInX, long aInY, boolean aInReachable) {
+            point = new XYChart.Data(aInX, aInY);
+        }
+
+        public XYChart.Data getPoint() {
+            return point;
+        }
+
+    }
+    private volatile Map<Integer, SpeedTestBar> speedTestBars = new HashMap<>();
+    private volatile Map<Integer, List<SpeedTestPoint>> speedTestPoints = new HashMap<>();
+
 
     // Speed test
     private SpeedTest speedTest;
@@ -326,18 +396,30 @@ public class CatView {
 
     @FXML private HBox liveSpeedTestChartContainer;
 
-    // Ping chart
+    @FXML private HBox speedTestBarChartContainer;
+    @FXML private CheckBox speedTestManageCheckBox;
+    @FXML private CheckBox speedTestDownloadFilterCheckBox;
+    @FXML private CheckBox speedTestUploadFilterCheckBox;
+    @FXML private Slider speedTestBarChartVerticalZoomSlider;
+    @FXML private Slider speedTestBarChartHorizontalMoveSlider;
+    @FXML private Slider speedTestBarChartHorizontalZoomSlider;
+
+    // Ping line chart
     private NumberAxis pingLineChartXAxis = new NumberAxis();
     private NumberAxis pingLineChartYAxis = new NumberAxis();
     private LineChartWithMarkers<Number,Number> pingLineChart = new LineChartWithMarkers<>(pingLineChartXAxis, pingLineChartYAxis);
 
-    // Speed test live chart
+    // Speed test bar chart
+    private CategoryAxis speedTestBarChartXAxis = new CategoryAxis();
+    private NumberAxis speedTestBarChartYAxis = new NumberAxis();
+    private BarChart<String, Number> speedTestBarChart = new BarChart<>(speedTestBarChartXAxis, speedTestBarChartYAxis);
+
+    // Speed test live line chart
     private NumberAxis liveSpeedTestChartXAxis = new NumberAxis();
     private NumberAxis liveSpeedTestChartYAxis = new NumberAxis();
-    private LineChart<Number,Number> liveSpeedTestChart = new LineChart<>(liveSpeedTestChartXAxis, liveSpeedTestChartYAxis);
+    private LineChart<Number, Number> liveSpeedTestChart = new LineChart<>(liveSpeedTestChartXAxis, liveSpeedTestChartYAxis);
     private XYChart.Series<Number, Number> liveSpeedTestDownloadSeries = new XYChart.Series<>();
     private XYChart.Series<Number, Number> liveSpeedTestUploadSeries = new XYChart.Series<>();
-
 
     @FXML private void initialize() {
 
@@ -439,11 +521,7 @@ public class CatView {
                     }
                 });
 
-        Tooltip lClearConsoleTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.clearConsole"));
-        if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE))
-            Tooltip.install(clearConsoleButtonImageView, lClearConsoleTooltip);
-
-       // Initialize ping chart
+        // Initialize ping line chart
         pingLineFilterCheckBoxes.add(pingLineInterface1FilterCheckBox);
         pingLineInterface1FilterCheckBox.setVisible(false);
         pingLineFilterCheckBoxes.add(pingLineInterface2FilterCheckBox);
@@ -484,21 +562,31 @@ public class CatView {
             }
         });
 
-        if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) {
-            Tooltip lManageCheckBoxTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.manage"));
-            pingLineManageCheckBox.setTooltip(lManageCheckBoxTooltip);
-            Tooltip lWanFilterCheckBoxTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.WAN"));
-            pingLineWanFilterCheckBox.setTooltip(lWanFilterCheckBoxTooltip);
-            Tooltip lLanFilterCheckBoxTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.LAN"));
-            pingLineLanFilterCheckBox.setTooltip(lLanFilterCheckBoxTooltip);
-            Tooltip lHorizontalMoveSliderTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.horizontalMoveSlider"));
-            pingLineChartHorizontalMoveSlider.setTooltip(lHorizontalMoveSliderTooltip);
-            Tooltip lHorizontalZoomSliderTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.horizontalZoomSlider"));
-            pingLineChartHorizontalZoomSlider.setTooltip(lHorizontalZoomSliderTooltip);
-            Tooltip lVerticalZoomSliderTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.verticalZoomSlider"));
-            pingLineChartVerticalZoomSlider.setTooltip(lVerticalZoomSliderTooltip);
-        }
         checkPingChartState();
+
+        // Initialize speed test bar chart
+        speedTestBarFilterCheckBoxes.add(speedTestDownloadFilterCheckBox);
+        speedTestBarFilterCheckBoxes.add(speedTestUploadFilterCheckBox);
+
+        speedTestBarChart.getYAxis().setLabel(Display.getViewResourceBundle().getString("catView.speedTestChart.barChart.yAxis.title"));
+        speedTestBarChart.setAnimated(false);
+        HBox.setHgrow(speedTestBarChart, Priority.ALWAYS);
+        speedTestBarChartContainer.getChildren().add(speedTestBarChart);
+        speedTestBarChartXAxis.setAutoRanging(false);
+        speedTestBarChartYAxis.setAutoRanging(false);
+        speedTestBarChartYAxis.setMinorTickVisible(false);
+
+        speedTestBarChartHorizontalMoveSlider.valueProperty().addListener(speedTestBarsHorizontalSliderChangeListener);
+        speedTestBarChartHorizontalZoomSlider.valueProperty().addListener(speedTestBarsHorizontalSliderChangeListener);
+        speedTestBarChartVerticalZoomSlider.valueProperty().addListener(speedTestBarsVerticalSliderChangeListener);
+
+        speedTestManageCheckBox.setSelected(States.getInstance().getBooleanValue(Constants.SPEED_TEST_CHART_ENABLE_STATE, true));
+        speedTestDownloadFilterCheckBox.setSelected(States.getInstance().getBooleanValue(Constants.SPEED_TEST_CHART_DISPLAY_DOWNLOAD_STATE, true));
+        speedTestUploadFilterCheckBox.setSelected(States.getInstance().getBooleanValue(Constants.SPEED_TEST_CHART_DISPLAY_UPLOAD_STATE, true));
+        speedTestBarChartHorizontalZoomSlider.setValue(States.getInstance().getDoubleValue(Constants.SPEED_TEST_CHART_HORIZONTAL_ZOOM_SLIDER_STATE, 100d));
+        speedTestBarChartVerticalZoomSlider.setValue(States.getInstance().getDoubleValue(Constants.SPEED_TEST_CHART_VERTICAL_ZOOM_SLIDER_STATE, 100d));
+
+        checkSpeedTestChartState();
 
         // Initialize live speed test chart
         liveSpeedTestChart.getYAxis().setLabel(Display.getViewResourceBundle().getString("catView.liveSpeedTestChartView.lineChart.yAxis.title"));
@@ -538,6 +626,43 @@ public class CatView {
         ImageView lImageViewSpeedTest = new ImageView(new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_SPEED_TEST).toString()));
         lImageViewSpeedTest.setFitHeight(20d); lImageViewSpeedTest.setFitWidth(20d);
         speedTestStartStopButton.setGraphic(lImageViewSpeedTest);
+
+        // Tooltips
+        if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) {
+
+            Tooltip lClearConsoleTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.clearConsole"));
+            Tooltip.install(clearConsoleButtonImageView, lClearConsoleTooltip);
+
+            Tooltip lConfigureSpeedTestTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.speedTest.tooltip.configure"));
+            Tooltip.install(speedTestConfigureButton, lConfigureSpeedTestTooltip);
+
+            Tooltip lManageCheckBoxTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.manage"));
+            pingLineManageCheckBox.setTooltip(lManageCheckBoxTooltip);
+            Tooltip lWanFilterCheckBoxTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.WAN"));
+            pingLineWanFilterCheckBox.setTooltip(lWanFilterCheckBoxTooltip);
+            Tooltip lLanFilterCheckBoxTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.LAN"));
+            pingLineLanFilterCheckBox.setTooltip(lLanFilterCheckBoxTooltip);
+            Tooltip lHorizontalMoveSliderTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.horizontalMoveSlider"));
+            pingLineChartHorizontalMoveSlider.setTooltip(lHorizontalMoveSliderTooltip);
+            Tooltip lHorizontalZoomSliderTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.horizontalZoomSlider"));
+            pingLineChartHorizontalZoomSlider.setTooltip(lHorizontalZoomSliderTooltip);
+            Tooltip lVerticalZoomSliderTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.pingChartView.tooltip.verticalZoomSlider"));
+            pingLineChartVerticalZoomSlider.setTooltip(lVerticalZoomSliderTooltip);
+
+            Tooltip lSpeedTestManageCheckBoxTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.speedTestChart.tooltip.manage"));
+            speedTestManageCheckBox.setTooltip(lSpeedTestManageCheckBoxTooltip);
+            Tooltip lSpeedTestDownloadFilterCheckBoxTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.speedTestChart.tooltip.download"));
+            speedTestDownloadFilterCheckBox.setTooltip(lSpeedTestDownloadFilterCheckBoxTooltip);
+            Tooltip lSpeedTestUploadFilterCheckBoxTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.speedTestChart.tooltip.upload"));
+            speedTestUploadFilterCheckBox.setTooltip(lSpeedTestUploadFilterCheckBoxTooltip);
+            Tooltip lSpeedTestHorizontalMoveSliderTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.speedTestChart.tooltip.horizontalMoveSlider"));
+            speedTestBarChartHorizontalMoveSlider.setTooltip(lSpeedTestHorizontalMoveSliderTooltip);
+            Tooltip lSpeedTestHorizontalZoomSliderTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.speedTestChart.tooltip.horizontalZoomSlider"));
+            speedTestBarChartHorizontalZoomSlider.setTooltip(lSpeedTestHorizontalZoomSliderTooltip);
+            Tooltip lSpeedTestVerticalZoomSliderTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.speedTestChart.tooltip.verticalZoomSlider"));
+            speedTestBarChartVerticalZoomSlider.setTooltip(lSpeedTestVerticalZoomSliderTooltip);
+
+        }
 
     }
 
@@ -1229,6 +1354,14 @@ public class CatView {
 
     private ChangeListener<Number> pingLinesVerticalSliderChangeListener = (obs, oldValue, newValue) -> {
         zoomPingYAxis();
+    };
+
+    private ChangeListener<Number> speedTestBarsHorizontalSliderChangeListener = (obs, oldValue, newValue) -> {
+// TODO        refreshAllSpeedTestSeries();
+    };
+
+    private ChangeListener<Number> speedTestBarsVerticalSliderChangeListener = (obs, oldValue, newValue) -> {
+// TODO        zoomSpeedTestYAxis();
     };
 
     // GETTERS
@@ -2116,6 +2249,33 @@ public class CatView {
 
         // Hide or display legend symbol depending on filters
         for (Node lNode : pingLineChart.getChildrenUnmodifiable()) {
+            if (lNode instanceof Legend) {
+                for (Legend.LegendItem lLegendItem : ((Legend) lNode).getItems()) {
+                    for (PingLine lPingLine: pingLines.values()) {
+                        if (lPingLine.getSeries().getName().equals(lLegendItem.getText())) {
+                            lLegendItem.getSymbol().setVisible(isPingLineDisplayedAllowed(lPingLine));
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Enables or disables controls related to speed test chart depending on Manage speed test chart check box
+     */
+    public void checkSpeedTestChartState() {
+
+        speedTestDownloadFilterCheckBox.setDisable(!speedTestManageCheckBox.isSelected());
+        speedTestUploadFilterCheckBox.setDisable(!speedTestManageCheckBox.isSelected());
+        speedTestBarChartHorizontalMoveSlider.setDisable(!speedTestManageCheckBox.isSelected());
+        speedTestBarChartHorizontalZoomSlider.setDisable(!speedTestManageCheckBox.isSelected());
+        speedTestBarChartVerticalZoomSlider.setDisable(!speedTestManageCheckBox.isSelected());
+        speedTestBarChart.setDisable(!speedTestManageCheckBox.isSelected());
+
+        // Hide or display legend symbol depending on filters TODO
+        for (Node lNode : speedTestBarChart.getChildrenUnmodifiable()) {
             if (lNode instanceof Legend) {
                 for (Legend.LegendItem lLegendItem : ((Legend) lNode).getItems()) {
                     for (PingLine lPingLine: pingLines.values()) {
