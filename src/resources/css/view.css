@@ -526,10 +526,28 @@
      -fx-stroke-dash-array: 2 12 12 2;
 }
 
+
+.chart-bar-download {
+    -fx-background-color: blue;
+}
+
+.chart-bar-legend-download {
+    -fx-stroke: blue;
+}
+
+.chart-bar-upload {
+    -fx-background-color: purple;
+}
+
+.chart-bar-legend-upload {
+    -fx-stroke: purple;
+}
+
 .chart-line-symbol-download {
     -fx-background-insets: 0 5 ;
     -fx-background-color: blue;
 }
+
 .chart-download {
     -fx-stroke: blue;
     -fx-stroke-width: 2px
@@ -543,6 +561,7 @@
     -fx-background-insets: 0 5;
     -fx-background-color: purple;
 }
+
 .chart-upload {
     -fx-stroke: purple;
     -fx-stroke-width: 2px

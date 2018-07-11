@@ -44,10 +44,12 @@ import java.util.regex.Pattern;
 
 public class CatView {
 
-    // CONSTANTS TODO: customize in GUI
     private final long MAX_STORED_PING_DURATION = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration().getMaxStoredPingDuration();
     private final long MIN_DISPLAYED_PING_DURATION = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration().getMinDisplayedPingDuration();
     private final long MAX_DISPLAYED_PING_DURATION = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration().getMaxDisplayedPingDuration();
+    private final long MAX_STORED_SPEED_TEST_DURATION = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration().getMaxStoredSpeedTestDuration();
+    private final long MIN_DISPLAYED_SPEED_TEST_DURATION = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration().getMinDisplayedSpeedTestDuration();
+    private final long MAX_DISPLAYED_SPEED_TEST_DURATION = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration().getMaxDisplayedSpeedTestDuration();
 
     // Display management
     private Map<EnumTypes.AddressType, TabPane> monitoringTabPanes = new HashMap<>();
@@ -87,7 +89,7 @@ public class CatView {
     private SortedList<Alarm> sortedActiveAlarms;
     private SortedList<Alarm> sortedHistoricalAlarms;
 
-    // Charts
+    // Ping line chart
     class PingLine {
 
         private int id;
@@ -196,6 +198,11 @@ public class CatView {
         }
 
     }
+
+    private NumberAxis pingLineChartXAxis = new NumberAxis();
+    private NumberAxis pingLineChartYAxis = new NumberAxis();
+    private LineChartWithMarkers<Number,Number> pingLineChart = new LineChartWithMarkers<>(pingLineChartXAxis, pingLineChartYAxis);
+
     private static int pingLinesCount = 0;
     private long timeReference = 0;
     private volatile Map<Integer, PingLine> pingLines = new HashMap<>();
@@ -208,13 +215,19 @@ public class CatView {
     private long pingLineMinTime = 0L;
     private long pingLineMaxTime = MAX_DISPLAYED_PING_DURATION;
 
+    // Speed test management
+    private SpeedTest speedTest;
+    private boolean speedTestStartState = false;
+    private String speedTestServer;
+    private String speedTestDownloadUrl;
+    private String speedTestUploadUrl;
+
+    // Speed test bar chart
     class SpeedTestBar {
 
         private int id;
         private String name;
         private XYChart.Series<String, Number> series = new XYChart.Series<>();
-        private Number minX = Long.MAX_VALUE;
-        private Number maxX = 0;
         private Number minY = Long.MAX_VALUE;
         private Number maxY = 0;
 
@@ -242,27 +255,12 @@ public class CatView {
             return series;
         }
 
-        public Number getMinX() {
-            return minX;
-        }
-
-        public Number getMaxX() {
-            return maxX;
-        }
-
         public Number getMinY() {
             return minY;
         }
 
         public Number getMaxY() {
             return maxY;
-        }
-
-        public void setMinX(Number minX) {
-            this.minX = minX;
-        }
-        public void setMaxX(Number maxX) {
-            this.maxX = maxX;
         }
 
         public void setMinY(Number minY) {
@@ -280,7 +278,7 @@ public class CatView {
         private String category;
         private XYChart.Data point;
 
-        SpeedTestPoint(long aInX, long aInY, boolean aInReachable) {
+        SpeedTestPoint(long aInX, long aInY) {
             x = aInX;
             category = (LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(aInX).replaceAll("\\d{4} ", "\\\n"));
             point = new XYChart.Data(category, aInY);
@@ -290,18 +288,32 @@ public class CatView {
             return point;
         }
 
+        public long getX() {
+            return x;
+        }
+
     }
+
+    private static int speedTestBarsCount = 0;
+    private CategoryAxis speedTestBarChartXAxis = new CategoryAxis();
+    private NumberAxis speedTestBarChartYAxis = new NumberAxis();
+    private BarChart<String, Number> speedTestBarChart = new BarChart<>(speedTestBarChartXAxis, speedTestBarChartYAxis);
+
     private volatile Map<Integer, SpeedTestBar> speedTestBars = new HashMap<>();
     private volatile Map<Integer, List<SpeedTestPoint>> speedTestPoints = new HashMap<>();
+    private Double speedTestBarsXMoveRatio = 0d;
+    private Double speedTestBarsXZoomRatio = 1d;
+    private Double speedTestBarsYZoomRatio = 1d;
+    private long speedTestBarsDuration = MAX_DISPLAYED_PING_DURATION;
+    private long speedTestBarsMinTime = 0L;
+    private long speedTestBarsMaxTime = MAX_DISPLAYED_PING_DURATION;
 
-
-    // Speed test
-    private SpeedTest speedTest;
-    private boolean speedTestStartState = false;
-    private String speedTestServer;
-    private String speedTestDownloadUrl;
-    private String speedTestUploadUrl;
-    private ObservableList<SpeedTestServer> speedTestServers;
+    // Speed test live line chart
+    private NumberAxis liveSpeedTestChartXAxis = new NumberAxis();
+    private NumberAxis liveSpeedTestChartYAxis = new NumberAxis();
+    private LineChart<Number, Number> liveSpeedTestChart = new LineChart<>(liveSpeedTestChartXAxis, liveSpeedTestChartYAxis);
+    private XYChart.Series<Number, Number> liveSpeedTestDownloadSeries = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> liveSpeedTestUploadSeries = new XYChart.Series<>();
 
     // FXML
     @FXML private Label nameLabel;
@@ -408,23 +420,6 @@ public class CatView {
     @FXML private Slider speedTestBarChartVerticalZoomSlider;
     @FXML private Slider speedTestBarChartHorizontalMoveSlider;
     @FXML private Slider speedTestBarChartHorizontalZoomSlider;
-
-    // Ping line chart
-    private NumberAxis pingLineChartXAxis = new NumberAxis();
-    private NumberAxis pingLineChartYAxis = new NumberAxis();
-    private LineChartWithMarkers<Number,Number> pingLineChart = new LineChartWithMarkers<>(pingLineChartXAxis, pingLineChartYAxis);
-
-    // Speed test bar chart
-    private CategoryAxis speedTestBarChartXAxis = new CategoryAxis();
-    private NumberAxis speedTestBarChartYAxis = new NumberAxis();
-    private BarChart<String, Number> speedTestBarChart = new BarChart<>(speedTestBarChartXAxis, speedTestBarChartYAxis);
-
-    // Speed test live line chart
-    private NumberAxis liveSpeedTestChartXAxis = new NumberAxis();
-    private NumberAxis liveSpeedTestChartYAxis = new NumberAxis();
-    private LineChart<Number, Number> liveSpeedTestChart = new LineChart<>(liveSpeedTestChartXAxis, liveSpeedTestChartYAxis);
-    private XYChart.Series<Number, Number> liveSpeedTestDownloadSeries = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> liveSpeedTestUploadSeries = new XYChart.Series<>();
 
     @FXML private void initialize() {
 
@@ -577,7 +572,7 @@ public class CatView {
         speedTestBarChart.setAnimated(false);
         HBox.setHgrow(speedTestBarChart, Priority.ALWAYS);
         speedTestBarChartContainer.getChildren().add(speedTestBarChart);
-        speedTestBarChartXAxis.setAutoRanging(false);
+        speedTestBarChartXAxis.setAutoRanging(true);
         speedTestBarChartYAxis.setAutoRanging(false);
         speedTestBarChartYAxis.setMinorTickVisible(false);
 
@@ -590,6 +585,10 @@ public class CatView {
         speedTestUploadFilterCheckBox.setSelected(States.getInstance().getBooleanValue(Constants.SPEED_TEST_CHART_DISPLAY_UPLOAD_STATE, true));
         speedTestBarChartHorizontalZoomSlider.setValue(States.getInstance().getDoubleValue(Constants.SPEED_TEST_CHART_HORIZONTAL_ZOOM_SLIDER_STATE, 100d));
         speedTestBarChartVerticalZoomSlider.setValue(States.getInstance().getDoubleValue(Constants.SPEED_TEST_CHART_VERTICAL_ZOOM_SLIDER_STATE, 100d));
+        speedTestBarChart.setLegendVisible(false);
+
+        addSpeedTestSeries("download");
+        addSpeedTestSeries("upload");
 
         checkSpeedTestChartState();
 
@@ -1362,11 +1361,11 @@ public class CatView {
     };
 
     private ChangeListener<Number> speedTestBarsHorizontalSliderChangeListener = (obs, oldValue, newValue) -> {
-// TODO        refreshAllSpeedTestSeries();
+        refreshAllSpeedTestSeries();
     };
 
     private ChangeListener<Number> speedTestBarsVerticalSliderChangeListener = (obs, oldValue, newValue) -> {
-// TODO        zoomSpeedTestYAxis();
+        zoomSpeedTestYAxis();
     };
 
     // GETTERS
@@ -2110,8 +2109,18 @@ public class CatView {
     }
 
     /**
+     * Creates a new bar in the speed test bar chart
+     * @param aInName Name of the new bar
+     */
+    public void addSpeedTestSeries(String aInName) {
+        int lKey = Objects.hash(aInName);
+        speedTestBars.put(lKey, new SpeedTestBar(++speedTestBarsCount, aInName));
+        checkSpeedTestChartState();
+    }
+
+    /**
      * Checks if a ping line can be displayed depending on the states of the filter check boxes
-     * @param aInPingLine Ping line to chekk
+     * @param aInPingLine Ping line to check
      * @return true if the ping line can be displayed, false otherwise
      */
     private boolean isPingLineDisplayedAllowed(PingLine aInPingLine) {
@@ -2127,6 +2136,20 @@ public class CatView {
         final boolean lInterfaceEnabled = pingLineFilterCheckBoxes.get(lInterfaceNameIndex).isSelected();
 
         return lInterfaceEnabled && lAddressTypeEnabled;
+
+    }
+
+    /**
+     * Checks if a speed test bar can be displayed depending on the states of the filter check boxes
+     * @param aInSpeedTestBar Spped test bar to check
+     * @return true if the speed test bar can be displayed, false otherwise
+     */
+    private boolean isSpeedTestBarDisplayedAllowed(SpeedTestBar aInSpeedTestBar) {
+
+        final boolean lNameEnabled =
+                (aInSpeedTestBar.getName().equals("download") ? speedTestDownloadFilterCheckBox.isSelected() : speedTestUploadFilterCheckBox.isSelected());
+
+        return lNameEnabled;
 
     }
 
@@ -2229,12 +2252,95 @@ public class CatView {
     }
 
     /**
-     * Refreshes axis when zooming on Y axis
+     * Refreshes a speed test series with the current data depending on the move and zoom sliders positions
+     * @param aInKey   Key of the speedTestBar to which the series needs to be refreshed
+     */
+    private void refreshSpeedTestSeries(int aInKey) {
+
+        SpeedTestBar lSpeedTestBar = speedTestBars.get(aInKey);
+
+        if (!speedTestPoints.containsKey(aInKey)) return;
+        List<SpeedTestPoint> lSpeedTestPoints = speedTestPoints.get(aInKey);
+        if (speedTestPoints.size() == 0) return;
+
+        SpeedTestPoint lFirstPoint = lSpeedTestPoints.get(0);
+        SpeedTestPoint lLastPoint = lSpeedTestPoints.get(lSpeedTestPoints.size() - 1);
+
+        // Retrieve min and max time to be displayed if last measurements need to be displayed
+        if (speedTestBarsXMoveRatio == 0) {
+            speedTestBarsMaxTime = lLastPoint.getX() - Math.round((lLastPoint.getX() - lFirstPoint.getX()) * speedTestBarsXMoveRatio);
+            speedTestBarsMinTime = Math.max(0, speedTestBarsMaxTime - speedTestBarsDuration);
+        }
+
+        // Build the series
+        lSpeedTestBar.getSeries().getData().clear();
+        if (isSpeedTestBarDisplayedAllowed(lSpeedTestBar) && speedTestManageCheckBox.isSelected()) {
+
+            for (int lIndex = 0; lIndex < lSpeedTestPoints.size(); lIndex++) {
+
+                SpeedTestPoint lSpeedTestPoint = lSpeedTestPoints.get(lIndex);
+
+                // Compute style
+                String lSymbolStyle = "chart-bar-" + lSpeedTestBar.getName();
+
+                if (lSpeedTestPoint.getPoint().getNode() != null) lSpeedTestPoint.getPoint().getNode().getStyleClass().clear();
+                if ((lSpeedTestPoint.getX() >= speedTestBarsMinTime) && (lSpeedTestPoint.getX() <= speedTestBarsMaxTime)) {
+                    lSpeedTestBar.getSeries().getData().add(lSpeedTestPoint.getPoint());
+                   lSpeedTestPoint.getPoint().getNode().getStyleClass().add(lSymbolStyle);
+                } else {
+                    lSpeedTestPoint.getPoint().setNode(null);
+                }
+
+            }
+
+            if (lSpeedTestBar.getSeries().getData().size() -1 > 0) {
+
+                speedTestBarChart.setLegendVisible(true);
+                XYChart.Data lLastChartPoint = lSpeedTestBar.getSeries().getData().get(lSpeedTestBar.getSeries().getData().size() - 1);
+                String lLegendStyle = lLastChartPoint.getNode().getStyleClass().get(lLastChartPoint.getNode().getStyleClass().size() - 1);
+
+                // Style the legend element corresponding to the current series
+                for (Node lNode : speedTestBarChart.getChildrenUnmodifiable()) {
+                    if (lNode instanceof Legend) {
+                        Legend.LegendItem lLegendItem = ((Legend) lNode).getItems().get(lSpeedTestBar.getId() - 1);
+                        lLegendItem.getSymbol().getStyleClass().remove(lLegendItem.getSymbol().getStyleClass().size() - 1);
+                        lLegendItem.getSymbol().getStyleClass().add(lLegendStyle);
+                    }
+                }
+
+            }
+
+            // Recompute bounds for current series
+            lSpeedTestBar.setMinY(Long.MAX_VALUE);
+            lSpeedTestBar.setMaxY(Long.MIN_VALUE);
+            for (XYChart.Data lPoint : lSpeedTestBar.getSeries().getData()) {
+                if ((Long) lPoint.getYValue() < lSpeedTestBar.getMinY().longValue()) lSpeedTestBar.setMinY((Long) lPoint.getYValue());
+                if ((Long) lPoint.getYValue() > lSpeedTestBar.getMaxY().longValue()) lSpeedTestBar.setMaxY((Long) lPoint.getYValue());
+            }
+
+        }
+
+        refreshSpeedTestAxisBounds();
+
+    }
+
+    /**
+     * Refreshes axis when zooming on ping Y axis
      */
     private void zoomPingYAxis() {
         if (pingLineManageCheckBox.isSelected()) {
             pingLineYZoomRatio = pingLineChartVerticalZoomSlider.getValue() / 100;
             refreshPingAxisBounds();
+        }
+    }
+
+    /**
+     * Refreshes axis when zooming on speed test Y axis
+     */
+    private void zoomSpeedTestYAxis() {
+        if (speedTestManageCheckBox.isSelected()) {
+            speedTestBarsYZoomRatio = speedTestBarChartVerticalZoomSlider.getValue() / 100;
+            refreshSpeedTestAxisBounds();
         }
     }
 
@@ -2279,13 +2385,12 @@ public class CatView {
         speedTestBarChartVerticalZoomSlider.setDisable(!speedTestManageCheckBox.isSelected());
         speedTestBarChart.setDisable(!speedTestManageCheckBox.isSelected());
 
-        // Hide or display legend symbol depending on filters TODO
         for (Node lNode : speedTestBarChart.getChildrenUnmodifiable()) {
             if (lNode instanceof Legend) {
                 for (Legend.LegendItem lLegendItem : ((Legend) lNode).getItems()) {
-                    for (PingLine lPingLine: pingLines.values()) {
-                        if (lPingLine.getSeries().getName().equals(lLegendItem.getText())) {
-                            lLegendItem.getSymbol().setVisible(isPingLineDisplayedAllowed(lPingLine));
+                    for (SpeedTestBar lSpeedTestBar: speedTestBars.values()) {
+                        if (lSpeedTestBar.getSeries().getName().equals(lLegendItem.getText())) {
+                            lLegendItem.getSymbol().setVisible(isSpeedTestBarDisplayedAllowed(lSpeedTestBar));
                         }
                     }
                 }
@@ -2339,6 +2444,49 @@ public class CatView {
     }
 
     /**
+     * Refreshes all speed test series with the current data depending on the move and zoom sliders positions
+     */
+    public void refreshAllSpeedTestSeries() {
+
+        // Save sliders and check boxes states
+        States.getInstance().saveValue(Constants.SPEED_TEST_CHART_ENABLE_STATE, speedTestManageCheckBox.isSelected());
+        States.getInstance().saveValue(Constants.SPEED_TEST_CHART_DISPLAY_DOWNLOAD_STATE, speedTestDownloadFilterCheckBox.isSelected());
+        States.getInstance().saveValue(Constants.SPEED_TEST_CHART_DISPLAY_UPLOAD_STATE, speedTestUploadFilterCheckBox.isSelected());
+        States.getInstance().saveValue(Constants.SPEED_TEST_CHART_HORIZONTAL_ZOOM_SLIDER_STATE, speedTestBarChartHorizontalZoomSlider.getValue());
+        States.getInstance().saveValue(Constants.SPEED_TEST_CHART_VERTICAL_ZOOM_SLIDER_STATE, speedTestBarChartVerticalZoomSlider.getValue());
+
+        checkSpeedTestChartState();
+
+        // Recompute ratios depending on sliders position
+        speedTestBarsXMoveRatio = (100 - speedTestBarChartHorizontalMoveSlider.getValue()) / 100;
+        speedTestBarsXZoomRatio = speedTestBarChartHorizontalZoomSlider.getValue() / 100;
+
+        // Recompute min and max time to be displayed
+        long lMinX = Long.MAX_VALUE;
+        long lMaxX = Long.MIN_VALUE;
+        for (int lKey : speedTestBars.keySet()) {
+            if (speedTestPoints.containsKey(lKey) && speedTestPoints.get(lKey).size() != 0) {
+                SpeedTestPoint lFirstPoint = speedTestPoints.get(lKey).get(0);
+                SpeedTestPoint lLastPoint = speedTestPoints.get(lKey).get(speedTestPoints.get(lKey).size() - 1);
+                if (lFirstPoint.getX() < lMinX) lMinX = lFirstPoint.getX();
+                if (lLastPoint.getX() > lMaxX) lMaxX = lLastPoint.getX();
+            }
+        }
+
+        // Recompute duration to be displayed
+        speedTestBarsDuration = Math.max(MIN_DISPLAYED_SPEED_TEST_DURATION, Math.round((lMaxX - lMinX) * speedTestBarsXZoomRatio));
+
+        speedTestBarsMaxTime = lMaxX - Math.round((lMaxX - lMinX) * speedTestBarsXMoveRatio);
+        speedTestBarsMinTime = Math.max(0, speedTestBarsMaxTime - speedTestBarsDuration);
+
+        for (int lKey : speedTestBars.keySet()) {
+            refreshSpeedTestSeries(lKey);
+        }
+        refreshSpeedTestAxisBounds();
+
+    }
+
+    /**
      * Refresh min and max values of ping chart axis
      */
     private void refreshPingAxisBounds() {
@@ -2382,7 +2530,28 @@ public class CatView {
     }
 
     /**
-     *
+     * Refresh min and max values of speed test chart axis
+     */
+    private void refreshSpeedTestAxisBounds() {
+
+        // Recompute global bounds
+        long lMaxY = Long.MIN_VALUE;
+        for (SpeedTestBar lSpeedTestBar : speedTestBars.values()) {
+            if (isSpeedTestBarDisplayedAllowed(lSpeedTestBar) && speedTestManageCheckBox.isSelected()) {
+                if (lSpeedTestBar.getMaxY().longValue() > lMaxY) lMaxY = lSpeedTestBar.getMaxY().longValue();
+            }
+        }
+
+        if (lMaxY == Long.MIN_VALUE) lMaxY = 0;
+
+        // Resize Y axis
+        speedTestBarChartYAxis.setLowerBound(0);
+        speedTestBarChartYAxis.setUpperBound(lMaxY * speedTestBarsYZoomRatio);
+
+    }
+
+    /**
+     * Add a new point in a ping line series
      * @param aInServerType    Type of server the new data applies to
      * @param aInAddressType   Address type of the server the new data applies to
      * @param aInInterface     Interface of the server the new data applies to
@@ -2435,6 +2604,45 @@ public class CatView {
             Platform.runLater(() -> {
                 refreshPingSeries(lKey);
                 refreshPingAxisBounds();
+            });
+
+        }
+
+    }
+
+    /**
+     * Add a new point in the speed test bar series
+     * @param aInName    Name of the speed test series
+     * @param aInX       X coordinate of the new data
+     * @param aInY       Y coordinate of the new data
+     */
+    public void addSpeedTestSeriesData(String aInName, long aInX, long aInY) {
+
+        if (speedTestManageCheckBox.isSelected()) {
+
+            int lKey = Objects.hash(aInName);
+
+            // Initialize set of points
+            if (speedTestPoints.get(lKey) == null) {
+                List<SpeedTestPoint> lPoints = new ArrayList<>();
+                speedTestPoints.put(lKey, lPoints);
+            }
+            // Add the new point to set of points
+            speedTestPoints.get(lKey).add(new SpeedTestPoint(aInX, aInY));
+
+            // Remove oldest points from the set of points and the series
+            for (int lIndex = 0; lIndex < speedTestPoints.get(lKey).size(); lIndex++) {
+                SpeedTestPoint lPingSpeedTestPoint = speedTestPoints.get(lKey).get(lIndex);
+                XYChart.Data lPoint = lPingSpeedTestPoint.getPoint();
+                if (aInX - lPingSpeedTestPoint.getX() > MAX_STORED_SPEED_TEST_DURATION) {
+                    speedTestPoints.get(lKey).remove(lPingSpeedTestPoint);
+                } else break;
+            }
+
+            // Refresh display
+            Platform.runLater(() -> {
+                refreshSpeedTestSeries(lKey);
+                refreshSpeedTestAxisBounds();
             });
 
         }

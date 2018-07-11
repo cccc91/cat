@@ -102,6 +102,9 @@ public class ConfigurationDialog {
     @FXML TextField globalMaxStoredPingDurationTextField;
     @FXML TextField globalMinDisplayedPingDurationTextField;
     @FXML TextField globalMaxDisplayedPingDurationTextField;
+    @FXML TextField globalMaxStoredSpeedTestDurationTextField;
+    @FXML TextField globalMinDisplayedSpeedTestDurationTextField;
+    @FXML TextField globalMaxDisplayedSpeedTestDurationTextField;
 
     // Alarms tab
 
@@ -903,6 +906,9 @@ public class ConfigurationDialog {
         lGlobalConfigurationTextFields.put("MaxStoredPingDuration", globalMaxStoredPingDurationTextField);
         lGlobalConfigurationTextFields.put("MinDisplayedPingDuration", globalMinDisplayedPingDurationTextField);
         lGlobalConfigurationTextFields.put("MaxDisplayedPingDuration", globalMaxDisplayedPingDurationTextField);
+        lGlobalConfigurationTextFields.put("MaxStoredSpeedTestDuration", globalMaxStoredSpeedTestDurationTextField);
+        lGlobalConfigurationTextFields.put("MinDisplayedSpeedTestDuration", globalMinDisplayedSpeedTestDurationTextField);
+        lGlobalConfigurationTextFields.put("MaxDisplayedSpeedTestDuration", globalMaxDisplayedSpeedTestDurationTextField);
         textFields.put(Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration(), lGlobalConfigurationTextFields);
 
         Map<String, TextField> lAudibleAlarmsTextFields = new HashMap<>(); // Audible alarms configuration text fields

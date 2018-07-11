@@ -297,7 +297,9 @@ public class MonitoringJob implements Runnable {
         if (serverParameters.keySet().size() == 0) return;
 
         // Initialize charts
-        if (Cat.getInstance().displayGraphicalInterface()) Platform.runLater(() -> {catController.addPingSeries(addressType, networkInterface);});
+        if (Cat.getInstance().displayGraphicalInterface()) Platform.runLater(() -> {
+            catController.addPingSeries(addressType, networkInterface);
+        });
 
         // Wait for cat end of initialization
         while (Cat.getInstance() == null || Cat.getInstance().isInitializationInProgress()) {
@@ -364,9 +366,6 @@ public class MonitoringJob implements Runnable {
                     // Reachability test and time measurement
                     long lBeforeTime = Instant.now().toEpochMilli();
 
-// TODO - Force primary to be down (eth or wifi)
-//if (pingsCount > 3 && activeServer == 0 && lActiveServerParameters.host.equals("www.google.fr") && interfaceType.equals(EnumTypes.InterfaceType.ETH)) lActiveServerParameters.remoteIp = "135.117.205.22";
-//if (pingsCount > 3 && activeServer == 0 && lActiveServerParameters.host.equals("www.google.fr") && interfaceType.equals(EnumTypes.InterfaceType.WIFI)) lActiveServerParameters.remoteIp = "135.117.205.22";                    // Check active server reachability
                     ServerReachability lServerReachability = checkServerReachability(lActiveServerParameters);
 
                     // Log in case of retries

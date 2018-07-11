@@ -17,7 +17,8 @@ public class GlobalMonitoringConfiguration extends AbstractConfiguration {
     private static final List<String> ATTRIBUTE_NAMES = new ArrayList<>(Arrays.asList("pollingPeriod", "meanTimeBetweenTwoConnectionsLostThreshold1",
                                                                                       "meanTimeBetweenTwoConnectionsLostThreshold2", "meanTimeBetweenTwoConnectionsLostThreshold3",
                                                                                       "connectionsLostForgetTime",
-                                                                                      "maxStoredPingDuration", "minDisplayedPingDuration", "maxDisplayedPingDuration"));
+                                                                                      "maxStoredPingDuration", "minDisplayedPingDuration", "maxDisplayedPingDuration",
+                                                                                      "maxStoredSpeedTestDuration", "minDisplayedSpeedTestDuration", "maxDisplayedSpeedTestDuration"));
 
     // Accessed by introspection
     protected static final Integer DEFAULT_POLLING_PERIOD = Constants.DEFAULT_GLOBAL_MONITORING_POLLING_PERIOD;
@@ -28,6 +29,9 @@ public class GlobalMonitoringConfiguration extends AbstractConfiguration {
     protected static final Long DEFAULT_MAX_STORED_PING_DURATION = Constants.DEFAULT_MAX_STORED_PING_DURATION;
     protected static final Long DEFAULT_MAX_DISPLAYED_PING_DURATION = Constants.DEFAULT_MAX_DISPLAYED_PING_DURATION;
     protected static final Long DEFAULT_MIN_DISPLAYED_PING_DURATION = Constants.DEFAULT_MIN_DISPLAYED_PING_DURATION;
+    protected static final Long DEFAULT_MAX_STORED_SPEED_TEST_DURATION = Constants.DEFAULT_MAX_STORED_SPEED_TEST_DURATION;
+    protected static final Long DEFAULT_MAX_DISPLAYED_SPEED_TEST_DURATION = Constants.DEFAULT_MAX_DISPLAYED_SPEED_TEST_DURATION;
+    protected static final Long DEFAULT_MIN_DISPLAYED_SPEED_TEST_DURATION = Constants.DEFAULT_MIN_DISPLAYED_SPEED_TEST_DURATION;
 
     protected Integer pollingPeriod;
     protected Long meanTimeBetweenTwoConnectionsLostThreshold1;
@@ -37,6 +41,9 @@ public class GlobalMonitoringConfiguration extends AbstractConfiguration {
     protected Long maxStoredPingDuration;
     protected Long minDisplayedPingDuration;
     protected Long maxDisplayedPingDuration;
+    protected Long maxStoredSpeedTestDuration;
+    protected Long minDisplayedSpeedTestDuration;
+    protected Long maxDisplayedSpeedTestDuration;
 
     // SETTERS
 
@@ -90,6 +97,24 @@ public class GlobalMonitoringConfiguration extends AbstractConfiguration {
         }
     }
 
+    public void setMaxStoredSpeedTestDuration(String aInMaxStoredSpeedTestDuration) throws NumberFormatException {
+        if ((aInMaxStoredSpeedTestDuration != null) && !Long.valueOf(aInMaxStoredSpeedTestDuration).equals(maxStoredSpeedTestDuration)) {
+            maxStoredSpeedTestDuration = Long.valueOf(aInMaxStoredSpeedTestDuration);
+        }
+    }
+
+    public void setMinDisplayedSpeedTestDuration(String aInMinDisplayedSpeedTestDuration) throws NumberFormatException {
+        if ((aInMinDisplayedSpeedTestDuration != null) && !Long.valueOf(aInMinDisplayedSpeedTestDuration).equals(minDisplayedSpeedTestDuration)) {
+            minDisplayedSpeedTestDuration = Long.valueOf(aInMinDisplayedSpeedTestDuration);
+        }
+    }
+
+    public void setMaxDisplayedSpeedTestDuration(String aInMaxDisplayedSpeedTestDuration) throws NumberFormatException {
+        if ((aInMaxDisplayedSpeedTestDuration != null) && !Long.valueOf(aInMaxDisplayedSpeedTestDuration).equals(maxDisplayedSpeedTestDuration)) {
+            maxDisplayedSpeedTestDuration = Long.valueOf(aInMaxDisplayedSpeedTestDuration);
+        }
+    }
+
     // GETTERS
 
     public Integer getPollingPeriod() {
@@ -124,6 +149,18 @@ public class GlobalMonitoringConfiguration extends AbstractConfiguration {
         return maxDisplayedPingDuration;
     }
 
+    public Long getMaxStoredSpeedTestDuration() {
+        return maxStoredSpeedTestDuration;
+    }
+
+    public Long getMinDisplayedSpeedTestDuration() {
+        return minDisplayedSpeedTestDuration;
+    }
+
+    public Long getMaxDisplayedSpeedTestDuration() {
+        return maxDisplayedSpeedTestDuration;
+    }
+
     // CONSTRUCTORS
 
     public GlobalMonitoringConfiguration(Configuration aInConfiguration, String aInConfigurationFile, boolean aInDisplayError, Element aInElement)
@@ -144,6 +181,9 @@ public class GlobalMonitoringConfiguration extends AbstractConfiguration {
         maxStoredPingDuration = DEFAULT_MAX_STORED_PING_DURATION;
         minDisplayedPingDuration = DEFAULT_MIN_DISPLAYED_PING_DURATION;
         maxDisplayedPingDuration = DEFAULT_MAX_DISPLAYED_PING_DURATION;
+        maxStoredSpeedTestDuration = DEFAULT_MAX_STORED_SPEED_TEST_DURATION;
+        minDisplayedSpeedTestDuration = DEFAULT_MIN_DISPLAYED_SPEED_TEST_DURATION;
+        maxDisplayedSpeedTestDuration = DEFAULT_MAX_DISPLAYED_SPEED_TEST_DURATION;
     }
 
 }

@@ -503,10 +503,10 @@
                                                                      <children>
                                                                         <VBox alignment="CENTER_LEFT" spacing="5.0">
                                                                            <children>
-                                                                              <CheckBox fx:id="speedTestManageCheckBox" mnemonicParsing="false" onAction="#refreshAllPingSeries" selected="true" text="%catView.speedTestChart.manage" />
+                                                                              <CheckBox fx:id="speedTestManageCheckBox" mnemonicParsing="false" onAction="#refreshAllSpeedTestSeries" selected="true" text="%catView.speedTestChart.manage" />
                                                                               <Separator />
-                                                                              <CheckBox fx:id="speedTestDownloadFilterCheckBox" mnemonicParsing="false" onAction="#refreshAllPingSeries" selected="true" text="%catView.speedTestChart.download" />
-                                                                              <CheckBox fx:id="speedTestUploadFilterCheckBox" mnemonicParsing="false" onAction="#refreshAllPingSeries" selected="true" text="%catView.speedTestChart.upload" />
+                                                                              <CheckBox fx:id="speedTestDownloadFilterCheckBox" mnemonicParsing="false" onAction="#refreshAllSpeedTestSeries" selected="true" text="%catView.speedTestChart.download" />
+                                                                              <CheckBox fx:id="speedTestUploadFilterCheckBox" mnemonicParsing="false" onAction="#refreshAllSpeedTestSeries" selected="true" text="%catView.speedTestChart.upload" />
                                                                            </children>
                                                                         </VBox>
                                                                      </children>

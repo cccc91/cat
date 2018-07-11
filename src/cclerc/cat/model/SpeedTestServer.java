@@ -92,8 +92,6 @@ public class SpeedTestServer {
         city = new SimpleStringProperty(aInCity);
         distance = new SimpleDoubleProperty(aInDistance);
         url = aInUrl;
-        // TODO
-
     }
 
     /**

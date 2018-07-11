@@ -244,6 +244,9 @@
                 <xs:attribute type="xs:integer" name="maxStoredPingDuration"/>
                 <xs:attribute type="xs:integer" name="minDisplayedPingDuration"/>
                 <xs:attribute type="xs:integer" name="maxDisplayedPingDuration"/>
+                <xs:attribute type="xs:integer" name="maxStoredSpeedTestDuration"/>
+                <xs:attribute type="xs:integer" name="minDisplayedSpeedTestDuration"/>
+                <xs:attribute type="xs:integer" name="maxDisplayedSpeedTestDuration"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>

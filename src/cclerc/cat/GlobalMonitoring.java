@@ -272,13 +272,18 @@ public class GlobalMonitoring {
 
             reloadSpeedTestConfiguration();
 
+int i = 10;
+
             // Run the thread
             while (running) {
 
                 // Initializations
                 long lNow = System.currentTimeMillis();
                 GlobalMonitoringConfiguration lConfiguration = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration();
-
+// TODO ^--v
+//Cat.getInstance().getController().addSpeedTestSeriesData("download", lNow, i);
+//Cat.getInstance().getController().addSpeedTestSeriesData("upload", lNow, i-5);
+//i++;
                 HashMap<EnumTypes.ConnectionType, Double> lStatsPerConnectionType = new HashMap<>();
                 Double lNetworkStats = 0.0;
 

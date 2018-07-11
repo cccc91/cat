@@ -48,14 +48,18 @@ public class Constants {
 
     // Global statistics
     public final static int DEFAULT_GLOBAL_MONITORING_POLLING_PERIOD = 3000;
-    public final static long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD1 = 15 * 60 * 1000;     // 1 loss every 15 min max (warning)
-    public final static long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD2 = 1 * 60 * 1000;      // 1 loss every 1 min max  (minor)
-    public final static long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD3 = 10 * 1000;          // 1 loss every 10 sec max (major)
-    public final static long DEFAULT_CONNECTIONS_LOST_FORGET_TIME = 2 * 60 * 60 * 1000;                      // Consider there were no losses after 2 hours w/o loss
+    public final static Long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD1 = 15 * 60 * 1000L;     // 1 loss every 15 min max (warning)
+    public final static Long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD2 = 1 * 60 * 1000L;      // 1 loss every 1 min max  (minor)
+    public final static Long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD3 = 10 * 1000L;          // 1 loss every 10 sec max (major)
+    public final static Long DEFAULT_CONNECTIONS_LOST_FORGET_TIME = 2 * 60 * 60 * 1000L;                      // Consider there were no losses after 2 hours w/o loss
 
-    public static final long DEFAULT_MAX_STORED_PING_DURATION = 3 * 24 * 60 * 60 * 1000; // 3 days
-    public static final long DEFAULT_MAX_DISPLAYED_PING_DURATION = 60 * 60 * 1000;       // 1 hour
-    public static final long DEFAULT_MIN_DISPLAYED_PING_DURATION = 15 * 1000;            // 15 seconds
+    public static final Long DEFAULT_MAX_STORED_PING_DURATION = 3 * 24 * 60 * 60 * 1000L; // 3 days
+    public static final Long DEFAULT_MAX_DISPLAYED_PING_DURATION = 60 * 60 * 1000L;       // 1 hour
+    public static final Long DEFAULT_MIN_DISPLAYED_PING_DURATION = 15 * 1000L;            // 15 seconds
+
+    public static final Long DEFAULT_MAX_STORED_SPEED_TEST_DURATION = 30 * 24 * 60 * 60 * 1000L; // 30 days
+    public static final Long DEFAULT_MAX_DISPLAYED_SPEED_TEST_DURATION = 24 * 60 * 60 * 1000L;   // 24 hours
+    public static final Long DEFAULT_MIN_DISPLAYED_SPEED_TEST_DURATION = 15 * 60 * 1000L;        // 15 min
 
     // States
     public static final String PAUSE_STATE = "pause";

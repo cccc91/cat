@@ -468,7 +468,6 @@ public class ConfigureSpeedTestDialog {
 
         return (observable, oldValue, newValue) -> {
 
-            // TODO
             if (newValue.equals(serverNameFilterTextField.getText()))
                 Preferences.getInstance().saveValue(Constants.SPEED_TEST_NAME_FILTER_PREFERENCE, newValue);
             if (newValue.equals(serverCountryFilterChoiceBox.getSelectionModel().getSelectedItem()))
