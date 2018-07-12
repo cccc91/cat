@@ -1,6 +1,5 @@
 package cclerc.services;
 
-import cclerc.cat.model.Interface;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
@@ -256,5 +255,62 @@ public class EnumTypes {
 
     // SMTP servers
     public enum TlsMode {none, starttls};
+
+    // Speed test
+    public enum SpeedTestMode {
+        DOWNLOAD, UPLOAD;
+
+        public static String valueOf(SpeedTestMode aInSpeedTestMode) {
+            switch (aInSpeedTestMode) {
+                case DOWNLOAD:
+                    return "download";
+                case UPLOAD:
+                    return "upload";
+                default:
+                    return "download";
+            }
+        }
+
+        @Override
+        public String toString() {
+            switch (this) {
+                case DOWNLOAD:
+                    return Display.getMessagesResourceBundle().getString("enum.speedTestMode.download");
+                case UPLOAD:
+                    return Display.getMessagesResourceBundle().getString("enum.speedTestMode.upload");
+                default:
+                    return "";
+            }
+        }
+
+    }
+
+    public enum SpeedTestType {
+        PERIODIC, ON_REQUEST;
+
+        public static String valueOf(SpeedTestType aInSpeedTestType) {
+            switch (aInSpeedTestType) {
+                case PERIODIC:
+                    return "periodic";
+                case ON_REQUEST:
+                    return "onRequest";
+                default:
+                    return "onRequest";
+            }
+        }
+
+        @Override
+        public String toString() {
+            switch (this) {
+                case PERIODIC:
+                    return Display.getMessagesResourceBundle().getString("enum.speedTestType.periodic");
+                case ON_REQUEST:
+                    return Display.getMessagesResourceBundle().getString("enum.speedTestType.onRequest");
+                default:
+                    return "";
+            }
+        }
+
+    }
 
 }

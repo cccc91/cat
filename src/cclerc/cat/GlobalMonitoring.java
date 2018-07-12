@@ -281,8 +281,8 @@ int i = 10;
                 long lNow = System.currentTimeMillis();
                 GlobalMonitoringConfiguration lConfiguration = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration();
 // TODO ^--v
-//Cat.getInstance().getController().addSpeedTestSeriesData("download", lNow, i);
-//Cat.getInstance().getController().addSpeedTestSeriesData("upload", lNow, i-5);
+//Cat.getInstance().getController().addSpeedTestSeriesData(EnumTypes.SpeedTestMode.DOWNLOAD, lNow, i, (i%2 == 0) ? EnumTypes.SpeedTestType.PERIODIC: EnumTypes.SpeedTestType.ON_REQUEST);
+//Cat.getInstance().getController().addSpeedTestSeriesData(EnumTypes.SpeedTestMode.UPLOAD, lNow, i-5, (i%2 == 0) ? EnumTypes.SpeedTestType.PERIODIC: EnumTypes.SpeedTestType.ON_REQUEST);
 //i++;
                 HashMap<EnumTypes.ConnectionType, Double> lStatsPerConnectionType = new HashMap<>();
                 Double lNetworkStats = 0.0;
@@ -297,7 +297,7 @@ int i = 10;
                                         Display.getViewResourceBundle().getString("speedTest.running"),
                                         LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(new Date(nextSpeedTestExecutionTime))), EnumTypes.MessageLevel.WARNING));
                     } else {
-                        if (speedTest == null || speedTest.isInterrupted()) speedTest = SpeedTestFactory.getInstance("periodic");
+                        if (speedTest == null || speedTest.isInterrupted()) speedTest = SpeedTestFactory.getInstance(EnumTypes.SpeedTestType.PERIODIC);
                         speedTest.start(speedTestDownloadUrl, speedTestUploadUrl);
                     }
                 }

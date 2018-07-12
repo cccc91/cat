@@ -5,6 +5,7 @@ import fr.bmartel.speedtest.SpeedTestSocket;
 import fr.bmartel.speedtest.inter.IRepeatListener;
 import fr.bmartel.speedtest.inter.ISpeedTestListener;
 import fr.bmartel.speedtest.model.SpeedTestError;
+import fr.bmartel.speedtest.model.SpeedTestMode;
 import fr.bmartel.speedtest.model.UploadStorageType;
 
 import java.math.BigDecimal;
@@ -27,6 +28,7 @@ public class SpeedTest {
     private List<Map<Integer, BigDecimal>> bitRates = new ArrayList<>();
     private List<Map<Integer, BigDecimal>> octetRates = new ArrayList<>();
     private int count = 0;
+    private long startTime;
 
     /**
      * Speed test constructor
@@ -64,7 +66,7 @@ public class SpeedTest {
             @Override
             public void onError(SpeedTestError aInSpeedTestError, String aInErrorMessage) {
                 if (!interrupted) {
-                    aInSpeedTestInterface.reportError(speedTestSocket.getSpeedTestMode().toString().toLowerCase(), aInSpeedTestError, aInErrorMessage);
+                    aInSpeedTestInterface.reportError(convertSpeedTestMode(speedTestSocket.getSpeedTestMode()), aInSpeedTestError, aInErrorMessage);
                     testRunning = false;
                     speedTestSocket.forceStopTask();
                     speedTestSocket.closeSocket();
@@ -87,6 +89,23 @@ public class SpeedTest {
     // PRIVATE METHODS
 
     /**
+     * Converts mode from internal speed test representation to application representation
+     * @param aInSpeedTestMode Speed test mode internal representation
+     * @return Speed test mode application representation
+     */
+    private EnumTypes.SpeedTestMode convertSpeedTestMode(SpeedTestMode aInSpeedTestMode) {
+        switch (aInSpeedTestMode) {
+            case DOWNLOAD:
+                return EnumTypes.SpeedTestMode.DOWNLOAD;
+            case UPLOAD:
+                return EnumTypes.SpeedTestMode.UPLOAD;
+            default:
+                return EnumTypes.SpeedTestMode.DOWNLOAD;
+
+        }
+    }
+
+    /**
      * Displays current transfer rate and stores values for average computation on completion
      * @param aInReport Progress report
      */
@@ -97,7 +116,7 @@ public class SpeedTest {
         count++;
         bitRate = bitRate.add(aInReport.getTransferRateBit());
         octetRate = octetRate.add(aInReport.getTransferRateOctet());
-        speedTestInterface.reportProgress(aInReport.getSpeedTestMode().toString().toLowerCase(), aInReport.getProgressPercent(), lBitRate, lOctetRate);
+        speedTestInterface.reportProgress(convertSpeedTestMode(aInReport.getSpeedTestMode()), aInReport.getProgressPercent(), lBitRate, lOctetRate);
 
     }
 
@@ -113,8 +132,8 @@ public class SpeedTest {
         Map<Integer, BigDecimal> lBitRate = convertToBestUnit(bitRate);
         Map<Integer, BigDecimal> lOctetRate = convertToBestUnit(octetRate);
         bitRates.add(lBitRate); octetRates.add(lOctetRate);
-        speedTestInterface.reportResult(aInReport.getSpeedTestMode().toString().toLowerCase(), lBitRate, lOctetRate);
-        speedTestInterface.storeResult(aInReport);
+        speedTestInterface.reportResult(convertSpeedTestMode(aInReport.getSpeedTestMode()), lBitRate, lOctetRate);
+        speedTestInterface.storeResult(convertSpeedTestMode(aInReport.getSpeedTestMode()), startTime, aInReport);
         testRunning = false;
 
     }
@@ -146,6 +165,7 @@ public class SpeedTest {
 
         speedTestInterface.reportStartTest();
         testRunning = true;
+        startTime = System.currentTimeMillis();
 
         // Start download
         bitRate = BigDecimal.ZERO; octetRate = BigDecimal.ZERO; count = 0;

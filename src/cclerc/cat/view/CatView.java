@@ -5,7 +5,6 @@ import cclerc.cat.Configuration.Configuration;
 import cclerc.cat.GlobalMonitoring;
 import cclerc.cat.MonitoringJob;
 import cclerc.cat.model.Alarm;
-import cclerc.cat.model.SpeedTestServer;
 import cclerc.services.*;
 import com.sun.javafx.charts.Legend;
 import javafx.application.Platform;
@@ -13,7 +12,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.css.PseudoClass;
@@ -226,15 +224,15 @@ public class CatView {
     class SpeedTestBar {
 
         private int id;
-        private String name;
+        private EnumTypes.SpeedTestMode mode;
         private XYChart.Series<String, Number> series = new XYChart.Series<>();
         private Number minY = Long.MAX_VALUE;
         private Number maxY = 0;
 
-        SpeedTestBar(int aInId, String aInName) {
+        SpeedTestBar(int aInId, EnumTypes.SpeedTestMode aInMode) {
             id = aInId;
-            name = aInName;
-            String lTitle = Display.getViewResourceBundle().getString("catView.speedTestChart." + aInName);
+            mode = aInMode;
+            String lTitle = Display.getViewResourceBundle().getString("catView.speedTestChart." + EnumTypes.SpeedTestMode.valueOf(aInMode));
             series.setName(lTitle);
             speedTestBarChart.getData().add(series);
         }
@@ -247,8 +245,8 @@ public class CatView {
             return id;
         }
 
-        public String getName() {
-            return name;
+        public EnumTypes.SpeedTestMode getMode() {
+            return mode;
         }
 
         public XYChart.Series<String, Number> getSeries() {
@@ -277,11 +275,13 @@ public class CatView {
         private long x;
         private String category;
         private XYChart.Data point;
+        private EnumTypes.SpeedTestType type;
 
-        SpeedTestPoint(long aInX, long aInY) {
+        SpeedTestPoint(long aInX, long aInY, EnumTypes.SpeedTestType aInType) {
             x = aInX;
             category = (LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(aInX).replaceAll("\\d{4} ", "\\\n"));
             point = new XYChart.Data(category, aInY);
+            type = aInType;
         }
 
         public XYChart.Data getPoint() {
@@ -290,6 +290,10 @@ public class CatView {
 
         public long getX() {
             return x;
+        }
+
+        public EnumTypes.SpeedTestType getType() {
+            return type;
         }
 
     }
@@ -587,8 +591,8 @@ public class CatView {
         speedTestBarChartVerticalZoomSlider.setValue(States.getInstance().getDoubleValue(Constants.SPEED_TEST_CHART_VERTICAL_ZOOM_SLIDER_STATE, 100d));
         speedTestBarChart.setLegendVisible(false);
 
-        addSpeedTestSeries("download");
-        addSpeedTestSeries("upload");
+        addSpeedTestSeries(EnumTypes.SpeedTestMode.DOWNLOAD);
+        addSpeedTestSeries(EnumTypes.SpeedTestMode.UPLOAD);
 
         checkSpeedTestChartState();
 
@@ -699,7 +703,7 @@ public class CatView {
 
         if (speedTestStartState) {
             if (speedTestDownloadUrl != null && speedTestUploadUrl != null) {
-                if (speedTest == null || speedTest.isInterrupted()) speedTest = SpeedTestFactory.getInstance("onRequest");
+                if (speedTest == null || speedTest.isInterrupted()) speedTest = SpeedTestFactory.getInstance(EnumTypes.SpeedTestType.ON_REQUEST);
                 speedTest.start(speedTestDownloadUrl, speedTestUploadUrl);
             }
 
@@ -2110,11 +2114,11 @@ public class CatView {
 
     /**
      * Creates a new bar in the speed test bar chart
-     * @param aInName Name of the new bar
+     * @param aInMode Name of the new bar
      */
-    public void addSpeedTestSeries(String aInName) {
-        int lKey = Objects.hash(aInName);
-        speedTestBars.put(lKey, new SpeedTestBar(++speedTestBarsCount, aInName));
+    public void addSpeedTestSeries(EnumTypes.SpeedTestMode aInMode) {
+        int lKey = Objects.hash(aInMode);
+        speedTestBars.put(lKey, new SpeedTestBar(++speedTestBarsCount, aInMode));
         checkSpeedTestChartState();
     }
 
@@ -2147,7 +2151,7 @@ public class CatView {
     private boolean isSpeedTestBarDisplayedAllowed(SpeedTestBar aInSpeedTestBar) {
 
         final boolean lNameEnabled =
-                (aInSpeedTestBar.getName().equals("download") ? speedTestDownloadFilterCheckBox.isSelected() : speedTestUploadFilterCheckBox.isSelected());
+                (aInSpeedTestBar.getMode().equals(EnumTypes.SpeedTestMode.DOWNLOAD) ? speedTestDownloadFilterCheckBox.isSelected() : speedTestUploadFilterCheckBox.isSelected());
 
         return lNameEnabled;
 
@@ -2281,7 +2285,7 @@ public class CatView {
                 SpeedTestPoint lSpeedTestPoint = lSpeedTestPoints.get(lIndex);
 
                 // Compute style
-                String lSymbolStyle = "chart-bar-" + lSpeedTestBar.getName();
+                String lSymbolStyle = "chart-bar-" + EnumTypes.SpeedTestMode.valueOf(lSpeedTestBar.getMode()) + "-" + EnumTypes.SpeedTestType.valueOf(lSpeedTestPoint.getType());
 
                 if (lSpeedTestPoint.getPoint().getNode() != null) lSpeedTestPoint.getPoint().getNode().getStyleClass().clear();
                 if ((lSpeedTestPoint.getX() >= speedTestBarsMinTime) && (lSpeedTestPoint.getX() <= speedTestBarsMaxTime)) {
@@ -2612,15 +2616,16 @@ public class CatView {
 
     /**
      * Add a new point in the speed test bar series
-     * @param aInName    Name of the speed test series
+     * @param aInMode    Mode (download, upload) of the speed test series
      * @param aInX       X coordinate of the new data
      * @param aInY       Y coordinate of the new data
+     * @param aInType    Type of speed test (manual or periodic)
      */
-    public void addSpeedTestSeriesData(String aInName, long aInX, long aInY) {
+    public void addSpeedTestSeriesData(EnumTypes.SpeedTestMode aInMode, long aInX, long aInY, EnumTypes.SpeedTestType aInType) {
 
         if (speedTestManageCheckBox.isSelected()) {
 
-            int lKey = Objects.hash(aInName);
+            int lKey = Objects.hash(aInMode);
 
             // Initialize set of points
             if (speedTestPoints.get(lKey) == null) {
@@ -2628,7 +2633,7 @@ public class CatView {
                 speedTestPoints.put(lKey, lPoints);
             }
             // Add the new point to set of points
-            speedTestPoints.get(lKey).add(new SpeedTestPoint(aInX, aInY));
+            speedTestPoints.get(lKey).add(new SpeedTestPoint(aInX, aInY, aInType));
 
             // Remove oldest points from the set of points and the series
             for (int lIndex = 0; lIndex < speedTestPoints.get(lKey).size(); lIndex++) {

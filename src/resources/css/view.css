@@ -420,8 +420,9 @@
     -fx-border-color: red;
 }
 
-// Line charts
+// CHARTS
 
+// General
 .chart-legend {
    -fx-border-color: transparent;
    -fx-border-width: 0;
@@ -445,6 +446,8 @@
 .chart-series-line {
     -fx-stroke-width: 2px;
 }
+
+// Ping lines
 
 // Internet/Ethernet
 .chart-line-symbol-1-PRIMARY {
@@ -526,22 +529,41 @@
      -fx-stroke-dash-array: 2 12 12 2;
 }
 
+// Speed tests statistics
 
-.chart-bar-download {
+.chart-bar-download-periodic {
     -fx-background-color: blue;
 }
 
-.chart-bar-legend-download {
+.chart-bar-legend-download-periodic {
     -fx-stroke: blue;
 }
 
-.chart-bar-upload {
+.chart-bar-upload-periodic {
     -fx-background-color: purple;
 }
 
-.chart-bar-legend-upload {
+.chart-bar-legend-upload-periodic {
     -fx-stroke: purple;
 }
+
+.chart-bar-download-onRequest {
+    -fx-background-color: cyan;
+}
+
+.chart-bar-legend-download-onRequest {
+    -fx-stroke: cyan;
+}
+
+.chart-bar-upload-onRequest {
+    -fx-background-color: magenta;
+}
+
+.chart-bar-legend-upload-onRequest {
+    -fx-stroke: magenta;
+}
+
+// Live speed tests
 
 .chart-line-symbol-download {
     -fx-background-insets: 0 5 ;
