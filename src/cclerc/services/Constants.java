@@ -1,11 +1,9 @@
 package cclerc.services;
 
-import cclerc.cat.Cat;
 import javafx.scene.image.Image;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
-import java.util.prefs.Preferences;
 
 public class Constants {
 
@@ -135,6 +133,7 @@ public class Constants {
     public static final String SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE = "speedTest.emailReportEnabled";
     public static final String SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE = "speedTest.emailReportPeriod";
     public static final String SPEED_TEST_UPLOAD_FILE_SIZE_PREFERENCE = "speedTest.uploadFileSize";
+    public static final String SPEED_TEST_DISPLAY_UNIT_PREFERENCE = "speedTest.displayUnit";
 
     public static final Integer DEFAULT_SPEED_TEST_SOCKET_TIMEOUT = 10000;
     public static final Long DEFAULT_SPEED_TEST_DOWNLOAD_SETUP_TIME = 100L;
@@ -147,6 +146,12 @@ public class Constants {
     public static final Boolean DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED = false;
     public static final Integer DEFAULT_SPEED_TEST_EMAIL_PERIOD = 1;
     public static final Integer DEFAULT_SPEED_TEST_UPLOAD_FILE_SIZE = 100000000;
+    public static final Long Kbs = 1024L;
+    public static final Long Mbs = 1024 * 1024L;
+    public static final Long KBs = 8 * Kbs;
+    public static final Long MBs = 8 * Mbs;
+    public static final Long DEFAULT_SPEED_TEST_DISPLAY_UNIT = Mbs;
+
 
     public static final String GEO_LOC_DATABASE = "GeoLite2-City.mmdb";
 

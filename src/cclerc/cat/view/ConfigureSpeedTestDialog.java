@@ -14,6 +14,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -64,6 +65,10 @@ public class ConfigureSpeedTestDialog {
     @FXML Button refreshButton;
     @FXML Button saveButton;
     @FXML Button closeButton;
+    @FXML RadioButton KbsRadioButton;
+    @FXML RadioButton MbsRadioButton;
+    @FXML RadioButton KBsRadioButton;
+    @FXML RadioButton MBsRadioButton;
     @FXML TextField socketTimeoutTextField;
     @FXML TextField downloadSetupTimeTextField;
     @FXML TextField uploadSetupTimeTextField;
@@ -656,6 +661,46 @@ public class ConfigureSpeedTestDialog {
     // FXML
 
     /**
+     * Set displayed unit to Kbs
+     */
+    @FXML private void setUnitToKbs() {
+        KBsRadioButton.setSelected(false);
+        MbsRadioButton.setSelected(false);
+        MBsRadioButton.setSelected(false);
+        checkChanges();
+    }
+
+    /**
+     * Set displayed unit to Mbs
+     */
+    @FXML private void setUnitToMbs() {
+        KbsRadioButton.setSelected(false);
+        KBsRadioButton.setSelected(false);
+        MBsRadioButton.setSelected(false);
+        checkChanges();
+    }
+
+    /**
+     * Set displayed unit to KBs
+     */
+    @FXML private void setUnitToKBs() {
+        KbsRadioButton.setSelected(false);
+        MbsRadioButton.setSelected(false);
+        MBsRadioButton.setSelected(false);
+        checkChanges();
+    }
+
+    /**
+     * Set displayed unit to MBs
+     */
+    @FXML private void setUnitToMBs() {
+        KbsRadioButton.setSelected(false);
+        KBsRadioButton.setSelected(false);
+        MbsRadioButton.setSelected(false);
+        checkChanges();
+    }
+
+    /**
      * Cancels changes if confirmed and closes dialog box
      */
     @FXML private void close() {
@@ -701,6 +746,12 @@ public class ConfigureSpeedTestDialog {
         Preferences.getInstance().saveValue(Constants.SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE, periodicTestOffsetTextField.getText());
         Preferences.getInstance().saveValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, periodicTestEmailEnabledCheckBox.isSelected());
         Preferences.getInstance().saveValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, periodicTestEmailPeriodTextField.getText());
+        Long lDisplayedUnit;
+        if (KbsRadioButton.isSelected()) lDisplayedUnit = Constants.Kbs;
+        else if (MbsRadioButton.isSelected()) lDisplayedUnit = Constants.Mbs;
+        else if (KBsRadioButton.isSelected()) lDisplayedUnit = Constants.KBs;
+        else lDisplayedUnit = Constants.MBs;
+        Preferences.getInstance().saveValue(Constants.SPEED_TEST_DISPLAY_UNIT_PREFERENCE, lDisplayedUnit);
 
         setStyles();
 
@@ -716,6 +767,7 @@ public class ConfigureSpeedTestDialog {
      * Checks if configuration has changed
      */
     private void checkChanges() {
+        Long lDisplayedUnit = Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DISPLAY_UNIT_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT);
         if (erroredFields.size() == 0 &&
                 serversTableView.getSelectionModel().getSelectedItem() != null &&
                 serversTableView.getSelectionModel().getSelectedItem().getName().equals(Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE)) &&
@@ -740,7 +792,9 @@ public class ConfigureSpeedTestDialog {
                 periodicTestEmailEnabledCheckBox.isSelected() ==
                         Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED) &&
                 Integer.valueOf(periodicTestEmailPeriodTextField.getText()).equals(
-                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD))
+                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD)) &&
+                ((lDisplayedUnit.equals(Constants.Kbs) && KbsRadioButton.isSelected()) || (lDisplayedUnit.equals(Constants.Mbs) && MbsRadioButton.isSelected()) ||
+                 (lDisplayedUnit.equals(Constants.KBs) && KBsRadioButton.isSelected()) || (lDisplayedUnit.equals(Constants.MBs) && MBsRadioButton.isSelected()))
                 ) {
             hasConfigurationChanged = false;
             saveButton.setDisable(true);
@@ -762,6 +816,12 @@ public class ConfigureSpeedTestDialog {
         serverCountryFilterChoiceBox.getSelectionModel().select(Preferences.getInstance().getValue(Constants.SPEED_TEST_COUNTRY_FILTER_PREFERENCE, ""));
         serverCityFilterTextField.setText(Preferences.getInstance().getValue(Constants.SPEED_TEST_CITY_FILTER_PREFERENCE, ""));
         serverDistanceFilterTextField.setText(Preferences.getInstance().getValue(Constants.SPEED_TEST_DISTANCE_FILTER_PREFERENCE, ""));
+
+        Long lDisplayedUnit = Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DISPLAY_UNIT_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT);
+        if (lDisplayedUnit.equals(Constants.Kbs)) KbsRadioButton.setSelected(true);
+        else if (lDisplayedUnit.equals(Constants.Mbs)) MbsRadioButton.setSelected(true);
+        else if (lDisplayedUnit.equals(Constants.KBs)) KBsRadioButton.setSelected(true);
+        else MBsRadioButton.setSelected(true);
 
         // Select it in the table view if it exists
         for (SpeedTestServer lSpeedTestServer: sortedSpeedTestServers) {

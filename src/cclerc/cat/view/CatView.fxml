@@ -470,9 +470,9 @@
                                           <Insets left="10.0" right="10.0" />
                                        </VBox.margin>
                                     </GridPane>
-                                    <ScrollPane fx:id="speedTestScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="100.0" VBox.vgrow="ALWAYS">
+                                    <ScrollPane fx:id="speedTestScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                        <content>
-                                          <TextFlow fx:id="speedTestTextFlow" />
+                                          <TextFlow fx:id="speedTestTextFlow" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                                        </content>
                                     </ScrollPane>
                                  </children>

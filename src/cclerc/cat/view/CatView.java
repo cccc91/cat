@@ -11,15 +11,20 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.geometry.Side;
+import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -29,6 +34,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.util.Callback;
@@ -273,12 +279,14 @@ public class CatView {
     class SpeedTestPoint {
 
         private long x;
+        private long y;
         private String category;
         private XYChart.Data point;
         private EnumTypes.SpeedTestType type;
 
         SpeedTestPoint(long aInX, long aInY, EnumTypes.SpeedTestType aInType) {
             x = aInX;
+            y = aInY;
             category = (LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(aInX).replaceAll("\\d{4} ", "\\\n"));
             point = new XYChart.Data(category, aInY);
             type = aInType;
@@ -290,6 +298,14 @@ public class CatView {
 
         public long getX() {
             return x;
+        }
+
+        public long getY() {
+            return y;
+        }
+
+        public String getCategory() {
+            return category;
         }
 
         public EnumTypes.SpeedTestType getType() {
@@ -709,7 +725,7 @@ public class CatView {
 
         } else {
             // Stops current speed test (only one is potentially on-going, nothing is done if trying to stop a not on-going test)
-            speedTest.stop();
+            if (speedTest != null) speedTest.stop();
             if (GlobalMonitoring.getSpeedTest() != null) GlobalMonitoring.getSpeedTest().stop();
         }
     }
@@ -2277,9 +2293,14 @@ public class CatView {
         }
 
         // Build the series
+        Set<String> lCategories = new LinkedHashSet<>();
         lSpeedTestBar.getSeries().getData().clear();
         if (isSpeedTestBarDisplayedAllowed(lSpeedTestBar) && speedTestManageCheckBox.isSelected()) {
 
+            // Compute scale
+            Long lRatio = Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DISPLAY_UNIT_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT);
+
+            long lMaxY = 0;
             for (int lIndex = 0; lIndex < lSpeedTestPoints.size(); lIndex++) {
 
                 SpeedTestPoint lSpeedTestPoint = lSpeedTestPoints.get(lIndex);
@@ -2289,13 +2310,21 @@ public class CatView {
 
                 if (lSpeedTestPoint.getPoint().getNode() != null) lSpeedTestPoint.getPoint().getNode().getStyleClass().clear();
                 if ((lSpeedTestPoint.getX() >= speedTestBarsMinTime) && (lSpeedTestPoint.getX() <= speedTestBarsMaxTime)) {
+                    lSpeedTestPoint.getPoint().setYValue(lSpeedTestPoint.getY() / lRatio);
                     lSpeedTestBar.getSeries().getData().add(lSpeedTestPoint.getPoint());
-                   lSpeedTestPoint.getPoint().getNode().getStyleClass().add(lSymbolStyle);
+                    lCategories.add(lSpeedTestPoint.getCategory());
+                    lSpeedTestPoint.getPoint().getNode().getStyleClass().add(lSymbolStyle);
+                    if (lSpeedTestPoint.getY() > lMaxY) lMaxY = lSpeedTestPoint.getY();
                 } else {
                     lSpeedTestPoint.getPoint().setNode(null);
                 }
 
             }
+            speedTestBarChartYAxis.setTickUnit(lMaxY / 5);
+            // Order categories
+            final ObservableList<String> c = FXCollections.observableArrayList(lCategories);
+            Collections.sort(c);
+            speedTestBarChartXAxis.setCategories(c);
 
             if (lSpeedTestBar.getSeries().getData().size() -1 > 0) {
 
@@ -2635,10 +2664,12 @@ public class CatView {
             // Add the new point to set of points
             speedTestPoints.get(lKey).add(new SpeedTestPoint(aInX, aInY, aInType));
 
+            // Sort speedTestPoints by date
+            speedTestPoints.get(lKey).sort(Comparator.comparing(SpeedTestPoint::getX));
+
             // Remove oldest points from the set of points and the series
             for (int lIndex = 0; lIndex < speedTestPoints.get(lKey).size(); lIndex++) {
                 SpeedTestPoint lPingSpeedTestPoint = speedTestPoints.get(lKey).get(lIndex);
-                XYChart.Data lPoint = lPingSpeedTestPoint.getPoint();
                 if (aInX - lPingSpeedTestPoint.getX() > MAX_STORED_SPEED_TEST_DURATION) {
                     speedTestPoints.get(lKey).remove(lPingSpeedTestPoint);
                 } else break;
@@ -2770,6 +2801,7 @@ public class CatView {
         if (speedTestUploadUrl != null) speedTestDownloadUrl = speedTestUploadUrl.replaceAll("upload.php", "random4000x4000.jpg");
         setSpeedTestServer();
         speedTestStartStopButton.setDisable(false);
+        refreshAllSpeedTestSeries();
     }
 
     /**

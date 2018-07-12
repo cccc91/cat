@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -111,6 +112,7 @@
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -125,38 +127,47 @@
                         <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.socketTimeout" GridPane.rowIndex="1" />
-                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.downloadSetupTime" GridPane.rowIndex="2" />
-                        <TextField fx:id="socketTimeoutTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <TextField fx:id="downloadSetupTimeTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <TextField fx:id="uploadSetupTimeTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.uploadSetupTime" GridPane.rowIndex="3" />
-                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.uploadFileSize" GridPane.rowIndex="4" />
-                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.repeatDuration" GridPane.rowIndex="5" />
-                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.reportInterval" GridPane.rowIndex="6" />
-                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.periodicTest.enabled" GridPane.rowIndex="8" />
-                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.periodicTest.period" GridPane.rowIndex="9" />
-                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.periodicTest.offset" GridPane.rowIndex="10" />
-                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.periodicTest.email.enabled" GridPane.rowIndex="11" />
-                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.periodicTest.email.period" GridPane.rowIndex="12" />
+                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.socketTimeout" GridPane.rowIndex="2" />
+                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.downloadSetupTime" GridPane.rowIndex="3" />
+                        <TextField fx:id="socketTimeoutTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <TextField fx:id="downloadSetupTimeTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <TextField fx:id="uploadSetupTimeTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.uploadSetupTime" GridPane.rowIndex="4" />
+                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.uploadFileSize" GridPane.rowIndex="5" />
+                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.repeatDuration" GridPane.rowIndex="6" />
+                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.reportInterval" GridPane.rowIndex="7" />
+                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.periodicTest.enabled" GridPane.rowIndex="9" />
+                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.periodicTest.period" GridPane.rowIndex="10" />
+                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.periodicTest.offset" GridPane.rowIndex="11" />
+                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.periodicTest.email.enabled" GridPane.rowIndex="12" />
+                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.periodicTest.email.period" GridPane.rowIndex="13" />
                         <HBox alignment="CENTER_LEFT">
                            <children>
                               <Label styleClass="attributeValueMain" text="%configureSpeedTestDialog.speedTest" />
                            </children>
                         </HBox>
-                        <HBox alignment="CENTER_LEFT" GridPane.rowIndex="7">
+                        <HBox alignment="CENTER_LEFT" GridPane.rowIndex="8">
                            <children>
                               <Label styleClass="attributeValueMain" text="%configureSpeedTestDialog.periodicTest" />
                            </children>
                         </HBox>
-                        <TextField fx:id="uploadFileSizeTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <TextField fx:id="repeatDurationTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                        <TextField fx:id="reportIntervalTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                        <TextField fx:id="periodicTestPeriodTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                        <TextField fx:id="periodicTestOffsetTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                        <TextField fx:id="periodicTestEmailPeriodTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-                        <CheckBox fx:id="periodicTestEnabledCheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                        <CheckBox fx:id="periodicTestEmailEnabledCheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                        <TextField fx:id="uploadFileSizeTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <TextField fx:id="repeatDurationTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <TextField fx:id="reportIntervalTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                        <TextField fx:id="periodicTestPeriodTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                        <TextField fx:id="periodicTestOffsetTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                        <TextField fx:id="periodicTestEmailPeriodTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                        <CheckBox fx:id="periodicTestEnabledCheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                        <CheckBox fx:id="periodicTestEmailEnabledCheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.displayedUnit" GridPane.rowIndex="1" />
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <RadioButton fx:id="KbsRadioButton" mnemonicParsing="false" onAction="#setUnitToKbs" text="%bitRate.1" />
+                              <RadioButton fx:id="MbsRadioButton" mnemonicParsing="false" onAction="#setUnitToMbs" text="%bitRate.2" />
+                              <RadioButton fx:id="KBsRadioButton" mnemonicParsing="false" onAction="#setUnitToKBs" text="%octetRate.1" />
+                              <RadioButton fx:id="MBsRadioButton" mnemonicParsing="false" onAction="#setUnitToMBs" text="%octetRate.2" />
+                           </children>
+                        </HBox>
                      </children>
                      <BorderPane.margin>
                         <Insets left="50.0" right="50.0" />

@@ -27,6 +27,6 @@ public interface SpeedTestInterface {
     // Invoked when an error occurs - After an error, speed test is no more usable and needs to be re-instantiated
     public void reportError(EnumTypes.SpeedTestMode aInTransferMode, SpeedTestError aInSpeedTestError, String aInErrorMessage);
     // Invoked when download or upload finishes, after reportResult and before reportStopTest
-    public void storeResult(EnumTypes.SpeedTestMode aInSpeedTestMode, long aInStartTime, SpeedTestReport report);
+    public void storeResult(EnumTypes.SpeedTestMode aInSpeedTestMode, long aInStartTime, BigDecimal aInBitRate, BigDecimal aInOctetRate);
 
 }

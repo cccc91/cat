@@ -153,9 +153,8 @@ public class SpeedTestFactory {
             }
 
             @Override
-            public void storeResult(EnumTypes.SpeedTestMode aInSpeedTestMode, long aInStartTime, SpeedTestReport report) {
-                Cat.getInstance().getController().addSpeedTestSeriesData(aInSpeedTestMode, aInStartTime, report.getTransferRateOctet().intValue(), aInType);
-                // TODO
+            public void storeResult(EnumTypes.SpeedTestMode aInSpeedTestMode, long aInStartTime, BigDecimal aInBitRate, BigDecimal aInOctetRate) {
+                Cat.getInstance().getController().addSpeedTestSeriesData(aInSpeedTestMode, aInStartTime, aInBitRate.intValue(), aInType);
             }
 
         },  (Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkConfiguration(EnumTypes.AddressType.WAN) == null) ? true :

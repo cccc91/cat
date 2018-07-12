@@ -133,7 +133,7 @@ public class SpeedTest {
         Map<Integer, BigDecimal> lOctetRate = convertToBestUnit(octetRate);
         bitRates.add(lBitRate); octetRates.add(lOctetRate);
         speedTestInterface.reportResult(convertSpeedTestMode(aInReport.getSpeedTestMode()), lBitRate, lOctetRate);
-        speedTestInterface.storeResult(convertSpeedTestMode(aInReport.getSpeedTestMode()), startTime, aInReport);
+        speedTestInterface.storeResult(convertSpeedTestMode(aInReport.getSpeedTestMode()), startTime, bitRate, octetRate);
         testRunning = false;
 
     }
