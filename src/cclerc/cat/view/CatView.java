@@ -324,7 +324,7 @@ public class CatView {
     private Double speedTestBarsXMoveRatio = 0d;
     private Double speedTestBarsXZoomRatio = 1d;
     private Double speedTestBarsYZoomRatio = 1d;
-    private long speedTestBarsDuration = MAX_DISPLAYED_PING_DURATION;
+    private long speedTestBarsDuration = MAX_DISPLAYED_SPEED_TEST_DURATION;
     private long speedTestBarsMinTime = 0L;
     private long speedTestBarsMaxTime = MAX_DISPLAYED_PING_DURATION;
 
