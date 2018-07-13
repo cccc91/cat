@@ -51,6 +51,15 @@ public class SpeedTestFactory {
             }
 
             @Override
+            public void reportStartTransfer(EnumTypes.SpeedTestMode aInTransferMode) {
+                if (Cat.getInstance().displayGraphicalInterface()) {
+                    Platform.runLater(() -> {
+                        Cat.getInstance().getController().setLiveSpeedTestStyle(aInTransferMode, aInType);
+                    });
+                }
+            }
+
+            @Override
             public void reportStopTest() {
                 Cat.getInstance().getController().switchStopStartSpeedTestButton();
                 Cat.getInstance().getController().printSpeedTest(
@@ -95,7 +104,7 @@ public class SpeedTestFactory {
                             Cat.getInstance().getController().getLiveSpeedTestDownloadSeries().getData().add(lPoint);
                         else
                             Cat.getInstance().getController().getLiveSpeedTestUploadSeries().getData().add(lPoint);
-                        lPoint.getNode().getStyleClass().add("chart-line-symbol-" + EnumTypes.SpeedTestMode.valueOf(aInTransferMode));
+                        lPoint.getNode().getStyleClass().add("chart-line-symbol-" + EnumTypes.SpeedTestMode.valueOf(aInTransferMode) + "-" + EnumTypes.SpeedTestType.valueOf(aInType));
                     });
                 }
 
@@ -122,7 +131,7 @@ public class SpeedTestFactory {
                             Cat.getInstance().getController().getLiveSpeedTestDownloadSeries().getData().add(lPoint);
                         else
                             Cat.getInstance().getController().getLiveSpeedTestUploadSeries().getData().add(lPoint);
-                        lPoint.getNode().getStyleClass().add("chart-line-symbol-" + EnumTypes.SpeedTestMode.valueOf(aInTransferMode));
+                        lPoint.getNode().getStyleClass().add("chart-line-symbol-" + EnumTypes.SpeedTestMode.valueOf(aInTransferMode) + "-" + EnumTypes.SpeedTestType.valueOf(aInType));
                     });
                 }
 

@@ -628,7 +628,6 @@ public class CatView {
         liveSpeedTestChartYAxis.setMinorTickVisible(false);
         liveSpeedTestChart.getData().add(liveSpeedTestDownloadSeries);
         liveSpeedTestChart.getData().add(liveSpeedTestUploadSeries);
-        liveSpeedTestDownloadSeries.getNode().getStyleClass().add("chart-download");
         liveSpeedTestDownloadSeries.setName(Display.getViewResourceBundle().getString("speedtest.mode.download"));
         liveSpeedTestUploadSeries.getNode().getStyleClass().add("chart-upload");
         liveSpeedTestUploadSeries.setName(Display.getViewResourceBundle().getString("speedtest.mode.upload"));
@@ -2831,6 +2830,23 @@ public class CatView {
             }
             speedTestStartState = !speedTestStartState;
         });
+    }
+
+    public void setLiveSpeedTestStyle(EnumTypes.SpeedTestMode aInMode, EnumTypes.SpeedTestType aInType) {
+        XYChart.Series<Number, Number> lLiveSpeedTestSeries;
+        if (aInMode == EnumTypes.SpeedTestMode.DOWNLOAD) {
+            lLiveSpeedTestSeries = liveSpeedTestDownloadSeries;
+        } else {
+            lLiveSpeedTestSeries = liveSpeedTestUploadSeries;
+        }
+        String lStyle = "chart-" + EnumTypes.SpeedTestMode.valueOf(aInMode) + "-" + EnumTypes.SpeedTestType.valueOf(aInType);
+        for (String lStyleClass: lLiveSpeedTestSeries.getNode().getStyleClass()) {
+            if (lStyleClass.contains("chart-" + EnumTypes.SpeedTestMode.valueOf(aInMode))) {
+                lLiveSpeedTestSeries.getNode().getStyleClass().remove(lStyleClass);
+                break;
+            }
+        }
+        lLiveSpeedTestSeries.getNode().getStyleClass().add(lStyle);
     }
 
 }

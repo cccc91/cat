@@ -169,6 +169,7 @@ public class SpeedTest {
 
         // Start download
         bitRate = BigDecimal.ZERO; octetRate = BigDecimal.ZERO; count = 0;
+        speedTestInterface.reportStartTransfer(EnumTypes.SpeedTestMode.DOWNLOAD);
         speedTestSocket.startDownloadRepeat(
                 aInDownloadUrl,
                 Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPEAT_DURATION_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPEAT_DURATION),
@@ -186,6 +187,7 @@ public class SpeedTest {
                         processCompletionReport(aInReport);
 
                         // Start upload
+                        speedTestInterface.reportStartTransfer(EnumTypes.SpeedTestMode.UPLOAD);
                         bitRate = BigDecimal.ZERO; octetRate = BigDecimal.ZERO; count = 0;
                         testRunning = true;
 

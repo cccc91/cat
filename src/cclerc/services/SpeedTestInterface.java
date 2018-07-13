@@ -18,6 +18,8 @@ public interface SpeedTestInterface {
     public void reportStopTest();
     // Invoked when speed test is interrupted by user - After an interruption, speed test is no more usable and needs to be re-instantiated
     public void reportInterruption();
+    // Invoked when starting download and when starting upload
+    public void reportStartTransfer(EnumTypes.SpeedTestMode aInTransferMode);
     // Invoked when download or upload progress is reported (but not on completion)
     public void reportProgress(EnumTypes.SpeedTestMode aInTransferMode, float aInProgress, Map<Integer, BigDecimal> aInBitRate, Map<Integer, BigDecimal> aInOctetRate);
     // Invoked when download or upload finishes

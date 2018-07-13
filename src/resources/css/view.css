@@ -565,12 +565,22 @@
 
 // Live speed tests
 
-.chart-line-symbol-download {
+.chart-line-symbol-download-onRequest {
+    -fx-background-insets: 0 5 ;
+    -fx-background-color: cyan;
+}
+
+.chart-line-symbol-download-periodic {
     -fx-background-insets: 0 5 ;
     -fx-background-color: blue;
 }
 
-.chart-download {
+.chart-download-onRequest {
+    -fx-stroke: cyan;
+    -fx-stroke-width: 2px
+}
+
+.chart-download-periodic {
     -fx-stroke: blue;
     -fx-stroke-width: 2px
 }
@@ -579,12 +589,22 @@
     -fx-background-color: blue;
 }
 
-.chart-line-symbol-upload {
+.chart-line-symbol-upload-onRequest {
+    -fx-background-insets: 0 5;
+    -fx-background-color: magenta;
+}
+
+.chart-line-symbol-upload-periodic {
     -fx-background-insets: 0 5;
     -fx-background-color: purple;
 }
 
-.chart-upload {
+.chart-upload-onRequest {
+    -fx-stroke: magenta;
+    -fx-stroke-width: 2px
+}
+
+.chart-upload-periodic {
     -fx-stroke: purple;
     -fx-stroke-width: 2px
 }
