@@ -29,6 +29,7 @@ public class SpeedTest {
     private List<Map<Integer, BigDecimal>> octetRates = new ArrayList<>();
     private int count = 0;
     private long startTime;
+    private SpeedTestMode mode;
 
     /**
      * Speed test constructor
@@ -65,12 +66,13 @@ public class SpeedTest {
 
             @Override
             public void onError(SpeedTestError aInSpeedTestError, String aInErrorMessage) {
-                if (!interrupted) {
-                    aInSpeedTestInterface.reportError(convertSpeedTestMode(speedTestSocket.getSpeedTestMode()), aInSpeedTestError, aInErrorMessage);
+                if (!interrupted && testRunning) {
                     testRunning = false;
                     speedTestSocket.forceStopTask();
                     speedTestSocket.closeSocket();
+                    aInSpeedTestInterface.reportError(convertSpeedTestMode(speedTestSocket.getSpeedTestMode()), aInSpeedTestError, aInErrorMessage);
                     speedTestInterface.reportStopTest();
+                    speedTestInterface.storeResult(convertSpeedTestMode(mode), startTime, BigDecimal.ZERO, BigDecimal.ZERO);
                 }
             }
 
@@ -111,12 +113,14 @@ public class SpeedTest {
      */
     private void processProgressReport(SpeedTestReport aInReport) {
 
-        Map<Integer, BigDecimal> lBitRate = convertToBestUnit(aInReport.getTransferRateBit());
-        Map<Integer, BigDecimal> lOctetRate = convertToBestUnit(aInReport.getTransferRateOctet());
-        count++;
-        bitRate = bitRate.add(aInReport.getTransferRateBit());
-        octetRate = octetRate.add(aInReport.getTransferRateOctet());
-        speedTestInterface.reportProgress(convertSpeedTestMode(aInReport.getSpeedTestMode()), aInReport.getProgressPercent(), lBitRate, lOctetRate);
+        if (testRunning) {
+            Map<Integer, BigDecimal> lBitRate = convertToBestUnit(aInReport.getTransferRateBit());
+            Map<Integer, BigDecimal> lOctetRate = convertToBestUnit(aInReport.getTransferRateOctet());
+            count++;
+            bitRate = bitRate.add(aInReport.getTransferRateBit());
+            octetRate = octetRate.add(aInReport.getTransferRateOctet());
+            speedTestInterface.reportProgress(convertSpeedTestMode(aInReport.getSpeedTestMode()), aInReport.getProgressPercent(), lBitRate, lOctetRate);
+        }
 
     }
 
@@ -126,15 +130,18 @@ public class SpeedTest {
      */
     private void processCompletionReport(SpeedTestReport aInReport) {
 
-        count++;
-        bitRate = bitRate.add(aInReport.getTransferRateBit()).divide(new BigDecimal(count), 2);
-        octetRate = octetRate.add(aInReport.getTransferRateOctet()).divide(new BigDecimal(count), 2);
-        Map<Integer, BigDecimal> lBitRate = convertToBestUnit(bitRate);
-        Map<Integer, BigDecimal> lOctetRate = convertToBestUnit(octetRate);
-        bitRates.add(lBitRate); octetRates.add(lOctetRate);
-        speedTestInterface.reportResult(convertSpeedTestMode(aInReport.getSpeedTestMode()), lBitRate, lOctetRate);
-        speedTestInterface.storeResult(convertSpeedTestMode(aInReport.getSpeedTestMode()), startTime, bitRate, octetRate);
-        testRunning = false;
+        if (testRunning) {
+            count++;
+            bitRate = bitRate.add(aInReport.getTransferRateBit()).divide(new BigDecimal(count), 2);
+            octetRate = octetRate.add(aInReport.getTransferRateOctet()).divide(new BigDecimal(count), 2);
+            Map<Integer, BigDecimal> lBitRate = convertToBestUnit(bitRate);
+            Map<Integer, BigDecimal> lOctetRate = convertToBestUnit(octetRate);
+            bitRates.add(lBitRate);
+            octetRates.add(lOctetRate);
+            speedTestInterface.reportResult(convertSpeedTestMode(aInReport.getSpeedTestMode()), lBitRate, lOctetRate);
+            speedTestInterface.storeResult(convertSpeedTestMode(aInReport.getSpeedTestMode()), startTime, bitRate, octetRate);
+            testRunning = false;
+        }
 
     }
 
@@ -169,6 +176,7 @@ public class SpeedTest {
 
         // Start download
         bitRate = BigDecimal.ZERO; octetRate = BigDecimal.ZERO; count = 0;
+        mode = SpeedTestMode.DOWNLOAD;
         speedTestInterface.reportStartTransfer(EnumTypes.SpeedTestMode.DOWNLOAD);
         speedTestSocket.startDownloadRepeat(
                 aInDownloadUrl,
@@ -187,6 +195,7 @@ public class SpeedTest {
                         processCompletionReport(aInReport);
 
                         // Start upload
+                        mode = SpeedTestMode.UPLOAD;
                         speedTestInterface.reportStartTransfer(EnumTypes.SpeedTestMode.UPLOAD);
                         bitRate = BigDecimal.ZERO; octetRate = BigDecimal.ZERO; count = 0;
                         testRunning = true;
@@ -227,6 +236,7 @@ public class SpeedTest {
             speedTestSocket.closeSocket(); // Socket needs to be closed otherwise transfer goes on forever although no callback is no more called
             speedTestInterface.reportInterruption();
             testRunning = false;
+            speedTestInterface.storeResult(convertSpeedTestMode(mode), startTime, BigDecimal.ZERO, BigDecimal.ZERO);
         }
     }
 

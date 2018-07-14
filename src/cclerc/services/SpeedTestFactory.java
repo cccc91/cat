@@ -51,22 +51,22 @@ public class SpeedTestFactory {
             }
 
             @Override
+            public void reportStopTest() {
+                    Cat.getInstance().getController().switchStopStartSpeedTestButton();
+                Cat.getInstance().getController().printSpeedTest(
+                        new Message(
+                                String.format(Display.getViewResourceBundle().getString("speedTest.end"),
+                                              Display.getViewResourceBundle().getString("speedtest.type." + EnumTypes.SpeedTestType.valueOf(aInType)).toUpperCase()),
+                                EnumTypes.MessageLevel.INFO));
+            }
+
+            @Override
             public void reportStartTransfer(EnumTypes.SpeedTestMode aInTransferMode) {
                 if (Cat.getInstance().displayGraphicalInterface()) {
                     Platform.runLater(() -> {
                         Cat.getInstance().getController().setLiveSpeedTestStyle(aInTransferMode, aInType);
                     });
                 }
-            }
-
-            @Override
-            public void reportStopTest() {
-                Cat.getInstance().getController().switchStopStartSpeedTestButton();
-                Cat.getInstance().getController().printSpeedTest(
-                        new Message(
-                                String.format(Display.getViewResourceBundle().getString("speedTest.end"),
-                                              Display.getViewResourceBundle().getString("speedtest.type." + EnumTypes.SpeedTestType.valueOf(aInType)).toUpperCase()),
-                                EnumTypes.MessageLevel.INFO));
             }
 
             @Override
@@ -153,12 +153,15 @@ public class SpeedTestFactory {
 
             @Override
             public void reportError(EnumTypes.SpeedTestMode aInTransferMode, SpeedTestError aInSpeedTestError, String aInErrorMessage) {
+
                 Message lMessage = new Message(String.format(Display.getViewResourceBundle().getString("speedTest.error"),
                                                              Display.getViewResourceBundle().getString("speedtest.type." + EnumTypes.SpeedTestType.valueOf(aInType)),
                                                              Display.getViewResourceBundle().getString("speedtest.mode." + EnumTypes.SpeedTestMode.valueOf(aInTransferMode)),
                                                              aInSpeedTestError + " - " + aInErrorMessage), EnumTypes.MessageLevel.ERROR);
                 Cat.getInstance().getController().printConsole(lMessage);
                 Cat.getInstance().getController().printSpeedTest(lMessage);
+
+
             }
 
             @Override

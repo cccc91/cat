@@ -286,7 +286,7 @@ public class GlobalMonitoring {
                     nextSpeedTestExecutionTime = Utilities.nextExecutionTime(nextSpeedTestExecutionTime, speedTestPeriod, speedTestOffset);
                     if ((Cat.getInstance().getController().getSpeedTest() != null && Cat.getInstance().getController().getSpeedTest().isTestRunning()) ||
                         (speedTest != null && speedTest.isTestRunning())) {
-                        Cat.getInstance().getController().printSpeedTest(
+                        Cat.getInstance().getController().printConsole(
                                 new Message(String.format(
                                         Display.getViewResourceBundle().getString("speedTest.running"),
                                         LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(new Date(nextSpeedTestExecutionTime))), EnumTypes.MessageLevel.WARNING));

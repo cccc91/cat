@@ -326,7 +326,7 @@ public class CatView {
     private Double speedTestBarsYZoomRatio = 1d;
     private long speedTestBarsDuration = MAX_DISPLAYED_SPEED_TEST_DURATION;
     private long speedTestBarsMinTime = 0L;
-    private long speedTestBarsMaxTime = MAX_DISPLAYED_PING_DURATION;
+    private long speedTestBarsMaxTime = MAX_DISPLAYED_SPEED_TEST_DURATION;
 
     // Speed test live line chart
     private NumberAxis liveSpeedTestChartXAxis = new NumberAxis();
@@ -629,14 +629,13 @@ public class CatView {
         liveSpeedTestChart.getData().add(liveSpeedTestDownloadSeries);
         liveSpeedTestChart.getData().add(liveSpeedTestUploadSeries);
         liveSpeedTestDownloadSeries.setName(Display.getViewResourceBundle().getString("speedtest.mode.download"));
-        liveSpeedTestUploadSeries.getNode().getStyleClass().add("chart-upload");
         liveSpeedTestUploadSeries.setName(Display.getViewResourceBundle().getString("speedtest.mode.upload"));
 
         for (Node lNode : liveSpeedTestChart.getChildrenUnmodifiable()) {
             if (lNode instanceof Legend) {
                 int i = 0;
                 for (Legend.LegendItem lLegendItem: ((Legend) lNode).getItems()) {
-                    lLegendItem.getSymbol().getStyleClass().add("chart-legend-speedtest-" + i++);
+                    lLegendItem.getSymbol().getStyleClass().add("chart-legend-speedtest-periodic-" + i++);
                 }
             }
         }
@@ -2114,7 +2113,7 @@ public class CatView {
         networkInterfacesNames.add(aInPriority - 1, aInInterfaceName);
     }
 
-    // PINGS CHARTS
+    // CHARTS
 
     /**
      * Creates a new line in the ping line chart
@@ -2506,7 +2505,7 @@ public class CatView {
         }
 
         // Recompute duration to be displayed
-        speedTestBarsDuration = Math.max(MIN_DISPLAYED_SPEED_TEST_DURATION, Math.round((lMaxX - lMinX) * speedTestBarsXZoomRatio));
+        speedTestBarsDuration = Math.max(MIN_DISPLAYED_SPEED_TEST_DURATION, Math.round(MAX_DISPLAYED_SPEED_TEST_DURATION * speedTestBarsXZoomRatio));
 
         speedTestBarsMaxTime = lMaxX - Math.round((lMaxX - lMinX) * speedTestBarsXMoveRatio);
         speedTestBarsMinTime = Math.max(0, speedTestBarsMaxTime - speedTestBarsDuration);
@@ -2847,6 +2846,23 @@ public class CatView {
             }
         }
         lLiveSpeedTestSeries.getNode().getStyleClass().add(lStyle);
+
+        for (Node lNode : liveSpeedTestChart.getChildrenUnmodifiable()) {
+            if (lNode instanceof Legend) {
+                int i = 0;
+                for (Legend.LegendItem lLegendItem: ((Legend) lNode).getItems()) {
+                    for (String lStyleClass: lLegendItem.getSymbol().getStyleClass()) {
+                        if (lStyleClass.contains("chart-legend-speedtest-")) {
+                            lLegendItem.getSymbol().getStyleClass().remove(lStyleClass);
+                            break;
+                        }
+                    }
+                    lLegendItem.getSymbol().getStyleClass().add("chart-legend-speedtest-" + EnumTypes.SpeedTestType.valueOf(aInType) + "-" + i++);
+                }
+            }
+        }
+
+
     }
 
 }

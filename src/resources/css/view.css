@@ -580,12 +580,16 @@
     -fx-stroke-width: 2px
 }
 
+.chart-legend-speedtest-onRequest-0 {
+    -fx-background-color: cyan;
+}
+
 .chart-download-periodic {
     -fx-stroke: blue;
     -fx-stroke-width: 2px
 }
 
-.chart-legend-speedtest-0 {
+.chart-legend-speedtest-periodic-0 {
     -fx-background-color: blue;
 }
 
@@ -604,12 +608,17 @@
     -fx-stroke-width: 2px
 }
 
+.chart-legend-speedtest-onRequest-1 {
+    -fx-background-color: magenta;
+
+}
+
 .chart-upload-periodic {
     -fx-stroke: purple;
     -fx-stroke-width: 2px
 }
 
-.chart-legend-speedtest-1 {
+.chart-legend-speedtest-periodic-1 {
     -fx-background-color: purple;
 
 }
