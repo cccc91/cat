@@ -294,8 +294,7 @@ public class GlobalMonitoring {
 
                 // Run speed test if needed
                 if (speedTestEnabled && speedTestDownloadUrl != null && speedTestUploadUrl != null && lNow >= nextSpeedTestExecutionTime) {
-                    nextSpeedTestExecutionTime = Utilities.nextExecutionTime(
-                            (nextSpeedTestExecutionTime == null || nextSpeedTestExecutionTime > System.currentTimeMillis()) ? null : nextSpeedTestExecutionTime, speedTestPeriod, speedTestOffset);
+                    nextSpeedTestExecutionTime = Utilities.nextExecutionTime(nextSpeedTestExecutionTime, speedTestPeriod, speedTestOffset);
                     if (Cat.getInstance().displayGraphicalInterface()) {
                         Platform.runLater(() -> {
                             Cat.getInstance().getController().setSpeedTestNextPeriodLabel(LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(nextSpeedTestExecutionTime));

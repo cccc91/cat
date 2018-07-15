@@ -156,7 +156,7 @@ public class Constants {
     public static final Long DEFAULT_SPEED_TEST_DISPLAY_UNIT = Mbs;
     public static final String DEFAULT_SPEED_TEST_DISPLAY_UNIT_KEY = "bitRate.2";
     public static final Integer MINUTES = 1;
-    public static final Integer HOURS = 60 * 60;
+    public static final Integer HOURS = 60;
     public static final Integer DAYS = 24 * HOURS;
     public static final Integer DEFAULT_SPEED_TEST_DISPLAY_UNIT_PERIOD = HOURS;
 
