@@ -14,7 +14,6 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -54,10 +53,12 @@ public class ConfigureSpeedTestDialog {
     @FXML TableColumn<SpeedTestServer, String> nameColumn;
     @FXML TableColumn<SpeedTestServer, String> countryColumn;
     @FXML TableColumn<SpeedTestServer, String> cityColumn;
+    @FXML TableColumn<SpeedTestServer, String> sponsorColumn;
     @FXML TableColumn<SpeedTestServer, Double> distanceColumn;
     @FXML Pagination serversPagination;
     @FXML Label serversCountLabel;
     @FXML TextField serverNameFilterTextField;
+    @FXML TextField serverSponsorFilterTextField;
     @FXML ChoiceBox<String> serverCountryFilterChoiceBox;
     @FXML TextField serverCityFilterTextField;
     @FXML TextField serverDistanceFilterTextField;
@@ -139,6 +140,7 @@ public class ConfigureSpeedTestDialog {
      */
     public void clearFilter() {
         serverNameFilterTextField.setText("");
+        serverSponsorFilterTextField.setText("");
         serverCountryFilterChoiceBox.getSelectionModel().select("");
         serverCityFilterTextField.setText("");
         serverDistanceFilterTextField.setText("");
@@ -198,7 +200,8 @@ public class ConfigureSpeedTestDialog {
 
             }
             // Add some servers extra server
-            speedTestServers.add(new SpeedTestServer("intuxication.lafibre.info", "FR", "Vitry-sur-Seine", 14.5d, "http://intuxication.lafibre.info/speedtest/upload.php"));
+            speedTestServers.add(new SpeedTestServer(
+                    "intuxication.lafibre.info", "FR", "Vitry-sur-Seine", "Intuxication", 14.5d, "http://intuxication.lafibre.info/speedtest/upload.php"));
             speedTestServers.sort(Comparator.comparing(SpeedTestServer::getDistance));
 
             serverCountryFilterList.add("");
@@ -226,6 +229,10 @@ public class ConfigureSpeedTestDialog {
         lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.server.name");
         lTooltip = new Tooltip(lTooltipText);
         Tooltip.install(serverNameFilterTextField, lTooltip);
+
+        lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.server.sponsor");
+        lTooltip = new Tooltip(lTooltipText);
+        Tooltip.install(serverSponsorFilterTextField, lTooltip);
 
         lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.server.country");
         lTooltip = new Tooltip(lTooltipText);
@@ -314,6 +321,8 @@ public class ConfigureSpeedTestDialog {
         countryColumn.setCellFactory(column -> stringFormatter());
         cityColumn.setCellValueFactory(cellData -> cellData.getValue().cityProperty());
         cityColumn.setCellFactory(column -> stringFormatter());
+        sponsorColumn.setCellValueFactory(cellData -> cellData.getValue().sponsorProperty());
+        sponsorColumn.setCellFactory(column -> stringFormatter());
         distanceColumn.setCellValueFactory(cellData -> cellData.getValue().distanceProperty().asObject());
         distanceColumn.setCellFactory(column -> doubleFormatter());
         serversPagination.setPageFactory(this::createPage);
@@ -323,6 +332,7 @@ public class ConfigureSpeedTestDialog {
 
         // Set the filter predicate whenever the filters change.
         serverNameFilterTextField.textProperty().addListener(speedTestServersFilterListener(lFilteredSpeedTestServers));
+        serverSponsorFilterTextField.textProperty().addListener(speedTestServersFilterListener(lFilteredSpeedTestServers));
         serverCountryFilterChoiceBox.getSelectionModel().selectedItemProperty().addListener(speedTestServersFilterListener(lFilteredSpeedTestServers));
         serverCityFilterTextField.textProperty().addListener(speedTestServersFilterListener(lFilteredSpeedTestServers));
         serverDistanceFilterTextField.textProperty().addListener(speedTestServersFilterListener(lFilteredSpeedTestServers));
@@ -475,6 +485,8 @@ public class ConfigureSpeedTestDialog {
 
             if (newValue.equals(serverNameFilterTextField.getText()))
                 Preferences.getInstance().saveValue(Constants.SPEED_TEST_NAME_FILTER_PREFERENCE, newValue);
+            if (newValue.equals(serverSponsorFilterTextField.getText()))
+                Preferences.getInstance().saveValue(Constants.SPEED_TEST_SPONSOR_FILTER_PREFERENCE, newValue);
             if (newValue.equals(serverCountryFilterChoiceBox.getSelectionModel().getSelectedItem()))
                 Preferences.getInstance().saveValue(Constants.SPEED_TEST_COUNTRY_FILTER_PREFERENCE, newValue);
             if (newValue.equals(serverCityFilterTextField.getText()))
@@ -487,6 +499,8 @@ public class ConfigureSpeedTestDialog {
                 // If filter text is empty or filter matches the server, display it.
                 if ((serverNameFilterTextField.getText().isEmpty() ||
                      speedTestServer.getName().toLowerCase().contains(serverNameFilterTextField.getText().toLowerCase())) &&
+                    (serverSponsorFilterTextField.getText().isEmpty() ||
+                     speedTestServer.getSponsor().toLowerCase().contains(serverSponsorFilterTextField.getText().toLowerCase())) &&
                     (serverCountryFilterChoiceBox.getSelectionModel().getSelectedItem() == null ||
                      speedTestServer.getCountry().contains(serverCountryFilterChoiceBox.getSelectionModel().getSelectedItem())) &&
                     (serverCityFilterTextField.getText().isEmpty() ||
@@ -746,16 +760,29 @@ public class ConfigureSpeedTestDialog {
         Preferences.getInstance().saveValue(Constants.SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE, periodicTestOffsetTextField.getText());
         Preferences.getInstance().saveValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, periodicTestEmailEnabledCheckBox.isSelected());
         Preferences.getInstance().saveValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, periodicTestEmailPeriodTextField.getText());
-        Long lDisplayedUnit;
-        if (KbsRadioButton.isSelected()) lDisplayedUnit = Constants.Kbs;
-        else if (MbsRadioButton.isSelected()) lDisplayedUnit = Constants.Mbs;
-        else if (KBsRadioButton.isSelected()) lDisplayedUnit = Constants.KBs;
-        else lDisplayedUnit = Constants.MBs;
-        Preferences.getInstance().saveValue(Constants.SPEED_TEST_DISPLAY_UNIT_PREFERENCE, lDisplayedUnit);
+
+        Long lDisplayedUnitRatio; String lDisplayedUnitKey;
+        if (KbsRadioButton.isSelected()) {
+            lDisplayedUnitRatio = Constants.Kbs;
+            lDisplayedUnitKey = "bitRate.1";
+        } else if (MbsRadioButton.isSelected()) {
+            lDisplayedUnitRatio = Constants.Mbs;
+            lDisplayedUnitKey = "bitRate.2";
+        } else if (KBsRadioButton.isSelected()) {
+            lDisplayedUnitRatio = Constants.KBs;
+            lDisplayedUnitKey = "octetRate.1";
+        } else {
+            lDisplayedUnitRatio = Constants.MBs;
+            lDisplayedUnitKey = "octetRate.2";
+        }
+        boolean hasUnitChanged =
+                !Preferences.getInstance().getValue(Constants.SPEED_TEST_DISPLAY_UNIT_KEY_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT_KEY).equals(lDisplayedUnitKey);
+        Preferences.getInstance().saveValue(Constants.SPEED_TEST_DISPLAY_UNIT_RATIO_PREFERENCE, lDisplayedUnitRatio);
+        Preferences.getInstance().saveValue(Constants.SPEED_TEST_DISPLAY_UNIT_KEY_PREFERENCE, lDisplayedUnitKey);
 
         setStyles();
 
-        Cat.getInstance().getController().reloadSpeedTestConfiguration();
+        Cat.getInstance().getController().reloadSpeedTestConfiguration(hasUnitChanged);
         GlobalMonitoring.reloadSpeedTestConfiguration();
 
         hasConfigurationChanged = false;
@@ -767,7 +794,7 @@ public class ConfigureSpeedTestDialog {
      * Checks if configuration has changed
      */
     private void checkChanges() {
-        Long lDisplayedUnit = Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DISPLAY_UNIT_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT);
+        Long lDisplayedUnit = Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DISPLAY_UNIT_RATIO_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT);
         if (erroredFields.size() == 0 &&
                 serversTableView.getSelectionModel().getSelectedItem() != null &&
                 serversTableView.getSelectionModel().getSelectedItem().getName().equals(Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE)) &&
@@ -813,11 +840,12 @@ public class ConfigureSpeedTestDialog {
         String lCurrentUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE);
 
         serverNameFilterTextField.setText(Preferences.getInstance().getValue(Constants.SPEED_TEST_NAME_FILTER_PREFERENCE, ""));
+        serverSponsorFilterTextField.setText(Preferences.getInstance().getValue(Constants.SPEED_TEST_SPONSOR_FILTER_PREFERENCE, ""));
         serverCountryFilterChoiceBox.getSelectionModel().select(Preferences.getInstance().getValue(Constants.SPEED_TEST_COUNTRY_FILTER_PREFERENCE, ""));
         serverCityFilterTextField.setText(Preferences.getInstance().getValue(Constants.SPEED_TEST_CITY_FILTER_PREFERENCE, ""));
         serverDistanceFilterTextField.setText(Preferences.getInstance().getValue(Constants.SPEED_TEST_DISTANCE_FILTER_PREFERENCE, ""));
 
-        Long lDisplayedUnit = Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DISPLAY_UNIT_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT);
+        Long lDisplayedUnit = Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DISPLAY_UNIT_RATIO_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT);
         if (lDisplayedUnit.equals(Constants.Kbs)) KbsRadioButton.setSelected(true);
         else if (lDisplayedUnit.equals(Constants.Mbs)) MbsRadioButton.setSelected(true);
         else if (lDisplayedUnit.equals(Constants.KBs)) KBsRadioButton.setSelected(true);

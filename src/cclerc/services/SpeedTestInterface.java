@@ -4,6 +4,7 @@ import fr.bmartel.speedtest.SpeedTestReport;
 import fr.bmartel.speedtest.model.SpeedTestError;
 
 import java.math.BigDecimal;
+import java.util.Formatter;
 import java.util.List;
 import java.util.Map;
 
@@ -20,10 +21,14 @@ public interface SpeedTestInterface {
     public void reportInterruption();
     // Invoked when starting download and when starting upload
     public void reportStartTransfer(EnumTypes.SpeedTestMode aInTransferMode);
-    // Invoked when download or upload progress is reported (but not on completion)
-    public void reportProgress(EnumTypes.SpeedTestMode aInTransferMode, float aInProgress, Map<Integer, BigDecimal> aInBitRate, Map<Integer, BigDecimal> aInOctetRate);
-    // Invoked when download or upload finishes
-    public void reportResult(EnumTypes.SpeedTestMode aInTransferMode, Map<Integer, BigDecimal> aInBitRate, Map<Integer, BigDecimal> aInOctetRate);
+    // Invoked when download or upload progress is reported (but not on completion) - bit and octet rates are values converted to best unit from the raw values
+    // (the key of the map represents the power of 1024 that has been used to divide the raw value)
+    public void reportProgress(EnumTypes.SpeedTestMode aInTransferMode, float aInProgress, Map<Integer, BigDecimal> aInBitRate, BigDecimal aInRawBitRate,
+                               Map<Integer, BigDecimal> aInOctetRate, BigDecimal aInRawOctetRate);
+    // Invoked when download or upload finishes - bit and octet rates are values converted to best unit from the raw values
+    //    // (the key of the map represents the power of 1024 that has been used to divide the raw value)
+    public void reportResult(EnumTypes.SpeedTestMode aInTransferMode, Map<Integer, BigDecimal> aInBitRate, BigDecimal aInRawBitRate,
+                             Map<Integer, BigDecimal> aInOctetRate, BigDecimal aInRawOctetRate);
     // Invoked when upload finishes, after reportResult and before reportStopTest
     public void reportFinalResult(List<Map<Integer, BigDecimal>> aInBitRates, List<Map<Integer, BigDecimal>> aInOctetRates);
     // Invoked when an error occurs - After an error, speed test is no more usable and needs to be re-instantiated

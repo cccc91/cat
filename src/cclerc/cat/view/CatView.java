@@ -20,11 +20,8 @@ import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.geometry.Side;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -34,7 +31,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.util.Callback;
@@ -418,6 +414,8 @@ public class CatView {
     @FXML private TextFlow speedTestTextFlow;
     @FXML private Tab speedTestTab;
     @FXML private Label speedTestServerLabel;
+    @FXML private Label speedTestNextPeriodTitleLabel;
+    @FXML private Label speedTestNextPeriodLabel;
     @FXML private Button speedTestStartStopButton;
     @FXML private Button speedTestConfigureButton;
 
@@ -588,7 +586,6 @@ public class CatView {
         speedTestBarFilterCheckBoxes.add(speedTestDownloadFilterCheckBox);
         speedTestBarFilterCheckBoxes.add(speedTestUploadFilterCheckBox);
 
-        speedTestBarChart.getYAxis().setLabel(Display.getViewResourceBundle().getString("catView.speedTestChart.barChart.yAxis.title"));
         speedTestBarChart.setAnimated(false);
         HBox.setHgrow(speedTestBarChart, Priority.ALWAYS);
         speedTestBarChartContainer.getChildren().add(speedTestBarChart);
@@ -613,7 +610,6 @@ public class CatView {
         checkSpeedTestChartState();
 
         // Initialize live speed test chart
-        liveSpeedTestChart.getYAxis().setLabel(Display.getViewResourceBundle().getString("catView.liveSpeedTestChartView.lineChart.yAxis.title"));
         liveSpeedTestChart.setAnimated(false);
         HBox.setHgrow(liveSpeedTestChart, Priority.ALWAYS);
         liveSpeedTestChart.setLegendSide(Side.RIGHT);
@@ -640,7 +636,7 @@ public class CatView {
             }
         }
 
-        reloadSpeedTestConfiguration();
+        reloadSpeedTestConfiguration(true);
         switchStopStartSpeedTestButton();
         ImageView lImageViewConfigure = new ImageView(new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_CONFIGURE).toString()));
         lImageViewConfigure.setFitHeight(20d); lImageViewConfigure.setFitWidth(20d);
@@ -1429,6 +1425,10 @@ public class CatView {
     }
 
     // SETTERS
+
+    public void setSpeedTestNextPeriodLabel(String aInNextPeriod) {
+        speedTestNextPeriodLabel.setText(aInNextPeriod);
+    }
 
     /**
      * Refreshes jobs count
@@ -2296,7 +2296,8 @@ public class CatView {
         if (isSpeedTestBarDisplayedAllowed(lSpeedTestBar) && speedTestManageCheckBox.isSelected()) {
 
             // Compute scale
-            Long lRatio = Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DISPLAY_UNIT_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT);
+            Long lRatio = Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DISPLAY_UNIT_RATIO_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT);
+            if (lRatio < Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT) speedTestBarChartYAxis.setTickUnit(500); else speedTestBarChartYAxis.setTickUnit(5);
 
             long lMaxY = 0;
             for (int lIndex = 0; lIndex < lSpeedTestPoints.size(); lIndex++) {
@@ -2317,12 +2318,13 @@ public class CatView {
                     lSpeedTestPoint.getPoint().setNode(null);
                 }
 
+                // Order categories
+                final ObservableList<String> c = FXCollections.observableArrayList(lCategories);
+                Collections.sort(c);
+                speedTestBarChartXAxis.setCategories(FXCollections.observableArrayList(new LinkedHashSet<>()));
+                speedTestBarChartXAxis.setCategories(c);
+
             }
-            speedTestBarChartYAxis.setTickUnit(lMaxY / 5);
-            // Order categories
-            final ObservableList<String> c = FXCollections.observableArrayList(lCategories);
-            Collections.sort(c);
-            speedTestBarChartXAxis.setCategories(c);
 
             if (lSpeedTestBar.getSeries().getData().size() -1 > 0) {
 
@@ -2793,12 +2795,20 @@ public class CatView {
         }
     }
 
-    public void reloadSpeedTestConfiguration() {
+    public void reloadSpeedTestConfiguration(boolean aInHasUnitChanged) {
         speedTestServer = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE);
         speedTestUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE);
         if (speedTestUploadUrl != null) speedTestDownloadUrl = speedTestUploadUrl.replaceAll("upload.php", "random4000x4000.jpg");
         setSpeedTestServer();
         speedTestStartStopButton.setDisable(false);
+        if (aInHasUnitChanged) {
+            String lDisplayUnit = Display.getViewResourceBundle().getString(
+                    Preferences.getInstance().getValue(Constants.SPEED_TEST_DISPLAY_UNIT_KEY_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT_KEY));
+            liveSpeedTestDownloadSeries.getData().clear();
+            liveSpeedTestUploadSeries.getData().clear();
+            liveSpeedTestChart.getYAxis().setLabel(Display.getViewResourceBundle().getString("catView.liveSpeedTestChartView.lineChart.yAxis.title") + " (" + lDisplayUnit + ")");
+            speedTestBarChart.getYAxis().setLabel(Display.getViewResourceBundle().getString("catView.speedTestChart.barChart.yAxis.title") + " (" + lDisplayUnit + ")");
+        }
         refreshAllSpeedTestSeries();
     }
 

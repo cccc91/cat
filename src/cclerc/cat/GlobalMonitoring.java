@@ -38,6 +38,7 @@ public class GlobalMonitoring {
                 Constants.SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET);
         nextSpeedTestExecutionTime = Utilities.nextExecutionTime(
                 (nextSpeedTestExecutionTime == null || nextSpeedTestExecutionTime > System.currentTimeMillis()) ? null : nextSpeedTestExecutionTime, speedTestPeriod, speedTestOffset);
+        Cat.getInstance().getController().setSpeedTestNextPeriodLabel(LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(nextSpeedTestExecutionTime));
         speedTestUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE);
         speedTestDownloadUrl = (speedTestUploadUrl != null) ? speedTestUploadUrl.replaceAll("upload.php", "random4000x4000.jpg") : null;
 
@@ -284,6 +285,7 @@ public class GlobalMonitoring {
                 // Run speed test if needed
                 if (speedTestEnabled && speedTestDownloadUrl != null && speedTestUploadUrl != null && lNow >= nextSpeedTestExecutionTime) {
                     nextSpeedTestExecutionTime = Utilities.nextExecutionTime(nextSpeedTestExecutionTime, speedTestPeriod, speedTestOffset);
+                    Cat.getInstance().getController().setSpeedTestNextPeriodLabel(LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(nextSpeedTestExecutionTime));
                     if ((Cat.getInstance().getController().getSpeedTest() != null && Cat.getInstance().getController().getSpeedTest().isTestRunning()) ||
                         (speedTest != null && speedTest.isTestRunning())) {
                         Cat.getInstance().getController().printConsole(

@@ -117,6 +117,7 @@ public class Constants {
     // Speed test preferences
     public static final String SPEED_TEST_GET_SERVERS_URL = "http://c.speedtest.net/speedtest-servers-static.php";
     public static final String SPEED_TEST_NAME_FILTER_PREFERENCE = "speedTest.filter.name";
+    public static final String SPEED_TEST_SPONSOR_FILTER_PREFERENCE = "speedTest.filter.sponsor";
     public static final String SPEED_TEST_COUNTRY_FILTER_PREFERENCE = "speedTest.filter.country";
     public static final String SPEED_TEST_CITY_FILTER_PREFERENCE = "speedTest.filter.city";
     public static final String SPEED_TEST_DISTANCE_FILTER_PREFERENCE = "speedTest.filter.distance";
@@ -133,7 +134,8 @@ public class Constants {
     public static final String SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE = "speedTest.emailReportEnabled";
     public static final String SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE = "speedTest.emailReportPeriod";
     public static final String SPEED_TEST_UPLOAD_FILE_SIZE_PREFERENCE = "speedTest.uploadFileSize";
-    public static final String SPEED_TEST_DISPLAY_UNIT_PREFERENCE = "speedTest.displayUnit";
+    public static final String SPEED_TEST_DISPLAY_UNIT_RATIO_PREFERENCE = "speedTest.displayUnitRatio";
+    public static final String SPEED_TEST_DISPLAY_UNIT_KEY_PREFERENCE = "speedTest.displayUnitKey";
 
     public static final Integer DEFAULT_SPEED_TEST_SOCKET_TIMEOUT = 10000;
     public static final Long DEFAULT_SPEED_TEST_DOWNLOAD_SETUP_TIME = 100L;
@@ -151,6 +153,7 @@ public class Constants {
     public static final Long KBs = 8 * Kbs;
     public static final Long MBs = 8 * Mbs;
     public static final Long DEFAULT_SPEED_TEST_DISPLAY_UNIT = Mbs;
+    public static final String DEFAULT_SPEED_TEST_DISPLAY_UNIT_KEY = "bitRate.2";
 
 
     public static final String GEO_LOC_DATABASE = "GeoLite2-City.mmdb";

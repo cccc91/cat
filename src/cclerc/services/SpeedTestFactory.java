@@ -2,13 +2,11 @@ package cclerc.services;
 
 import cclerc.cat.Cat;
 import cclerc.cat.Configuration.Configuration;
-import fr.bmartel.speedtest.SpeedTestReport;
 import fr.bmartel.speedtest.model.SpeedTestError;
 import javafx.application.Platform;
 import javafx.scene.chart.XYChart;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -84,7 +82,10 @@ public class SpeedTestFactory {
             }
 
             @Override
-            public void reportProgress(EnumTypes.SpeedTestMode aInTransferMode, float aInProgress, Map<Integer, BigDecimal> aInBitRate, Map<Integer, BigDecimal> aInOctetRate) {
+            public void reportProgress(EnumTypes.SpeedTestMode aInTransferMode, float aInProgress, Map<Integer, BigDecimal> aInBitRate, BigDecimal aInRawBitRate,
+                                       Map<Integer, BigDecimal> aInOctetRate, BigDecimal aInRawOctetRate) {
+
+                // Use converted rates for textual display and raw values converted to the configured unit for graphical display
 
                 BigDecimal lBitRate = aInBitRate.values().iterator().next();
                 String lMessage =  String.format(
@@ -96,10 +97,15 @@ public class SpeedTestFactory {
                         lBitRate, Display.getViewResourceBundle().getString("bitRate." + aInBitRate.keySet().iterator().next()));
                     Cat.getInstance().getController().replaceLastSpeedTestMessage(new Message(lMessage, EnumTypes.MessageLevel.INFO));
 
-                // Add point to speed test series
-                if (Cat.getInstance().displayGraphicalInterface() && aInProgress != 0) {
+                // Add point to speed test series - Filter first point on download and 2 first ones in upload (stabilization of throughput)
+                if (Cat.getInstance().displayGraphicalInterface() &&
+                    ((aInTransferMode.equals(EnumTypes.SpeedTestMode.DOWNLOAD) && aInProgress >= 1) ||
+                     (aInTransferMode.equals(EnumTypes.SpeedTestMode.UPLOAD) && aInProgress >= 2))) {
                     Platform.runLater(() -> {
-                        XYChart.Data lPoint = new XYChart.Data(aInProgress, lBitRate);
+                        // Compute scale
+                        BigDecimal lRatio =
+                                BigDecimal.valueOf(Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DISPLAY_UNIT_RATIO_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT));
+                        XYChart.Data lPoint = new XYChart.Data(aInProgress, aInRawBitRate.divide(lRatio, 1));
                         if (aInTransferMode.equals(EnumTypes.SpeedTestMode.DOWNLOAD))
                             Cat.getInstance().getController().getLiveSpeedTestDownloadSeries().getData().add(lPoint);
                         else
@@ -111,7 +117,10 @@ public class SpeedTestFactory {
             }
 
             @Override
-            public void reportResult(EnumTypes.SpeedTestMode aInTransferMode, Map<Integer, BigDecimal> aInBitRate, Map<Integer, BigDecimal> aInOctetRate) {
+            public void reportResult(EnumTypes.SpeedTestMode aInTransferMode, Map<Integer, BigDecimal> aInBitRate, BigDecimal aInRawBitRate,
+                                     Map<Integer, BigDecimal> aInOctetRate, BigDecimal aInRawOctetRate) {
+
+                // Use converted rates for textual display and raw values converted to the configured unit for graphical display
 
                 BigDecimal lBitRate = aInBitRate.values().iterator().next();
                 String lMessage = String.format(
@@ -126,7 +135,9 @@ public class SpeedTestFactory {
                 // Add point to speed test series
                 if (Cat.getInstance().displayGraphicalInterface()) {
                     Platform.runLater(() -> {
-                        XYChart.Data lPoint = new XYChart.Data(100, lBitRate);
+                        BigDecimal lRatio =
+                                BigDecimal.valueOf(Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DISPLAY_UNIT_RATIO_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT));
+                        XYChart.Data lPoint = new XYChart.Data(100, aInRawBitRate.divide(lRatio, 1));
                         if (aInTransferMode.equals(EnumTypes.SpeedTestMode.DOWNLOAD))
                             Cat.getInstance().getController().getLiveSpeedTestDownloadSeries().getData().add(lPoint);
                         else

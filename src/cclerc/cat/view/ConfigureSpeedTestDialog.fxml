@@ -40,7 +40,8 @@
                <children>
                   <TableView fx:id="serversTableView" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="390.0" prefWidth="840.0" styleClass="configurationTable">
                     <columns>
-                      <TableColumn fx:id="nameColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="500.0" sortable="false" text="%configureSpeedTestDialog.server.name" />
+                      <TableColumn fx:id="nameColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="300.0" sortable="false" text="%configureSpeedTestDialog.server.name" />
+                        <TableColumn fx:id="sponsorColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="200.0" sortable="false" text="%configureSpeedTestDialog.server.sponsor" />
                       <TableColumn fx:id="countryColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="70.0" sortable="false" text="%configureSpeedTestDialog.server.country" />
                         <TableColumn fx:id="cityColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="150.0" sortable="false" text="%configureSpeedTestDialog.server.city" />
                         <TableColumn fx:id="distanceColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="90.0" sortType="DESCENDING" sortable="false" styleClass="configurationTable" text="%configureSpeedTestDialog.server.distance" />
@@ -63,19 +64,22 @@
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label contentDisplay="RIGHT" styleClass="attributeName" text="%configureSpeedTestDialog.server.country" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-                        <Label contentDisplay="RIGHT" styleClass="attributeName" text="%configureSpeedTestDialog.server.city" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
-                        <Label contentDisplay="RIGHT" styleClass="attributeName" text="%configureSpeedTestDialog.server.maxDistance" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
-                        <TextField fx:id="serverDistanceFilterTextField" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
+                        <Label contentDisplay="RIGHT" styleClass="attributeName" text="%configureSpeedTestDialog.server.country" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
+                        <Label contentDisplay="RIGHT" styleClass="attributeName" text="%configureSpeedTestDialog.server.city" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
+                        <Label contentDisplay="RIGHT" styleClass="attributeName" text="%configureSpeedTestDialog.server.maxDistance" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
+                        <TextField fx:id="serverDistanceFilterTextField" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
                         <TextField fx:id="serverNameFilterTextField" styleClass="attributeValue" GridPane.columnIndex="1" />
                         <Label contentDisplay="RIGHT" styleClass="attributeName" text="%configureSpeedTestDialog.server.name" />
-                        <ChoiceBox fx:id="serverCountryFilterChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <TextField fx:id="serverCityFilterTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <ChoiceBox fx:id="serverCountryFilterChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <TextField fx:id="serverCityFilterTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <TextField fx:id="serverSponsorFilterTextField" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label contentDisplay="RIGHT" styleClass="attributeName" text="%configureSpeedTestDialog.server.sponsor" GridPane.rowIndex="1" />
                      </children>
                      <padding>
                         <Insets left="10.0" right="10.0" />
