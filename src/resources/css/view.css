@@ -13,6 +13,12 @@
     -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
 }
 
+// RADIO BUTTONS
+
+.radio-button:selected {
+    -fx-background-color: transparent;
+}
+
 // CHECK BOXES
 
 .check-box:focused {
