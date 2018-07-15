@@ -264,13 +264,13 @@ public class Utilities {
             if (aInPeriod < 60) {
                 return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, hour, minute))
                        + (aInPeriod - (minute % aInPeriod) + aInOffset) * 60_000;
-            } else if (aInPeriod == 60 * 60 * 12) {
+            } else if (aInPeriod == 60 * 12) {
                 if (hour < 12) return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, 12, aInOffset));
                 else return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, 0, aInOffset)) + 60_000 * 60 * 24;
-            } else if (aInPeriod < 60 * 60 * 24) {
+            } else if (aInPeriod < 60 * 24) {
                 return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, hour, aInOffset)) + 60_000 * 60;
             } else {
-                return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, 0, aInOffset)) + 60_000 * 60 * 24 * (aInPeriod / (24 * 60 * 60));
+                return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, 0, aInOffset)) + 60_000 * 60 * 24 * (aInPeriod / (24 * 60));
             }
         } else {
             return aInLastExecutionTime + aInPeriod * 60_000;
