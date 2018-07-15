@@ -506,15 +506,13 @@ public class GlobalMonitoring {
 
     // SETTERS
 
+    // METHODS
+
     public static void computeNextSpeedTestEmailTime() {
         nextSpeedTestEmailTime = Utilities.nextExecutionTime(
                 (nextSpeedTestEmailTime == null || nextSpeedTestEmailTime > System.currentTimeMillis()) ? null : nextSpeedTestEmailTime,
                 speedTestPeriod * Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD),
                 speedTestOffset);
-    }
-
-    public static void newPeriodicSpeedTestEmail() {
-        periodicSpeedTestEmailStartDate = new Date();
         periodicSpeedTestEmail = new Email(
                 States.getInstance().getBooleanValue((Cat.getInstance().getController().BuildStatePropertyName(Constants.SEND_MAIL_STATE)), true) &&
                 Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getSmtpServerConfigurations().size() != 0 &&
@@ -523,10 +521,14 @@ public class GlobalMonitoring {
         periodicSpeedTestEmailContent = "";
     }
 
+    public static void newPeriodicSpeedTestEmail() {
+        periodicSpeedTestEmailStartDate = new Date();
+    }
+
     public static void buildPeriodicSpeedTestEmail(String aInMessage) {
         String lDate = LocaleUtilities.getInstance().getDateFormat().format(periodicSpeedTestEmailStartDate);
         String lTime = LocaleUtilities.getInstance().getTimeFormat().format(periodicSpeedTestEmailStartDate.getTime());
-        periodicSpeedTestEmailContent += String.format("%s %s - %s", lDate, lTime, aInMessage);
+        periodicSpeedTestEmailContent = String.format("%s %s - %s", lDate, lTime, aInMessage) + periodicSpeedTestEmailContent;
     }
 
     public static void sendPeriodicSpeedTestEmail() {
@@ -543,8 +545,6 @@ public class GlobalMonitoring {
                 periodicSpeedTestEmailContent);
 
     }
-
-    // METHODS
 
     /**
      * Add a monitoring job
