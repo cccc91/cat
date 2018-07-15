@@ -56,7 +56,7 @@ public class Constants {
     public static final Long DEFAULT_MIN_DISPLAYED_PING_DURATION = 15 * 1000L;            // 15 seconds
 
     public static final Long DEFAULT_MAX_STORED_SPEED_TEST_DURATION = 30 * 24 * 60 * 60 * 1000L; // 30 days
-    public static final Long DEFAULT_MAX_DISPLAYED_SPEED_TEST_DURATION = 24 * 60 * 60 * 1000L;   // 24 hours
+    public static final Long DEFAULT_MAX_DISPLAYED_SPEED_TEST_DURATION = 12 * 60 * 60 * 1000L;   // 12 hours
     public static final Long DEFAULT_MIN_DISPLAYED_SPEED_TEST_DURATION = 15 * 60 * 1000L;        // 15 min
 
     // States
@@ -136,12 +136,13 @@ public class Constants {
     public static final String SPEED_TEST_UPLOAD_FILE_SIZE_PREFERENCE = "speedTest.uploadFileSize";
     public static final String SPEED_TEST_DISPLAY_UNIT_RATIO_PREFERENCE = "speedTest.displayUnitRatio";
     public static final String SPEED_TEST_DISPLAY_UNIT_KEY_PREFERENCE = "speedTest.displayUnitKey";
+    public static final String SPEED_TEST_DISPLAY_UNIT_PERIOD_PREFERENCE = "speedTest.displayUnitPeriod";
 
     public static final Integer DEFAULT_SPEED_TEST_SOCKET_TIMEOUT = 10000;
     public static final Long DEFAULT_SPEED_TEST_DOWNLOAD_SETUP_TIME = 100L;
     public static final Long DEFAULT_SPEED_TEST_UPLOAD_SETUP_TIME = 100L;
     public static final Boolean DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED = true;
-    public static final Integer DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD = 60;     // min
+    public static final Integer DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD = 1;
     public static final Integer DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET = 0;      // min
     public static final Integer DEFAULT_SPEED_TEST_REPEAT_DURATION = 30000;       // ms
     public static final Integer DEFAULT_SPEED_TEST_REPORT_INTERVAL = 300;         // ms
@@ -154,6 +155,10 @@ public class Constants {
     public static final Long MBs = 8 * Mbs;
     public static final Long DEFAULT_SPEED_TEST_DISPLAY_UNIT = Mbs;
     public static final String DEFAULT_SPEED_TEST_DISPLAY_UNIT_KEY = "bitRate.2";
+    public static final Integer MINUTES = 1;
+    public static final Integer HOURS = 60 * 60;
+    public static final Integer DAYS = 24 * HOURS;
+    public static final Integer DEFAULT_SPEED_TEST_DISPLAY_UNIT_PERIOD = HOURS;
 
 
     public static final String GEO_LOC_DATABASE = "GeoLite2-City.mmdb";

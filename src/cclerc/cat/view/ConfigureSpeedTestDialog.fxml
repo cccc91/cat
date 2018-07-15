@@ -158,7 +158,14 @@
                         <TextField fx:id="uploadFileSizeTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                         <TextField fx:id="repeatDurationTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                         <TextField fx:id="reportIntervalTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                        <TextField fx:id="periodicTestPeriodTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                        <HBox alignment="CENTER_LEFT" spacing="1.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                           <children>
+                              <TextField fx:id="periodicTestPeriodTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" />
+                              <RadioButton fx:id="minutesRadioButton" mnemonicParsing="false" onAction="#setUnitToMinutes" text="%period.minutes" />
+                              <RadioButton fx:id="hoursRadioButton" mnemonicParsing="false" onAction="#setUnitToHours" text="%period.hour" />
+                              <RadioButton fx:id="daysRadioButton" mnemonicParsing="false" onAction="#setUnitToDays" text="%period.days" />
+                           </children>
+                        </HBox>
                         <TextField fx:id="periodicTestOffsetTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="11" />
                         <TextField fx:id="periodicTestEmailPeriodTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="13" />
                         <CheckBox fx:id="periodicTestEnabledCheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="9" />

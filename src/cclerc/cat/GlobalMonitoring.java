@@ -4,9 +4,9 @@ import cclerc.cat.Configuration.Configuration;
 import cclerc.cat.Configuration.GlobalMonitoringConfiguration;
 import cclerc.cat.model.Alarm;
 import cclerc.services.*;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.omg.CORBA.MARSHAL;
 
 import java.net.InetAddress;
 import java.util.*;
@@ -20,9 +20,13 @@ public class GlobalMonitoring {
     private static int speedTestPeriod;
     private static int speedTestOffset;
     private static Long nextSpeedTestExecutionTime;
+    private static Long nextSpeedTestEmailTime;
     private static String speedTestUploadUrl;
     private static String speedTestDownloadUrl;
     private static SpeedTest speedTest;
+    private static Email periodicSpeedTestEmail;
+    private static String periodicSpeedTestEmailContent;
+    private static Date periodicSpeedTestEmailStartDate;
 
     public static SpeedTest getSpeedTest() {
         return speedTest;
@@ -32,13 +36,19 @@ public class GlobalMonitoring {
 
         speedTestEnabled = Preferences.getInstance().getBooleanValue(
                 Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED);
-        speedTestPeriod = Preferences.getInstance().getIntegerValue(
-                Constants.SPEED_TEST_PERIODIC_TEST_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD);
+        speedTestPeriod =
+                Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_PERIODIC_TEST_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD) *
+                Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_DISPLAY_UNIT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT_PERIOD);
         speedTestOffset = Preferences.getInstance().getIntegerValue(
                 Constants.SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET);
         nextSpeedTestExecutionTime = Utilities.nextExecutionTime(
                 (nextSpeedTestExecutionTime == null || nextSpeedTestExecutionTime > System.currentTimeMillis()) ? null : nextSpeedTestExecutionTime, speedTestPeriod, speedTestOffset);
-        Cat.getInstance().getController().setSpeedTestNextPeriodLabel(LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(nextSpeedTestExecutionTime));
+        computeNextSpeedTestEmailTime();
+        if (Cat.getInstance().displayGraphicalInterface()) {
+            Platform.runLater(() -> {
+                Cat.getInstance().getController().setSpeedTestNextPeriodLabel(LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(nextSpeedTestExecutionTime));
+            });
+        }
         speedTestUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE);
         speedTestDownloadUrl = (speedTestUploadUrl != null) ? speedTestUploadUrl.replaceAll("upload.php", "random4000x4000.jpg") : null;
 
@@ -284,8 +294,13 @@ public class GlobalMonitoring {
 
                 // Run speed test if needed
                 if (speedTestEnabled && speedTestDownloadUrl != null && speedTestUploadUrl != null && lNow >= nextSpeedTestExecutionTime) {
-                    nextSpeedTestExecutionTime = Utilities.nextExecutionTime(nextSpeedTestExecutionTime, speedTestPeriod, speedTestOffset);
-                    Cat.getInstance().getController().setSpeedTestNextPeriodLabel(LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(nextSpeedTestExecutionTime));
+                    nextSpeedTestExecutionTime = Utilities.nextExecutionTime(
+                            (nextSpeedTestExecutionTime == null || nextSpeedTestExecutionTime > System.currentTimeMillis()) ? null : nextSpeedTestExecutionTime, speedTestPeriod, speedTestOffset);
+                    if (Cat.getInstance().displayGraphicalInterface()) {
+                        Platform.runLater(() -> {
+                            Cat.getInstance().getController().setSpeedTestNextPeriodLabel(LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(nextSpeedTestExecutionTime));
+                        });
+                    }
                     if ((Cat.getInstance().getController().getSpeedTest() != null && Cat.getInstance().getController().getSpeedTest().isTestRunning()) ||
                         (speedTest != null && speedTest.isTestRunning())) {
                         Cat.getInstance().getController().printConsole(
@@ -485,7 +500,49 @@ public class GlobalMonitoring {
         return periodicCheck;
     }
 
+    public static long getNextSpeedTestEmailTime() {
+        return nextSpeedTestEmailTime;
+    }
+
     // SETTERS
+
+    public static void computeNextSpeedTestEmailTime() {
+        nextSpeedTestEmailTime = Utilities.nextExecutionTime(
+                (nextSpeedTestEmailTime == null || nextSpeedTestEmailTime > System.currentTimeMillis()) ? null : nextSpeedTestEmailTime,
+                speedTestPeriod * Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD),
+                speedTestOffset);
+    }
+
+    public static void newPeriodicSpeedTestEmail() {
+        periodicSpeedTestEmailStartDate = new Date();
+        periodicSpeedTestEmail = new Email(
+                States.getInstance().getBooleanValue((Cat.getInstance().getController().BuildStatePropertyName(Constants.SEND_MAIL_STATE)), true) &&
+                Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getSmtpServerConfigurations().size() != 0 &&
+                !Configuration.getCurrentConfiguration().getEmailConfiguration().getRecipientList().isEmpty(),
+                Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getPreferredSmtpServer());
+        periodicSpeedTestEmailContent = "";
+    }
+
+    public static void buildPeriodicSpeedTestEmail(String aInMessage) {
+        String lDate = LocaleUtilities.getInstance().getDateFormat().format(periodicSpeedTestEmailStartDate);
+        String lTime = LocaleUtilities.getInstance().getTimeFormat().format(periodicSpeedTestEmailStartDate.getTime());
+        periodicSpeedTestEmailContent += String.format("%s %s - %s", lDate, lTime, aInMessage);
+    }
+
+    public static void sendPeriodicSpeedTestEmail() {
+
+        String lLocalHostName = "";
+        try {
+            lLocalHostName = InetAddress.getLocalHost().getHostName();
+        } catch (Exception e) {
+            Display.logUnexpectedError(e);
+        }
+
+        periodicSpeedTestEmail.sendMail(
+                String.format(Display.getMessagesResourceBundle().getString("generalEmail.speedTest.subject"), lLocalHostName),
+                periodicSpeedTestEmailContent);
+
+    }
 
     // METHODS
 

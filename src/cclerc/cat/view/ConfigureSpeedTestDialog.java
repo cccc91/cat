@@ -70,6 +70,9 @@ public class ConfigureSpeedTestDialog {
     @FXML RadioButton MbsRadioButton;
     @FXML RadioButton KBsRadioButton;
     @FXML RadioButton MBsRadioButton;
+    @FXML RadioButton minutesRadioButton;
+    @FXML RadioButton hoursRadioButton;
+    @FXML RadioButton daysRadioButton;
     @FXML TextField socketTimeoutTextField;
     @FXML TextField downloadSetupTimeTextField;
     @FXML TextField uploadSetupTimeTextField;
@@ -715,6 +718,33 @@ public class ConfigureSpeedTestDialog {
     }
 
     /**
+     * Set unit to minutes
+     */
+    @FXML private void setUnitToMinutes() {
+        hoursRadioButton.setSelected(false);
+        daysRadioButton.setSelected(false);
+        checkChanges();
+    }
+
+    /**
+     * Set unit to hours
+     */
+    @FXML private void setUnitToHours() {
+        minutesRadioButton.setSelected(false);
+        daysRadioButton.setSelected(false);
+        checkChanges();
+    }
+
+    /**
+     * Set unit to days
+     */
+    @FXML private void setUnitToDays() {
+        minutesRadioButton.setSelected(false);
+        hoursRadioButton.setSelected(false);
+        checkChanges();
+    }
+
+    /**
      * Cancels changes if confirmed and closes dialog box
      */
     @FXML private void close() {
@@ -780,6 +810,16 @@ public class ConfigureSpeedTestDialog {
         Preferences.getInstance().saveValue(Constants.SPEED_TEST_DISPLAY_UNIT_RATIO_PREFERENCE, lDisplayedUnitRatio);
         Preferences.getInstance().saveValue(Constants.SPEED_TEST_DISPLAY_UNIT_KEY_PREFERENCE, lDisplayedUnitKey);
 
+        Integer lDisplayedUnitPeriod;
+        if (minutesRadioButton.isSelected()) {
+            lDisplayedUnitPeriod = Constants.MINUTES;
+        } else if (hoursRadioButton.isSelected()) {
+            lDisplayedUnitPeriod = Constants.HOURS;
+        } else {
+            lDisplayedUnitPeriod = Constants.DAYS;
+        }
+        Preferences.getInstance().saveValue(Constants.SPEED_TEST_DISPLAY_UNIT_PERIOD_PREFERENCE, lDisplayedUnitPeriod);
+
         setStyles();
 
         Cat.getInstance().getController().reloadSpeedTestConfiguration(hasUnitChanged);
@@ -794,34 +834,38 @@ public class ConfigureSpeedTestDialog {
      * Checks if configuration has changed
      */
     private void checkChanges() {
-        Long lDisplayedUnit = Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DISPLAY_UNIT_RATIO_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT);
+        Long lThroughputDisplayedUnit = Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DISPLAY_UNIT_RATIO_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT);
+        Integer lPeriodDisplayedUnit = Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_DISPLAY_UNIT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT_PERIOD);
         if (erroredFields.size() == 0 &&
-                serversTableView.getSelectionModel().getSelectedItem() != null &&
-                serversTableView.getSelectionModel().getSelectedItem().getName().equals(Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE)) &&
-                Integer.valueOf(socketTimeoutTextField.getText()).equals(
-                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_SOCKET_TIMEOUT_PREFERENCE, Constants.DEFAULT_SPEED_TEST_SOCKET_TIMEOUT)) &&
-                Long.valueOf(downloadSetupTimeTextField.getText()).equals(
-                        Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DOWNLOAD_SETUP_TIME_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DOWNLOAD_SETUP_TIME)) &&
-                Long.valueOf(uploadSetupTimeTextField.getText()).equals(
-                        Preferences.getInstance().getLongValue(Constants.SPEED_TEST_UPLOAD_SETUP_TIME_PREFERENCE, Constants.DEFAULT_SPEED_TEST_UPLOAD_SETUP_TIME)) &&
-                Integer.valueOf(uploadFileSizeTextField.getText()).equals(
-                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_UPLOAD_FILE_SIZE_PREFERENCE, Constants.DEFAULT_SPEED_TEST_UPLOAD_FILE_SIZE)) &&
-                Integer.valueOf(repeatDurationTextField.getText()).equals(
-                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPEAT_DURATION_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPEAT_DURATION)) &&
-                Integer.valueOf(reportIntervalTextField.getText()).equals(
-                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPORT_INTERVAL_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPORT_INTERVAL)) &&
-                periodicTestEnabledCheckBox.isSelected() ==
-                        Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED) &&
-                Integer.valueOf(periodicTestPeriodTextField.getText()).equals(
-                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_PERIODIC_TEST_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD)) &&
-                Integer.valueOf(periodicTestOffsetTextField.getText()).equals(
-                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET)) &&
-                periodicTestEmailEnabledCheckBox.isSelected() ==
-                        Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED) &&
-                Integer.valueOf(periodicTestEmailPeriodTextField.getText()).equals(
-                        Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD)) &&
-                ((lDisplayedUnit.equals(Constants.Kbs) && KbsRadioButton.isSelected()) || (lDisplayedUnit.equals(Constants.Mbs) && MbsRadioButton.isSelected()) ||
-                 (lDisplayedUnit.equals(Constants.KBs) && KBsRadioButton.isSelected()) || (lDisplayedUnit.equals(Constants.MBs) && MBsRadioButton.isSelected()))
+            serversTableView.getSelectionModel().getSelectedItem() != null &&
+            serversTableView.getSelectionModel().getSelectedItem().getName().equals(Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE)) &&
+            Integer.valueOf(socketTimeoutTextField.getText()).equals(
+                    Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_SOCKET_TIMEOUT_PREFERENCE, Constants.DEFAULT_SPEED_TEST_SOCKET_TIMEOUT)) &&
+            Long.valueOf(downloadSetupTimeTextField.getText()).equals(
+                    Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DOWNLOAD_SETUP_TIME_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DOWNLOAD_SETUP_TIME)) &&
+            Long.valueOf(uploadSetupTimeTextField.getText()).equals(
+                    Preferences.getInstance().getLongValue(Constants.SPEED_TEST_UPLOAD_SETUP_TIME_PREFERENCE, Constants.DEFAULT_SPEED_TEST_UPLOAD_SETUP_TIME)) &&
+            Integer.valueOf(uploadFileSizeTextField.getText()).equals(
+                    Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_UPLOAD_FILE_SIZE_PREFERENCE, Constants.DEFAULT_SPEED_TEST_UPLOAD_FILE_SIZE)) &&
+            Integer.valueOf(repeatDurationTextField.getText()).equals(
+                    Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPEAT_DURATION_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPEAT_DURATION)) &&
+            Integer.valueOf(reportIntervalTextField.getText()).equals(
+                    Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_REPORT_INTERVAL_PREFERENCE, Constants.DEFAULT_SPEED_TEST_REPORT_INTERVAL)) &&
+            periodicTestEnabledCheckBox.isSelected() ==
+            Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED) &&
+            Integer.valueOf(periodicTestPeriodTextField.getText()).equals(
+                    Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_PERIODIC_TEST_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD)) &&
+            Integer.valueOf(periodicTestOffsetTextField.getText()).equals(
+                    Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET)) &&
+            periodicTestEmailEnabledCheckBox.isSelected() ==
+            Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED) &&
+            Integer.valueOf(periodicTestEmailPeriodTextField.getText()).equals(
+                    Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD)) &&
+            ((lThroughputDisplayedUnit.equals(Constants.Kbs) && KbsRadioButton.isSelected()) || (lThroughputDisplayedUnit.equals(Constants.Mbs) && MbsRadioButton.isSelected()) ||
+             (lThroughputDisplayedUnit.equals(Constants.KBs) && KBsRadioButton.isSelected()) || (lThroughputDisplayedUnit.equals(Constants.MBs) && MBsRadioButton.isSelected()))  &&
+            ((lPeriodDisplayedUnit.equals(Constants.MINUTES) && minutesRadioButton.isSelected()) ||
+             (lPeriodDisplayedUnit.equals(Constants.HOURS) && hoursRadioButton.isSelected()) ||
+             (lPeriodDisplayedUnit.equals(Constants.DAYS) && daysRadioButton.isSelected()))
                 ) {
             hasConfigurationChanged = false;
             saveButton.setDisable(true);
@@ -845,11 +889,17 @@ public class ConfigureSpeedTestDialog {
         serverCityFilterTextField.setText(Preferences.getInstance().getValue(Constants.SPEED_TEST_CITY_FILTER_PREFERENCE, ""));
         serverDistanceFilterTextField.setText(Preferences.getInstance().getValue(Constants.SPEED_TEST_DISTANCE_FILTER_PREFERENCE, ""));
 
-        Long lDisplayedUnit = Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DISPLAY_UNIT_RATIO_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT);
-        if (lDisplayedUnit.equals(Constants.Kbs)) KbsRadioButton.setSelected(true);
-        else if (lDisplayedUnit.equals(Constants.Mbs)) MbsRadioButton.setSelected(true);
-        else if (lDisplayedUnit.equals(Constants.KBs)) KBsRadioButton.setSelected(true);
+        Long lDisplayedThroughputUnit = Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DISPLAY_UNIT_RATIO_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT);
+        if (lDisplayedThroughputUnit.equals(Constants.Kbs)) KbsRadioButton.setSelected(true);
+        else if (lDisplayedThroughputUnit.equals(Constants.Mbs)) MbsRadioButton.setSelected(true);
+        else if (lDisplayedThroughputUnit.equals(Constants.KBs)) KBsRadioButton.setSelected(true);
         else MBsRadioButton.setSelected(true);
+
+        Integer lDisplayedPeriodUnit =
+                Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_DISPLAY_UNIT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT_PERIOD);
+        if (lDisplayedPeriodUnit.equals(Constants.MINUTES)) minutesRadioButton.setSelected(true);
+        else if (lDisplayedPeriodUnit.equals(Constants.HOURS)) hoursRadioButton.setSelected(true);
+        else daysRadioButton.setSelected(true);
 
         // Select it in the table view if it exists
         for (SpeedTestServer lSpeedTestServer: sortedSpeedTestServers) {

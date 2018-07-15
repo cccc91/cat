@@ -1852,7 +1852,7 @@ public class CatView {
     }
 
     public String BuildStatePropertyName(String aInState) {
-        return new StringBuilder("General").append('.').append(aInState).toString();
+        return new StringBuilder("general").append('.').append(aInState).toString();
     }
 
     /**

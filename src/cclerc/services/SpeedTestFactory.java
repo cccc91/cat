@@ -2,11 +2,14 @@ package cclerc.services;
 
 import cclerc.cat.Cat;
 import cclerc.cat.Configuration.Configuration;
+import cclerc.cat.GlobalMonitoring;
 import fr.bmartel.speedtest.model.SpeedTestError;
 import javafx.application.Platform;
 import javafx.scene.chart.XYChart;
+import javafx.scene.text.Text;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +49,7 @@ public class SpeedTestFactory {
                         Cat.getInstance().getController().getLiveSpeedTestUploadSeries().getData().clear();
                     });
                 }
+                GlobalMonitoring.newPeriodicSpeedTestEmail();
             }
 
             @Override
@@ -160,6 +164,17 @@ public class SpeedTestFactory {
                         aInBitRates.get(1).values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + aInBitRates.get(1).keySet().iterator().next()));
                 Cat.getInstance().getController().printConsole(new Message(lMessage, EnumTypes.MessageLevel.INFO));
                 Display.getLogger().info(lMessage);
+
+                // Manage email if email is allowed and periodic speed test
+                if (Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED) &&
+                    aInType.equals(EnumTypes.SpeedTestType.PERIODIC)) {
+                    GlobalMonitoring.buildPeriodicSpeedTestEmail(lMessage + "<br>");
+                    // Send email if period is reached
+                    if (System.currentTimeMillis() >= GlobalMonitoring.getNextSpeedTestEmailTime()) {
+                        GlobalMonitoring.sendPeriodicSpeedTestEmail();
+                        GlobalMonitoring.computeNextSpeedTestEmailTime();
+                    }
+                }
             }
 
             @Override
