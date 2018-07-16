@@ -103,8 +103,8 @@ public class SpeedTestFactory {
 
                 // Add point to speed test series - Filter first point on download and 2 first ones in upload (stabilization of throughput)
                 if (Cat.getInstance().displayGraphicalInterface() &&
-                    ((aInTransferMode.equals(EnumTypes.SpeedTestMode.DOWNLOAD) && aInProgress >= 1) ||
-                     (aInTransferMode.equals(EnumTypes.SpeedTestMode.UPLOAD) && aInProgress >= 2))) {
+                    ((aInTransferMode.equals(EnumTypes.SpeedTestMode.DOWNLOAD) && aInProgress >= 0) ||
+                     (aInTransferMode.equals(EnumTypes.SpeedTestMode.UPLOAD) && aInProgress >= 1))) {
                     Platform.runLater(() -> {
                         // Compute scale
                         BigDecimal lRatio =

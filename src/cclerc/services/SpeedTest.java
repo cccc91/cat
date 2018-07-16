@@ -135,9 +135,9 @@ public class SpeedTest {
     private void processCompletionReport(SpeedTestReport aInReport) {
 
         if (testRunning) {
-            count++;
-            bitRate = bitRate.add(aInReport.getTransferRateBit()).divide(new BigDecimal(count), 2);
-            octetRate = octetRate.add(aInReport.getTransferRateOctet()).divide(new BigDecimal(count), 2);
+            // Don't take into account completion report, just use average of progress reports
+            bitRate = bitRate.divide(new BigDecimal(count), 2);
+            octetRate = octetRate.divide(new BigDecimal(count), 2);
             Map<Integer, BigDecimal> lBitRate = convertToBestUnit(bitRate);
             Map<Integer, BigDecimal> lOctetRate = convertToBestUnit(octetRate);
             bitRates.add(lBitRate);
