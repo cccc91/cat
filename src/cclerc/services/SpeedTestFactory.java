@@ -152,6 +152,7 @@ public class SpeedTestFactory {
 
             @Override
             public void reportFinalResult(List<Map<Integer, BigDecimal>> aInBitRates, List<Map<Integer, BigDecimal>> aInOctetRates) {
+//                if (aInType.equals(EnumTypes.SpeedTestType.PERIODIC)) GlobalMonitoring.resetSpeedTestError();
                 String lMessage = String.format(
                         Display.getViewResourceBundle().getString("speedTest.report"),
                         Display.getViewResourceBundle().getString("speedtest.type." + EnumTypes.SpeedTestType.valueOf(aInType)),
@@ -185,7 +186,7 @@ public class SpeedTestFactory {
                                                              aInSpeedTestError + " - " + aInErrorMessage), EnumTypes.MessageLevel.ERROR);
                 Cat.getInstance().getController().printConsole(lMessage);
                 Cat.getInstance().getController().printSpeedTest(lMessage);
-
+                if (aInType.equals(EnumTypes.SpeedTestType.PERIODIC)) GlobalMonitoring.resetNextSpeedTestExecutionTime();
 
             }
 

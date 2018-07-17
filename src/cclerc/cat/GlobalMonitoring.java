@@ -19,6 +19,8 @@ public class GlobalMonitoring {
     private static boolean speedTestEnabled;
     private static int speedTestPeriod;
     private static int speedTestOffset;
+    private static boolean firstSpeedTestError = true;
+    private static Long lastSpeedTestExecutionTime;
     private static Long nextSpeedTestExecutionTime;
     private static Long nextSpeedTestEmailTime;
     private static String speedTestUploadUrl;
@@ -284,6 +286,7 @@ public class GlobalMonitoring {
 
             reloadSpeedTestConfiguration();
             resetPeriodicSpeedTestEmail();
+            lastSpeedTestExecutionTime = 0L;
 
             // Run the thread
             while (running) {
@@ -296,6 +299,7 @@ public class GlobalMonitoring {
 
                 // Run speed test if needed
                 if (speedTestEnabled && speedTestDownloadUrl != null && speedTestUploadUrl != null && lNow >= nextSpeedTestExecutionTime) {
+                    lastSpeedTestExecutionTime = nextSpeedTestExecutionTime;
                     nextSpeedTestExecutionTime = Utilities.nextExecutionTime(nextSpeedTestExecutionTime, speedTestPeriod, speedTestOffset);
                     if (Cat.getInstance().displayGraphicalInterface()) {
                         Platform.runLater(() -> {
@@ -508,6 +512,23 @@ public class GlobalMonitoring {
     // SETTERS
 
     // METHODS
+
+    public static void resetSpeedTestError() {
+        firstSpeedTestError = true;
+    }
+
+    public static void resetNextSpeedTestExecutionTime() {
+        if (firstSpeedTestError) {
+            nextSpeedTestExecutionTime = lastSpeedTestExecutionTime;
+            Platform.runLater(() -> {
+                Cat.getInstance().getController().printSpeedTest(new Message(Display.getViewResourceBundle().getString("speedTest.retry"), EnumTypes.MessageLevel.ERROR));
+                Cat.getInstance().getController().setSpeedTestNextPeriodLabel(LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(nextSpeedTestExecutionTime));
+            });
+            firstSpeedTestError = false;
+        } else {
+            firstSpeedTestError = true;
+        }
+    }
 
     public static void computeNextSpeedTestEmailTime() {
         nextSpeedTestEmailTime = Utilities.nextExecutionTime(
