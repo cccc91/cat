@@ -1,0 +1,146 @@
+<style media="screen" type="text/css">
+
+.table-results {
+    width: 100%;
+    padding:10;
+    border: 0px;
+    border-collapse: separate;
+    border-spacing: 0px;
+    border: 0px solid black;
+}
+
+.table-barchart {
+    width: 100%;
+    padding: 0;
+    border-collapse: separate;
+    border-spacing: 10px;
+    border-style: solid;
+    border-color: black;
+    border-width: 0 0 2 2;
+}
+
+.td-barchart {
+    vertical-align: bottom;
+}
+
+.table-result {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border-collapse: separate;
+    border-spacing: 0px;
+    border: 0px solid black;
+    text-align: center;
+}
+
+.table-measurements {
+    width: 100%;
+    padding: 0;
+    border-collapse: separate;
+    border-spacing: 0px;
+    border: 0px solid black;
+}
+
+.table-measurement {
+    width: 100%;
+    padding: 0;
+    border-collapse: separate;
+    border-spacing: 0px;
+    border: 0px solid black;
+}
+
+.td-measurement {
+    vertical-align: bottom;
+}
+
+.td-measurement-download-value {
+    text-align: center;
+    color: blue;
+}
+
+.td-measurement-upload-value {
+    text-align: center;
+    color: purple;
+}
+
+.td-measurement-download-bar {
+    background-color: blue;
+}
+
+.td-measurement-upload-bar {
+    background-color: purple;
+}
+
+.td-measurement-label {
+    text-align: center;
+}
+
+</style>
+
+
+<table class="table-results">
+
+    <!-- BAR CHART -->
+    <tr>
+
+        <!-- Bar chart table -->
+        <table class="table-barchart">
+
+            <tr class="td-barchart">
+
+#MEASUREMENTS#
+
+            </tr>
+
+        </table>
+
+    </tr>
+
+    <!-- LEGEND -->
+    <tr id="row_legend">
+        <table cellspacing="10" width="100%" >
+            <tr>
+                <td id="column_legend_download" width="50%" valign="center" height="10%">
+                    <table id="table_legend_download" width="100%" cellpadding="0" cellspacing="5" border="0" align="center">
+                        <tr>
+                            <td id="column_legend_download_color" align="center">
+                                <table id="table_legend_download_color" align="right">
+                                    <tr>
+                                        <td width="10" height="10" style="background-color:blue" />
+                                    </tr>
+                                </table>
+                            </td>
+                            <td id="column_legend_download_text" width="5%">
+                                <table id="table_legend_download_text" align="left">
+                                    <tr>
+                                        <td>Download</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td id="column_legend_upload" width="50%" valign="center">
+                    <table id="table_legend_upload" width="100%" cellpadding="0" cellspacing="5" align="center">
+                        <tr>
+                            <td id="column_legend_upload_color" width="5%" align="center">
+                                <table id="table_legend_upload_color" align="right">
+                                    <tr>
+                                        <td width="10" height="10" style="background-color:purple" />
+                                    </tr>
+                                </table>
+                            </td>
+                            <td id="column_legend_upload_text">
+                                <table id="table_legend_upload_text" align="left">
+                                    <tr>
+                                        <td>Upload</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </tr>
+</table>

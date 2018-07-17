@@ -25,7 +25,8 @@ public class GlobalMonitoring {
     private static String speedTestDownloadUrl;
     private static SpeedTest speedTest;
     private static Email periodicSpeedTestEmail;
-    private static String periodicSpeedTestEmailContent;
+    private static String periodicSpeedTestEmailContentText;
+    private static String periodicSpeedTestEmailContentHTML;
     private static Date periodicSpeedTestEmailStartDate;
 
     public static SpeedTest getSpeedTest() {
@@ -282,6 +283,7 @@ public class GlobalMonitoring {
             }
 
             reloadSpeedTestConfiguration();
+            resetPeriodicSpeedTestEmail();
 
             // Run the thread
             while (running) {
@@ -512,22 +514,27 @@ public class GlobalMonitoring {
                 (nextSpeedTestEmailTime == null || nextSpeedTestEmailTime > System.currentTimeMillis()) ? null : nextSpeedTestEmailTime,
                 speedTestPeriod * Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD),
                 speedTestOffset);
+    }
+
+    public static void resetPeriodicSpeedTestEmail() {
         periodicSpeedTestEmail = new Email(
                 States.getInstance().getBooleanValue((Cat.getInstance().getController().BuildStatePropertyName(Constants.SEND_MAIL_STATE)), true) &&
                 Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getSmtpServerConfigurations().size() != 0 &&
                 !Configuration.getCurrentConfiguration().getEmailConfiguration().getRecipientList().isEmpty(),
                 Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getPreferredSmtpServer());
-        periodicSpeedTestEmailContent = "";
+        periodicSpeedTestEmailContentText = "";
+        periodicSpeedTestEmailContentHTML = "";
     }
 
-    public static void newPeriodicSpeedTestEmail() {
+    public static void resetPeriodicSpeedTestEmailStartDate() {
         periodicSpeedTestEmailStartDate = new Date();
     }
 
     public static void buildPeriodicSpeedTestEmail(String aInMessage) {
         String lDate = LocaleUtilities.getInstance().getDateFormat().format(periodicSpeedTestEmailStartDate);
         String lTime = LocaleUtilities.getInstance().getTimeFormat().format(periodicSpeedTestEmailStartDate.getTime());
-        periodicSpeedTestEmailContent = String.format("%s %s - %s", lDate, lTime, aInMessage) + periodicSpeedTestEmailContent;
+        periodicSpeedTestEmailContentText = String.format("%s %s - %s", lDate, lTime, aInMessage) + periodicSpeedTestEmailContentText;
+//TODO        periodicSpeedTestEmailContentHTML += "";
     }
 
     public static void sendPeriodicSpeedTestEmail() {
@@ -541,7 +548,7 @@ public class GlobalMonitoring {
 
         periodicSpeedTestEmail.sendMail(
                 String.format(Display.getMessagesResourceBundle().getString("generalEmail.speedTest.subject"), lLocalHostName),
-                periodicSpeedTestEmailContent);
+                periodicSpeedTestEmailContentText);
 
     }
 

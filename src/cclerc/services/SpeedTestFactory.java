@@ -6,10 +6,8 @@ import cclerc.cat.GlobalMonitoring;
 import fr.bmartel.speedtest.model.SpeedTestError;
 import javafx.application.Platform;
 import javafx.scene.chart.XYChart;
-import javafx.scene.text.Text;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +47,7 @@ public class SpeedTestFactory {
                         Cat.getInstance().getController().getLiveSpeedTestUploadSeries().getData().clear();
                     });
                 }
-                GlobalMonitoring.newPeriodicSpeedTestEmail();
+                GlobalMonitoring.resetPeriodicSpeedTestEmailStartDate();
             }
 
             @Override
@@ -173,6 +171,7 @@ public class SpeedTestFactory {
                     if (System.currentTimeMillis() >= GlobalMonitoring.getNextSpeedTestEmailTime()) {
                         GlobalMonitoring.sendPeriodicSpeedTestEmail();
                         GlobalMonitoring.computeNextSpeedTestEmailTime();
+                        GlobalMonitoring.resetPeriodicSpeedTestEmail();
                     }
                 }
             }
