@@ -4,6 +4,7 @@ import cclerc.cat.Cat;
 import cclerc.cat.Configuration.Configuration;
 import cclerc.cat.GlobalMonitoring;
 import cclerc.cat.MonitoringJob;
+import cclerc.cat.PeriodicSpeedTest;
 import cclerc.cat.model.Alarm;
 import cclerc.services.*;
 import com.sun.javafx.charts.Legend;
@@ -720,7 +721,7 @@ public class CatView {
         } else {
             // Stops current speed test (only one is potentially on-going, nothing is done if trying to stop a not on-going test)
             if (speedTest != null) speedTest.stop();
-            if (GlobalMonitoring.getSpeedTest() != null) GlobalMonitoring.getSpeedTest().stop();
+            if (PeriodicSpeedTest.getInstance().getSpeedTest() != null) PeriodicSpeedTest.getInstance().getSpeedTest().stop();
         }
     }
 
@@ -1427,7 +1428,10 @@ public class CatView {
     // SETTERS
 
     public void setSpeedTestNextPeriodLabel(String aInNextPeriod) {
-        speedTestNextPeriodLabel.setText(aInNextPeriod);
+        if (Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED))
+            speedTestNextPeriodLabel.setText(aInNextPeriod);
+        else
+            speedTestNextPeriodLabel.setText("");
     }
 
     /**
@@ -2796,7 +2800,10 @@ public class CatView {
     }
 
     public void reloadSpeedTestConfiguration(boolean aInHasUnitChanged) {
-        speedTestServer = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE);
+        speedTestServer =
+                (Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_SPONSOR_PREFERENCE, "").equals(""))
+                          ? Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE)
+                          : Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_SPONSOR_PREFERENCE);
         speedTestUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE);
         if (speedTestUploadUrl != null) speedTestDownloadUrl = speedTestUploadUrl.replaceAll("upload.php", "random4000x4000.jpg");
         setSpeedTestServer();

@@ -55,24 +55,96 @@
 
 .td-measurement-download-value {
     text-align: center;
-    color: blue;
+    color: #DOWNLOAD#;
 }
 
 .td-measurement-upload-value {
     text-align: center;
-    color: purple;
+    color: #UPLOAD#;
 }
 
 .td-measurement-download-bar {
-    background-color: blue;
+    background-color: #DOWNLOAD#;
 }
 
 .td-measurement-upload-bar {
-    background-color: purple;
+    background-color: #UPLOAD#;
 }
 
 .td-measurement-label {
     text-align: center;
+}
+
+.table-legend {
+    width: 100%;
+    padding: 0;
+    border-collapse: separate;
+    border-spacing: 10px;
+    border: 0px solid black;
+}
+
+.td-legend {
+    width=50%;
+    height=10%;
+    vertical-align: center;
+}
+
+.table-legend-type {
+    width: 100%;
+    padding: 0;
+    border-collapse: separate;
+    border-spacing: 5px;
+    border: 0px solid black;
+    text-align: center;
+}
+
+.td-legend-type-download-color {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: right;
+    border-collapse: separate;
+    border-spacing: 0px;
+    border: 0px solid black;
+}
+
+.td-legend-type-download-text {
+    width: 5%;
+}
+
+.td-legend-type-upload-color {
+    width: 5%;
+    text-align: center;
+}
+
+.td-legend-type-upload-text {
+}
+
+.table-legend-color {
+    margin-left: auto;
+    text-align: right;
+    border-collapse: separate;
+    border-spacing: 0px;
+    border: 0px solid black;
+}
+
+.table-legend-text {
+    margin-right: auto;
+    text-align: left;
+    border-collapse: separate;
+    border-spacing: 0px;
+    border: 0px solid black;
+}
+
+.td-legend-download-color {
+    width: 10;
+    height: 10;
+    background-color: #DOWNLOAD#;
+}
+
+.td-legend-upload-color {
+    width: 10;
+    height: 10;
+    background-color: #UPLOAD#;
 }
 
 </style>
@@ -98,20 +170,20 @@
 
     <!-- LEGEND -->
     <tr id="row_legend">
-        <table cellspacing="10" width="100%" >
+        <table class="table-legend">
             <tr>
-                <td id="column_legend_download" width="50%" valign="center" height="10%">
-                    <table id="table_legend_download" width="100%" cellpadding="0" cellspacing="5" border="0" align="center">
+                <td class="td-legend">
+                    <table class="table-legend-type">
                         <tr>
-                            <td id="column_legend_download_color" align="center">
-                                <table id="table_legend_download_color" align="right">
+                            <td class="td-legend-type-download-color">
+                                <table class="table-legend-color">
                                     <tr>
-                                        <td width="10" height="10" style="background-color:blue" />
+                                        <td class="td-legend-download-color"/>
                                     </tr>
                                 </table>
                             </td>
-                            <td id="column_legend_download_text" width="5%">
-                                <table id="table_legend_download_text" align="left">
+                            <td class="td-legend-type-download-text">
+                                <table class="table-legend-text">
                                     <tr>
                                         <td>Download</td>
                                     </tr>
@@ -120,18 +192,18 @@
                         </tr>
                     </table>
                 </td>
-                <td id="column_legend_upload" width="50%" valign="center">
-                    <table id="table_legend_upload" width="100%" cellpadding="0" cellspacing="5" align="center">
+                <td class="td-legend">
+                    <table class="table-legend-type">
                         <tr>
-                            <td id="column_legend_upload_color" width="5%" align="center">
-                                <table id="table_legend_upload_color" align="right">
+                            <td class="td-legend-type-upload-color">
+                                <table class="table-legend-color">
                                     <tr>
-                                        <td width="10" height="10" style="background-color:purple" />
+                                        <td class="td-legend-upload-color"/>
                                     </tr>
                                 </table>
                             </td>
-                            <td id="column_legend_upload_text">
-                                <table id="table_legend_upload_text" align="left">
+                            <td class="td-legend-type-upload-text">
+                                <table class="table-legend-text">
                                     <tr>
                                         <td>Upload</td>
                                     </tr>

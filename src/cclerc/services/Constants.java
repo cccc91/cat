@@ -122,6 +122,7 @@ public class Constants {
     public static final String SPEED_TEST_CITY_FILTER_PREFERENCE = "speedTest.filter.city";
     public static final String SPEED_TEST_DISTANCE_FILTER_PREFERENCE = "speedTest.filter.distance";
     public static final String SPEED_TEST_SERVER_NAME_PREFERENCE = "speedTest.server";
+    public static final String SPEED_TEST_SERVER_SPONSOR_PREFERENCE = "speedTest.server.sponsor";
     public static final String SPEED_TEST_SERVER_URL_PREFERENCE = "speedTest.url";
     public static final String SPEED_TEST_SOCKET_TIMEOUT_PREFERENCE = "speedTest.socketTimeout";
     public static final String SPEED_TEST_DOWNLOAD_SETUP_TIME_PREFERENCE = "speedTest.setupTime.download";

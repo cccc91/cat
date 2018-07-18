@@ -27,6 +27,8 @@ public class SpeedTest {
     private BigDecimal octetRate = new BigDecimal(0);
     private List<Map<Integer, BigDecimal>> bitRates = new ArrayList<>();
     private List<Map<Integer, BigDecimal>> octetRates = new ArrayList<>();
+    private List<BigDecimal> rawBitRates = new ArrayList<>();
+    private List<BigDecimal> rawOctetRates = new ArrayList<>();
     private int count = 0;
     private long startTime;
     private SpeedTestMode mode;
@@ -70,9 +72,12 @@ public class SpeedTest {
                     testRunning = false;
                     speedTestSocket.forceStopTask();
                     speedTestSocket.closeSocket();
-                    aInSpeedTestInterface.reportError(convertSpeedTestMode(speedTestSocket.getSpeedTestMode()), aInSpeedTestError, aInErrorMessage);
+                    aInSpeedTestInterface.reportError(startTime, convertSpeedTestMode(speedTestSocket.getSpeedTestMode()), aInSpeedTestError, aInErrorMessage);
                     speedTestInterface.reportStopTest();
+                    fillRates();
+                    speedTestInterface.reportFinalResult(startTime, bitRates, octetRates, rawBitRates, rawOctetRates);
                     speedTestInterface.storeResult(convertSpeedTestMode(mode), startTime, BigDecimal.ZERO, BigDecimal.ZERO);
+                    resetRates();
                 }
             }
 
@@ -89,6 +94,22 @@ public class SpeedTest {
     }
 
     // PRIVATE METHODS
+
+    private void fillRates() {
+        for (int i = bitRates.size(); i <= 1; i++) bitRates.add(convertToBestUnit(BigDecimal.ZERO));
+        for (int i = octetRates.size(); i <= 1; i++) octetRates.add(convertToBestUnit(BigDecimal.ZERO));
+        for (int i = rawBitRates.size(); i <= 1; i++) rawBitRates.add(BigDecimal.ZERO);
+        for (int i = rawOctetRates.size(); i <= 1; i++) rawOctetRates.add(BigDecimal.ZERO);
+
+//        bitRates.clear(); bitRates.add(convertToBestUnit(BigDecimal.ZERO)); bitRates.add(convertToBestUnit(BigDecimal.ZERO));
+//        octetRates.clear(); octetRates.add(convertToBestUnit(BigDecimal.ZERO)); octetRates.add(convertToBestUnit(BigDecimal.ZERO));
+//        rawBitRates.clear(); rawBitRates.add(BigDecimal.ZERO); rawBitRates.add(BigDecimal.ZERO);
+//        rawOctetRates.clear(); rawOctetRates.add(BigDecimal.ZERO); rawOctetRates.add(BigDecimal.ZERO);
+    }
+
+    private void resetRates() {
+        bitRates.clear(); octetRates.clear(); rawBitRates.clear(); rawOctetRates.clear();
+    }
 
     /**
      * Converts mode from internal speed test representation to application representation
@@ -140,8 +161,8 @@ public class SpeedTest {
             octetRate = octetRate.divide(new BigDecimal(count), 2);
             Map<Integer, BigDecimal> lBitRate = convertToBestUnit(bitRate);
             Map<Integer, BigDecimal> lOctetRate = convertToBestUnit(octetRate);
-            bitRates.add(lBitRate);
-            octetRates.add(lOctetRate);
+            bitRates.add(lBitRate); octetRates.add(lOctetRate);
+            rawBitRates.add(bitRate); rawOctetRates.add(octetRate);
             speedTestInterface.reportResult(convertSpeedTestMode(aInReport.getSpeedTestMode()), lBitRate, bitRate, lOctetRate, octetRate);
             speedTestInterface.storeResult(convertSpeedTestMode(aInReport.getSpeedTestMode()), startTime, bitRate, octetRate);
             testRunning = false;
@@ -217,8 +238,8 @@ public class SpeedTest {
                                     @Override
                                     public void onCompletion(SpeedTestReport aInReport) {
                                         processCompletionReport(aInReport);
-                                        speedTestInterface.reportFinalResult(bitRates, octetRates);
-                                        bitRates.clear(); octetRates.clear();
+                                        speedTestInterface.reportFinalResult(startTime, bitRates, octetRates, rawBitRates, rawOctetRates);
+                                        resetRates();
                                         speedTestInterface.reportStopTest();
                                     }
 
@@ -240,7 +261,10 @@ public class SpeedTest {
             speedTestSocket.closeSocket(); // Socket needs to be closed otherwise transfer goes on forever although no callback is no more called
             speedTestInterface.reportInterruption();
             testRunning = false;
+            fillRates();
+            speedTestInterface.reportFinalResult(startTime, bitRates, octetRates, rawBitRates, rawOctetRates);
             speedTestInterface.storeResult(convertSpeedTestMode(mode), startTime, BigDecimal.ZERO, BigDecimal.ZERO);
+            resetRates();
         }
     }
 

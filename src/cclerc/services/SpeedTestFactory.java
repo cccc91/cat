@@ -2,7 +2,7 @@ package cclerc.services;
 
 import cclerc.cat.Cat;
 import cclerc.cat.Configuration.Configuration;
-import cclerc.cat.GlobalMonitoring;
+import cclerc.cat.PeriodicSpeedTest;
 import fr.bmartel.speedtest.model.SpeedTestError;
 import javafx.application.Platform;
 import javafx.scene.chart.XYChart;
@@ -47,7 +47,7 @@ public class SpeedTestFactory {
                         Cat.getInstance().getController().getLiveSpeedTestUploadSeries().getData().clear();
                     });
                 }
-                GlobalMonitoring.resetPeriodicSpeedTestEmailStartDate();
+
             }
 
             @Override
@@ -151,12 +151,17 @@ public class SpeedTestFactory {
             }
 
             @Override
-            public void reportFinalResult(List<Map<Integer, BigDecimal>> aInBitRates, List<Map<Integer, BigDecimal>> aInOctetRates) {
-//                if (aInType.equals(EnumTypes.SpeedTestType.PERIODIC)) GlobalMonitoring.resetSpeedTestError();
+            public void reportFinalResult(long aInTime, List<Map<Integer, BigDecimal>> aInBitRates, List<Map<Integer, BigDecimal>> aInOctetRates,
+                                          List<BigDecimal> aInBitRawRates, List<BigDecimal> aInRawOctetRates) {
+
+                String lServer = (Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_SPONSOR_PREFERENCE, "").equals(""))
+                                 ? Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE)
+                                 : Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_SPONSOR_PREFERENCE);
+
                 String lMessage = String.format(
                         Display.getViewResourceBundle().getString("speedTest.report"),
                         Display.getViewResourceBundle().getString("speedtest.type." + EnumTypes.SpeedTestType.valueOf(aInType)),
-                        Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE),
+                        lServer,
                         aInOctetRates.get(0).values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + aInOctetRates.get(0).keySet().iterator().next()),
                         aInBitRates.get(0).values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + aInBitRates.get(0).keySet().iterator().next()),
                         aInOctetRates.get(1).values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + aInOctetRates.get(1).keySet().iterator().next()),
@@ -164,21 +169,18 @@ public class SpeedTestFactory {
                 Cat.getInstance().getController().printConsole(new Message(lMessage, EnumTypes.MessageLevel.INFO));
                 Display.getLogger().info(lMessage);
 
-                // Manage email if email is allowed and periodic speed test
+                // In case of periodic speed test, manage email if email is allowed
                 if (Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED) &&
                     aInType.equals(EnumTypes.SpeedTestType.PERIODIC)) {
-                    GlobalMonitoring.buildPeriodicSpeedTestEmail(lMessage + "<br>");
-                    // Send email if period is reached
-                    if (System.currentTimeMillis() >= GlobalMonitoring.getNextSpeedTestEmailTime()) {
-                        GlobalMonitoring.sendPeriodicSpeedTestEmail();
-                        GlobalMonitoring.computeNextSpeedTestEmailTime();
-                        GlobalMonitoring.resetPeriodicSpeedTestEmail();
-                    }
+
+                    PeriodicSpeedTest.getInstance().addMeasurementToEmail(aInTime, aInBitRates, aInOctetRates, aInBitRawRates, aInRawOctetRates);
+
                 }
+
             }
 
             @Override
-            public void reportError(EnumTypes.SpeedTestMode aInTransferMode, SpeedTestError aInSpeedTestError, String aInErrorMessage) {
+            public void reportError(long aInTime, EnumTypes.SpeedTestMode aInTransferMode, SpeedTestError aInSpeedTestError, String aInErrorMessage) {
 
                 Message lMessage = new Message(String.format(Display.getViewResourceBundle().getString("speedTest.error"),
                                                              Display.getViewResourceBundle().getString("speedtest.type." + EnumTypes.SpeedTestType.valueOf(aInType)),
@@ -186,13 +188,14 @@ public class SpeedTestFactory {
                                                              aInSpeedTestError + " - " + aInErrorMessage), EnumTypes.MessageLevel.ERROR);
                 Cat.getInstance().getController().printConsole(lMessage);
                 Cat.getInstance().getController().printSpeedTest(lMessage);
-                if (aInType.equals(EnumTypes.SpeedTestType.PERIODIC)) GlobalMonitoring.resetNextSpeedTestExecutionTime();
+
+                PeriodicSpeedTest.getInstance().addErrorToEmail(aInTime, aInTransferMode, aInSpeedTestError, aInErrorMessage);
 
             }
 
             @Override
-            public void storeResult(EnumTypes.SpeedTestMode aInSpeedTestMode, long aInStartTime, BigDecimal aInBitRate, BigDecimal aInOctetRate) {
-                Cat.getInstance().getController().addSpeedTestSeriesData(aInSpeedTestMode, aInStartTime, aInBitRate.intValue(), aInType);
+            public void storeResult(EnumTypes.SpeedTestMode aInSpeedTestMode, long aInTime, BigDecimal aInBitRate, BigDecimal aInOctetRate) {
+                Cat.getInstance().getController().addSpeedTestSeriesData(aInSpeedTestMode, aInTime, aInBitRate.intValue(), aInType);
             }
 
         },  (Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkConfiguration(EnumTypes.AddressType.WAN) == null) ? true :

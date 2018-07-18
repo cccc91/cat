@@ -30,10 +30,11 @@ public interface SpeedTestInterface {
     public void reportResult(EnumTypes.SpeedTestMode aInTransferMode, Map<Integer, BigDecimal> aInBitRate, BigDecimal aInRawBitRate,
                              Map<Integer, BigDecimal> aInOctetRate, BigDecimal aInRawOctetRate);
     // Invoked when upload finishes, after reportResult and before reportStopTest
-    public void reportFinalResult(List<Map<Integer, BigDecimal>> aInBitRates, List<Map<Integer, BigDecimal>> aInOctetRates);
+    public void reportFinalResult(long aInTime, List<Map<Integer, BigDecimal>> aInBitRates, List<Map<Integer, BigDecimal>> aInOctetRates,
+                                  List<BigDecimal> aInRawBitRates, List<BigDecimal> aInRawOctetRates);
     // Invoked when an error occurs - After an error, speed test is no more usable and needs to be re-instantiated
-    public void reportError(EnumTypes.SpeedTestMode aInTransferMode, SpeedTestError aInSpeedTestError, String aInErrorMessage);
+    public void reportError(long aInTime, EnumTypes.SpeedTestMode aInTransferMode, SpeedTestError aInSpeedTestError, String aInErrorMessage);
     // Invoked when download or upload finishes, after reportResult and before reportStopTest
-    public void storeResult(EnumTypes.SpeedTestMode aInSpeedTestMode, long aInStartTime, BigDecimal aInBitRate, BigDecimal aInOctetRate);
+    public void storeResult(EnumTypes.SpeedTestMode aInSpeedTestMode, long aInTime, BigDecimal aInBitRate, BigDecimal aInOctetRate);
 
 }

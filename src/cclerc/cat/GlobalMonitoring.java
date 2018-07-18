@@ -4,7 +4,6 @@ import cclerc.cat.Configuration.Configuration;
 import cclerc.cat.Configuration.GlobalMonitoringConfiguration;
 import cclerc.cat.model.Alarm;
 import cclerc.services.*;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -15,47 +14,6 @@ import java.util.*;
  * Singleton class implementing global monitoring
  */
 public class GlobalMonitoring {
-
-    private static boolean speedTestEnabled;
-    private static int speedTestPeriod;
-    private static int speedTestOffset;
-    private static boolean firstSpeedTestError = true;
-    private static Long lastSpeedTestExecutionTime;
-    private static Long nextSpeedTestExecutionTime;
-    private static Long nextSpeedTestEmailTime;
-    private static String speedTestUploadUrl;
-    private static String speedTestDownloadUrl;
-    private static SpeedTest speedTest;
-    private static Email periodicSpeedTestEmail;
-    private static String periodicSpeedTestEmailContentText;
-    private static String periodicSpeedTestEmailContentHTML;
-    private static Date periodicSpeedTestEmailStartDate;
-
-    public static SpeedTest getSpeedTest() {
-        return speedTest;
-    }
-
-    public static void reloadSpeedTestConfiguration() {
-
-        speedTestEnabled = Preferences.getInstance().getBooleanValue(
-                Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED);
-        speedTestPeriod =
-                Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_PERIODIC_TEST_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD) *
-                Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_DISPLAY_UNIT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT_PERIOD);
-        speedTestOffset = Preferences.getInstance().getIntegerValue(
-                Constants.SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET);
-        nextSpeedTestExecutionTime = Utilities.nextExecutionTime(
-                (nextSpeedTestExecutionTime == null || nextSpeedTestExecutionTime > System.currentTimeMillis()) ? null : nextSpeedTestExecutionTime, speedTestPeriod, speedTestOffset);
-        computeNextSpeedTestEmailTime();
-        if (Cat.getInstance().displayGraphicalInterface()) {
-            Platform.runLater(() -> {
-                Cat.getInstance().getController().setSpeedTestNextPeriodLabel(LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(nextSpeedTestExecutionTime));
-            });
-        }
-        speedTestUploadUrl = Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE);
-        speedTestDownloadUrl = (speedTestUploadUrl != null) ? speedTestUploadUrl.replaceAll("upload.php", "random4000x4000.jpg") : null;
-
-    }
 
     class JobDetails {
 
@@ -284,10 +242,6 @@ public class GlobalMonitoring {
                 Utilities.sleep(1000);
             }
 
-            reloadSpeedTestConfiguration();
-            resetPeriodicSpeedTestEmail();
-            lastSpeedTestExecutionTime = 0L;
-
             // Run the thread
             while (running) {
 
@@ -296,27 +250,6 @@ public class GlobalMonitoring {
                 GlobalMonitoringConfiguration lConfiguration = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration();
                 HashMap<EnumTypes.ConnectionType, Double> lStatsPerConnectionType = new HashMap<>();
                 Double lNetworkStats = 0.0;
-
-                // Run speed test if needed
-                if (speedTestEnabled && speedTestDownloadUrl != null && speedTestUploadUrl != null && lNow >= nextSpeedTestExecutionTime) {
-                    lastSpeedTestExecutionTime = nextSpeedTestExecutionTime;
-                    nextSpeedTestExecutionTime = Utilities.nextExecutionTime(nextSpeedTestExecutionTime, speedTestPeriod, speedTestOffset);
-                    if (Cat.getInstance().displayGraphicalInterface()) {
-                        Platform.runLater(() -> {
-                            Cat.getInstance().getController().setSpeedTestNextPeriodLabel(LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(nextSpeedTestExecutionTime));
-                        });
-                    }
-                    if ((Cat.getInstance().getController().getSpeedTest() != null && Cat.getInstance().getController().getSpeedTest().isTestRunning()) ||
-                        (speedTest != null && speedTest.isTestRunning())) {
-                        Cat.getInstance().getController().printConsole(
-                                new Message(String.format(
-                                        Display.getViewResourceBundle().getString("speedTest.running"),
-                                        LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(new Date(nextSpeedTestExecutionTime))), EnumTypes.MessageLevel.WARNING));
-                    } else {
-                        if (speedTest == null || speedTest.isInterrupted()) speedTest = SpeedTestFactory.getInstance(EnumTypes.SpeedTestType.PERIODIC);
-                        speedTest.start(speedTestDownloadUrl, speedTestUploadUrl);
-                    }
-                }
 
                 // Parse all monitoring jobs
                 lStatsPerConnectionType.clear();
@@ -485,7 +418,7 @@ public class GlobalMonitoring {
         lThread.start();
 
         // Launch periodic speed test
-        PeriodicSpeedTest.getPeriodicSpeedTest().start();
+        PeriodicSpeedTest.getInstance().start();
 
         // For test only - to be disabled when not useful
         if (TEST_ENABLE) {
@@ -505,77 +438,9 @@ public class GlobalMonitoring {
         return historicalAlarmsList;
     }
 
-    public PeriodicCheck getPeriodicCheck() {
-        return periodicCheck;
-    }
-
-    public static long getNextSpeedTestEmailTime() {
-        return nextSpeedTestEmailTime;
-    }
-
     // SETTERS
 
     // METHODS
-
-    public static void resetSpeedTestError() {
-        firstSpeedTestError = true;
-    }
-
-    public static void resetNextSpeedTestExecutionTime() {
-        if (firstSpeedTestError) {
-            nextSpeedTestExecutionTime = lastSpeedTestExecutionTime;
-            Platform.runLater(() -> {
-                Cat.getInstance().getController().printSpeedTest(new Message(Display.getViewResourceBundle().getString("speedTest.retry"), EnumTypes.MessageLevel.ERROR));
-                Cat.getInstance().getController().setSpeedTestNextPeriodLabel(LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(nextSpeedTestExecutionTime));
-            });
-            firstSpeedTestError = false;
-        } else {
-            firstSpeedTestError = true;
-        }
-    }
-
-    public static void computeNextSpeedTestEmailTime() {
-        nextSpeedTestEmailTime = Utilities.nextExecutionTime(
-                (nextSpeedTestEmailTime == null || nextSpeedTestEmailTime > System.currentTimeMillis()) ? null : nextSpeedTestEmailTime,
-                speedTestPeriod * Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD),
-                speedTestOffset);
-    }
-
-    public static void resetPeriodicSpeedTestEmail() {
-        periodicSpeedTestEmail = new Email(
-                States.getInstance().getBooleanValue((Cat.getInstance().getController().BuildStatePropertyName(Constants.SEND_MAIL_STATE)), true) &&
-                Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getSmtpServerConfigurations().size() != 0 &&
-                !Configuration.getCurrentConfiguration().getEmailConfiguration().getRecipientList().isEmpty(),
-                Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getPreferredSmtpServer());
-        periodicSpeedTestEmailContentText = "";
-        periodicSpeedTestEmailContentHTML = "";
-    }
-
-    public static void resetPeriodicSpeedTestEmailStartDate() {
-        periodicSpeedTestEmailStartDate = new Date();
-    }
-
-    public static void buildPeriodicSpeedTestEmail(String aInMessage) {
-        String lDate = LocaleUtilities.getInstance().getDateFormat().format(periodicSpeedTestEmailStartDate);
-        String lTime = LocaleUtilities.getInstance().getTimeFormat().format(periodicSpeedTestEmailStartDate.getTime());
-        periodicSpeedTestEmailContentText = String.format("%s %s - %s", lDate, lTime, aInMessage) + periodicSpeedTestEmailContentText;
-//TODO        periodicSpeedTestEmailContentHTML += "";
-    }
-
-    public static void sendPeriodicSpeedTestEmail() {
-
-        String lLocalHostName = "";
-        try {
-            lLocalHostName = InetAddress.getLocalHost().getHostName();
-        } catch (Exception e) {
-            Display.logUnexpectedError(e);
-        }
-
-        periodicSpeedTestEmail.sendMail(
-                String.format(Display.getMessagesResourceBundle().getString("generalEmail.speedTest.subject"), lLocalHostName),
-                periodicSpeedTestEmailContentText);
-
-    }
 
     /**
      * Add a monitoring job

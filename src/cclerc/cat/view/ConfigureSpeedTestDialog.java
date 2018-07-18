@@ -3,6 +3,7 @@ package cclerc.cat.view;
 import cclerc.cat.Cat;
 import cclerc.cat.Configuration.Configuration;
 import cclerc.cat.GlobalMonitoring;
+import cclerc.cat.PeriodicSpeedTest;
 import cclerc.cat.model.SpeedTestServer;
 import cclerc.services.*;
 import javafx.application.Platform;
@@ -777,6 +778,7 @@ public class ConfigureSpeedTestDialog {
         SpeedTestServer lSpeedTestServer = serversTableView.getSelectionModel().getSelectedItem();
         if (lSpeedTestServer != null) {
             Preferences.getInstance().saveValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE, lSpeedTestServer.getName());
+            Preferences.getInstance().saveValue(Constants.SPEED_TEST_SERVER_SPONSOR_PREFERENCE, lSpeedTestServer.getSponsor() + " (" + lSpeedTestServer.getCity() + ')');
             Preferences.getInstance().saveValue(Constants.SPEED_TEST_SERVER_URL_PREFERENCE, lSpeedTestServer.getUrl());
         }
         Preferences.getInstance().saveValue(Constants.SPEED_TEST_SOCKET_TIMEOUT_PREFERENCE, socketTimeoutTextField.getText());
@@ -823,7 +825,7 @@ public class ConfigureSpeedTestDialog {
         setStyles();
 
         Cat.getInstance().getController().reloadSpeedTestConfiguration(hasUnitChanged);
-        GlobalMonitoring.reloadSpeedTestConfiguration();
+        PeriodicSpeedTest.getInstance().loadConfiguration();
 
         hasConfigurationChanged = false;
         saveButton.setDisable(true);
