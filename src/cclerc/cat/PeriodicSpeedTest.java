@@ -5,6 +5,7 @@ import cclerc.services.*;
 import fr.bmartel.speedtest.model.SpeedTestError;
 import javafx.application.Platform;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
@@ -66,7 +67,7 @@ public class PeriodicSpeedTest implements Runnable {
 
     private PeriodicSpeedTest() {
         try {
-// TODO            measurementTemplate = new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource("resources/templates/speedTestEmailMeasurement.html").toURI())));
+            measurementTemplate = new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource("resources/templates/speedTestEmailMeasurement.html").toURI())));
         } catch (Exception e) {
             Display.logUnexpectedError(e);
         }
