@@ -1428,10 +1428,13 @@ public class CatView {
     // SETTERS
 
     public void setSpeedTestNextPeriodLabel(String aInNextPeriod) {
-        if (Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED))
+        if (Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED)) {
+            speedTestNextPeriodTitleLabel.setVisible(true);
             speedTestNextPeriodLabel.setText(aInNextPeriod);
-        else
+        } else {
+            speedTestNextPeriodTitleLabel.setVisible(false);
             speedTestNextPeriodLabel.setText("");
+        }
     }
 
     /**

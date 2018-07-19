@@ -18,7 +18,7 @@ public interface SpeedTestInterface {
     // Invoked when speed test finishes, i.e after upload (after reportResult), or when an error occurs (after reportError), but not when test is interrupted
     public void reportStopTest();
     // Invoked when speed test is interrupted by user - After an interruption, speed test is no more usable and needs to be re-instantiated
-    public void reportInterruption();
+    public void reportInterruption(long aInTime, EnumTypes.SpeedTestMode aInTransferMode);
     // Invoked when starting download and when starting upload
     public void reportStartTransfer(EnumTypes.SpeedTestMode aInTransferMode);
     // Invoked when download or upload progress is reported (but not on completion) - bit and octet rates are values converted to best unit from the raw values

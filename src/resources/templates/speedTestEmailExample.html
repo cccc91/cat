@@ -53,22 +53,34 @@
     vertical-align: bottom;
 }
 
+.table-measurement-value {
+    width: 100%;
+    padding: 0;
+    border-collapse: separate;
+    border-spacing: 0px;
+    border: 0px solid black;
+}
+
 .td-measurement-download-value {
     text-align: center;
     color: blue;
+    vertical-align: bottom;
 }
 
 .td-measurement-upload-value {
     text-align: center;
     color: purple;
+    vertical-align: bottom;
 }
 
 .td-measurement-download-bar {
     background-color: blue;
+    vertical-align: bottom;
 }
 
 .td-measurement-upload-bar {
     background-color: purple;
+    vertical-align: bottom;
 }
 
 .td-measurement-label {
@@ -141,22 +153,22 @@
                                             <table class="table-measurement">
                                                 <tr>
                                                     <td class="td-measurement">
-                                                        <table width="100%">
+                                                        <table class="table-measurement-value">
                                                             <tr>
-                                                                <td class="td-measurement-download-value">20</td>
+                                                                <td class="td-measurement-download-value">0</td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="td-measurement-download-bar" height="20"/>
+                                                                <td class="td-measurement-download-bar" height="0"/>
                                                             </tr>
                                                         </table>
                                                     </td>
                                                     <td class="td-measurement">
-                                                        <table width="100%">
+                                                        <table class="table-measurement-value">
                                                             <tr>
-                                                                <td class="td-measurement-upload-value">40</td>
+                                                                <td class="td-measurement-upload-value">0</td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="td-measurement-upload-bar" height="40"/>
+                                                                <td class="td-measurement-upload-bar" height="0"/>
                                                             </tr>
                                                         </table>
                                                     </td>

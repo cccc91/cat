@@ -195,6 +195,9 @@ public class SpeedTest {
      */
     public void start(String aInDownloadUrl, String aInUploadUrl) {
 
+        // Force a shutdown in case socket is busy
+        speedTestSocket.shutdownAndWait();
+
         speedTestInterface.reportStartTest();
         testRunning = true;
         startTime = System.currentTimeMillis();
@@ -259,7 +262,7 @@ public class SpeedTest {
             interrupted = true; // Must not be moved as onError callback is called after socked is closed and this flag is tested in this callback
             speedTestSocket.forceStopTask();
             speedTestSocket.closeSocket(); // Socket needs to be closed otherwise transfer goes on forever although no callback is no more called
-            speedTestInterface.reportInterruption();
+            speedTestInterface.reportInterruption(startTime, convertSpeedTestMode(mode));
             testRunning = false;
             fillRates();
             speedTestInterface.reportFinalResult(startTime, bitRates, octetRates, rawBitRates, rawOctetRates);
