@@ -198,7 +198,7 @@ public class PeriodicSpeedTest implements Runnable {
             BufferedReader buffer = new BufferedReader(new InputStreamReader(lInputStream));
             emailContentHTML = buffer.lines().collect(Collectors.joining("\n"));
 //            // TODO : use css
-            emailContentHTML = emailContentHTML.replaceAll("#DOWNLOAD#", "blue").replaceAll("#UPLOAD#", "purple");
+            emailContentHTML = emailContentHTML.replaceAll("#DOWNLOAD_COLOR#", "blue").replaceAll("#UPLOAD_COLOR#", "purple");
         } catch (Exception e) {
             Display.logUnexpectedError(e);
         }
@@ -270,15 +270,19 @@ public class PeriodicSpeedTest implements Runnable {
             Double lScale = 400d / maxSpeed;
 
             // Build final HTML
+            Integer i = 1;
             for (Measurement lMeasurement: measurements) {
                 Double lScaledDownload = lMeasurement.getDownload() * lScale;
                 Double lScaledUpload = lMeasurement.getUpload() * lScale;
                 String lMeasurementHTML = new String(measurementTemplate);
                 lMeasurementHTML = lMeasurementHTML
+                        .replaceAll("#MEASUREMENT#", i.toString())
                         .replaceAll("#DOWNLOAD#", String.format("%.1f", lMeasurement.getDownload()))
-                        .replaceAll("#DOWNLOAD_HEIGHT#", String.format("%.1f", lScaledDownload))
+                        .replaceAll("#DOWNLOAD_HEIGHT#", String.format("%.1f", lScaledDownload).replaceAll(",", "."))
+                        .replaceAll("#DOWNLOAD_COLOR#", "blue") // TODO
                         .replaceAll("#UPLOAD#", String.format("%.1f", lMeasurement.getUpload()))
-                        .replaceAll("#UPLOAD_HEIGHT#", String.format("%.1f", lScaledUpload))
+                        .replaceAll("#UPLOAD_HEIGHT#", String.format("%.1f", lScaledUpload).replaceAll(",", "."))
+                        .replaceAll("#UPLOAD_COLOR#", "purple") // TODO
                         .replace("#CATEGORY#", lMeasurement.getCategory().replaceAll("\\n", "<br>"));
 
                 emailContentHTML = emailContentHTML.replaceAll("#MEASUREMENTS#", lMeasurementHTML + "\n#MEASUREMENTS#");

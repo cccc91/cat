@@ -100,11 +100,6 @@ public class SpeedTest {
         for (int i = octetRates.size(); i <= 1; i++) octetRates.add(convertToBestUnit(BigDecimal.ZERO));
         for (int i = rawBitRates.size(); i <= 1; i++) rawBitRates.add(BigDecimal.ZERO);
         for (int i = rawOctetRates.size(); i <= 1; i++) rawOctetRates.add(BigDecimal.ZERO);
-
-//        bitRates.clear(); bitRates.add(convertToBestUnit(BigDecimal.ZERO)); bitRates.add(convertToBestUnit(BigDecimal.ZERO));
-//        octetRates.clear(); octetRates.add(convertToBestUnit(BigDecimal.ZERO)); octetRates.add(convertToBestUnit(BigDecimal.ZERO));
-//        rawBitRates.clear(); rawBitRates.add(BigDecimal.ZERO); rawBitRates.add(BigDecimal.ZERO);
-//        rawOctetRates.clear(); rawOctetRates.add(BigDecimal.ZERO); rawOctetRates.add(BigDecimal.ZERO);
     }
 
     private void resetRates() {
@@ -196,6 +191,7 @@ public class SpeedTest {
     public void start(String aInDownloadUrl, String aInUploadUrl) {
 
         // Force a shutdown in case socket is busy
+        speedTestSocket.forceStopTask();
         speedTestSocket.shutdownAndWait();
 
         speedTestInterface.reportStartTest();

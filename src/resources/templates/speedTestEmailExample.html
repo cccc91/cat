@@ -1,132 +1,45 @@
 <style media="screen" type="text/css">
 
-.table-results {
-    width: 100%;
-    padding:10;
-    border: 0px;
-    border-collapse: separate;
-    border-spacing: 0px;
-    border: 0px solid black;
-}
-
-.table-barchart {
-    width: 100%;
-    padding: 0;
-    border-collapse: separate;
-    border-spacing: 10px;
-    border-style: solid;
-    border-color: black;
-    border-width: 0 0 2 2;
-}
-
-.td-barchart {
-    vertical-align: bottom;
-}
-
-.table-result {
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    border-collapse: separate;
-    border-spacing: 0px;
-    border: 0px solid black;
-    text-align: center;
-}
-
-.table-measurements {
-    width: 100%;
-    padding: 0;
-    border-collapse: separate;
-    border-spacing: 0px;
-    border: 0px solid black;
-}
-
-.table-measurement {
-    width: 100%;
-    padding: 0;
-    border-collapse: separate;
-    border-spacing: 0px;
-    border: 0px solid black;
-}
-
-.td-measurement {
-    vertical-align: bottom;
-}
-
-.table-measurement-value {
-    width: 100%;
-    padding: 0;
-    border-collapse: separate;
-    border-spacing: 0px;
-    border: 0px solid black;
-}
-
-.td-measurement-download-value {
-    text-align: center;
-    color: blue;
-    vertical-align: bottom;
-}
-
-.td-measurement-upload-value {
-    text-align: center;
-    color: purple;
-    vertical-align: bottom;
-}
-
-.td-measurement-download-bar {
-    background-color: blue;
-    vertical-align: bottom;
-}
-
-.td-measurement-upload-bar {
-    background-color: purple;
-    vertical-align: bottom;
-}
-
-.td-measurement-label {
-    text-align: center;
-}
-
 </style>
 
 
-<table class="table-results">
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
 
     <!-- BAR CHART -->
     <tr>
 
         <!-- Bar chart table -->
-        <table class="table-barchart">
+        <table width="150%" cellspacing="10" cellpadding="0"  style="border-left: 1px solid; border-bottom: 1px solid">
 
-            <tr class="td-barchart">
+            <tr valign="bottom">
 
                 <!-- MEASUREMENT #1 -->
                 <td>
-                    <table class="table-result">
+                    <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
                         <tr>
                             <td>
-                                <table class="table-measurements">
+                                <table width="100%" cellspacing="0" cellpadding="0" border="0">
                                     <tr>
                                         <td>
-                                            <table class="table-measurement">
+                                            <table width="100%" cellspacing="0" cellpadding="0" border="0">
                                                 <tr>
-                                                    <td class="td-measurement">
-                                                        <table width="100%">
+                                                    <td valign="bottom" width="50%">
+                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0">
                                                             <tr>
-                                                                <td class="td-measurement-download-value">90</td>
+                                                                <td align="center" style="color: blue">90</td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="td-measurement-download-bar" height="90"/>
+                                                                <td valign="bottom" style="background-color: blue" height="90"/>
                                                             </tr>
                                                         </table>
                                                     </td>
-                                                    <td class="td-measurement">
-                                                        <table width="100%">
+                                                    <td valign="bottom" width="50%">
+                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0">
                                                             <tr>
-                                                                <td class="td-measurement-upload-value">10</td>
+                                                                <td align="center" style="color: purple">10</td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="td-measurement-upload-bar" height="10"/>
+                                                                <td valign="bottom" style="background-color: purple" height="10"/>
                                                             </tr>
                                                         </table>
                                                     </td>
@@ -134,7 +47,7 @@
                                             </table>
                                     </tr>
                                     <tr>
-                                        <td class="td-measurement-label">Measurement #1<br>now</td>
+                                        <td align="center">Measurement #1<br>now</td>
                                     </tr>
                                 </table>
                             </td>
@@ -144,31 +57,31 @@
 
                 <!-- MEASUREMENT #2 -->
                 <td>
-                    <table class="table-result">
+                    <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
                         <tr>
                             <td>
-                                <table class="table-measurements">
+                                <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
                                     <tr>
                                         <td>
-                                            <table class="table-measurement">
+                                            <table width="100%" cellspacing="0" cellpadding="0" border="0">
                                                 <tr>
-                                                    <td class="td-measurement">
-                                                        <table class="table-measurement-value">
+                                                    <td valign="bottom" width="50%">
+                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0">
                                                             <tr>
-                                                                <td class="td-measurement-download-value">0</td>
+                                                                <td align="center" style="color: blue">0</td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="td-measurement-download-bar" height="0"/>
+                                                                <td valign="bottom" style="background-color: blue" height="0"/>
                                                             </tr>
                                                         </table>
                                                     </td>
-                                                    <td class="td-measurement">
-                                                        <table class="table-measurement-value">
+                                                    <td valign="bottom" width="50%">
+                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0">
                                                             <tr>
-                                                                <td class="td-measurement-upload-value">0</td>
+                                                                <td align="center" style="color: purple">0</td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="td-measurement-upload-bar" height="0"/>
+                                                                <td valign="bottom" style="background-color: purple" height="0"/>
                                                             </tr>
                                                         </table>
                                                     </td>
@@ -176,7 +89,7 @@
                                             </table>
                                     </tr>
                                     <tr>
-                                        <td class="td-measurement-label">Measurement #2<br>now</td>
+                                        <td align="center">Measurement #2<br>now</td>
                                     </tr>
                                 </table>
                             </td>
@@ -186,31 +99,31 @@
 
                 <!-- MEASUREMENT #3 -->
                 <td>
-                    <table class="table-result">
+                    <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
                         <tr>
                             <td>
-                                <table class="table-measurements">
+                                <table width="100%" cellspacing="0" cellpadding="0" border="0">
                                     <tr>
                                         <td>
-                                            <table class="table-measurement">
+                                            <table width="100%" cellspacing="0" cellpadding="0" border="0">
                                                 <tr>
-                                                    <td class="td-measurement">
-                                                        <table width="100%">
+                                                    <td valign="bottom" width="50%">
+                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0">
                                                             <tr>
-                                                                <td class="td-measurement-download-value">120</td>
+                                                                <td align="center" style="color: blue">120</td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="td-measurement-download-bar" height="120"/>
+                                                                <td valign="bottom" style="background-color: blue" height="120"/>
                                                             </tr>
                                                         </table>
                                                     </td>
-                                                    <td class="td-measurement">
-                                                        <table width="100%">
+                                                    <td valign="bottom" width="50%">
+                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0">
                                                             <tr>
-                                                                <td class="td-measurement-upload-value">30</td>
+                                                                <td align="center" style="color: purple">30</td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="td-measurement-upload-bar" height="30"/>
+                                                                <td valign="bottom" style="background-color: purple" height="30"/>
                                                             </tr>
                                                         </table>
                                                     </td>
@@ -218,7 +131,7 @@
                                             </table>
                                     </tr>
                                     <tr>
-                                        <td class="td-measurement-label">Measurement #3<br>now</td>
+                                        <td align="center">Measurement #1<br>now</td>
                                     </tr>
                                 </table>
                             </td>
@@ -228,31 +141,31 @@
 
                 <!-- MEASUREMENT #4 -->
                 <td>
-                    <table class="table-result">
+                    <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
                         <tr>
                             <td>
-                                <table class="table-measurements">
+                                <table width="100%" cellspacing="0" cellpadding="0" border="0">
                                     <tr>
                                         <td>
-                                            <table class="table-measurement">
+                                            <table width="100%" cellspacing="0" cellpadding="0" border="0">
                                                 <tr>
-                                                    <td class="td-measurement">
-                                                        <table width="100%">
+                                                    <td valign="bottom" width="50%">
+                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0">
                                                             <tr>
-                                                                <td class="td-measurement-download-value">95</td>
+                                                                <td align="center" style="color: blue">95</td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="td-measurement-download-bar" height="95"/>
+                                                                <td valign="bottom" style="background-color: blue" height="95"/>
                                                             </tr>
                                                         </table>
                                                     </td>
-                                                    <td class="td-measurement">
-                                                        <table width="100%">
+                                                    <td valign="bottom" width="50%">
+                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0">
                                                             <tr>
-                                                                <td class="td-measurement-upload-value">68</td>
+                                                                <td align="center" style="color: purple">68</td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="td-measurement-upload-bar" height="68"/>
+                                                                <td valign="bottom" style="background-color: purple" height="68"/>
                                                             </tr>
                                                         </table>
                                                     </td>
@@ -260,7 +173,7 @@
                                             </table>
                                     </tr>
                                     <tr>
-                                        <td class="td-measurement-label">Measurement #4<br>now</td>
+                                        <td align="center">Measurement #4<br>now</td>
                                     </tr>
                                 </table>
                             </td>
