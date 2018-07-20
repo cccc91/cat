@@ -4,6 +4,8 @@ import cclerc.cat.Configuration.Configuration;
 import cclerc.services.*;
 import fr.bmartel.speedtest.model.SpeedTestError;
 import javafx.application.Platform;
+import javafx.css.FontCssMetaData;
+import javafx.css.PseudoClass;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -64,15 +66,28 @@ public class PeriodicSpeedTest implements Runnable {
     private String measurementTemplate;
     private Double maxSpeed;
     private List<Measurement> measurements;
+    private String downloadColor;
+    private String uploadColor;
 
     // Periodic speed test instance
     private static PeriodicSpeedTest periodicSpeedTest = new PeriodicSpeedTest();
 
     private PeriodicSpeedTest() {
         try {
-            InputStream lInputStream = getClass().getResourceAsStream("/resources/templates/speedTestEmailMeasurement.html");
-            BufferedReader buffer = new BufferedReader(new InputStreamReader(lInputStream));
-            measurementTemplate = buffer.lines().collect(Collectors.joining("\n"));
+
+            // Load measurement template
+            InputStream lSpeedTestMeasurementInputStream = getClass().getResourceAsStream("/resources/templates/speedTestEmailMeasurement.html");
+            BufferedReader lSpeedTestBuffer = new BufferedReader(new InputStreamReader(lSpeedTestMeasurementInputStream));
+            measurementTemplate = lSpeedTestBuffer.lines().collect(Collectors.joining("\n"));
+
+            // Retrieve information from CSS
+            InputStream lCssInputStream = getClass().getResourceAsStream("/resources/css/view.css");
+            BufferedReader lCssBuffer = new BufferedReader(new InputStreamReader(lCssInputStream));
+            String lCss = lCssBuffer.lines().collect(Collectors.joining());
+            downloadColor = lCss.replaceAll(".*chart-download-periodic", "").replaceAll("}.*", "").replaceAll(".*-fx-stroke[^:]*:[ ]*([^;]*);.*", "$1");
+            uploadColor = lCss.replaceAll(".*chart-upload-periodic", "").replaceAll("}.*", "").replaceAll(".*-fx-stroke[^:]*:[ ]*([^;]*);.*", "$1");
+            measurementTemplate = measurementTemplate.replaceAll("#DOWNLOAD_COLOR#", downloadColor).replaceAll("#UPLOAD_COLOR#", uploadColor);
+
         } catch (Exception e) {
             Display.logUnexpectedError(e);
         }
@@ -198,8 +213,7 @@ public class PeriodicSpeedTest implements Runnable {
             InputStream lInputStream = getClass().getResourceAsStream("/resources/templates/speedTestEmailBody.html");
             BufferedReader buffer = new BufferedReader(new InputStreamReader(lInputStream));
             emailContentHTML = buffer.lines().collect(Collectors.joining("\n"));
-//            // TODO : use css
-            emailContentHTML = emailContentHTML.replaceAll("#DOWNLOAD_COLOR#", "blue").replaceAll("#UPLOAD_COLOR#", "purple");
+            emailContentHTML = emailContentHTML.replaceAll("#DOWNLOAD_COLOR#", downloadColor).replaceAll("#UPLOAD_COLOR#", uploadColor);
         } catch (Exception e) {
             Display.logUnexpectedError(e);
         }
@@ -281,10 +295,8 @@ public class PeriodicSpeedTest implements Runnable {
                         .replaceAll("#MEASUREMENT#", i.toString())
                         .replaceAll("#DOWNLOAD#", String.format("%.1f", lMeasurement.getDownload()))
                         .replaceAll("#DOWNLOAD_HEIGHT#", String.format("%.1f", lScaledDownload).replaceAll(",", "."))
-                        .replaceAll("#DOWNLOAD_COLOR#", "blue") // TODO
                         .replaceAll("#UPLOAD#", String.format("%.1f", lMeasurement.getUpload()))
                         .replaceAll("#UPLOAD_HEIGHT#", String.format("%.1f", lScaledUpload).replaceAll(",", "."))
-                        .replaceAll("#UPLOAD_COLOR#", "purple") // TODO
                         .replace("#CATEGORY#", lMeasurement.getCategory().replaceAll("\\n", "<br>"));
 
                 emailContentHTML = emailContentHTML.replaceAll("#MEASUREMENTS#", lMeasurementHTML + "\n#MEASUREMENTS#");
