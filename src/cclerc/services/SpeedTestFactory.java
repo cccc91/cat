@@ -70,8 +70,13 @@ public class SpeedTestFactory {
             }
 
             @Override
-            public void reportInterruption() {
+            public void reportInterruption(long aInTime, EnumTypes.SpeedTestMode aInTransferMode) {
                 Cat.getInstance().getController().switchStopStartSpeedTestButton();
+                Cat.getInstance().getController().printConsole(new Message(
+                        String.format(Display.getViewResourceBundle().getString("speedTest.interrupted"),
+                                      Display.getViewResourceBundle().getString("speedtest.type." + EnumTypes.SpeedTestType.valueOf(aInType))
+                                      + " ("  + aInTransferMode.toString().toLowerCase() + ')'),
+                        EnumTypes.MessageLevel.WARNING));
                 Cat.getInstance().getController().printSpeedTest(new Message(
                         String.format(Display.getViewResourceBundle().getString("speedTest.interrupted"),
                                       Display.getViewResourceBundle().getString("speedtest.type." + EnumTypes.SpeedTestType.valueOf(aInType))),
@@ -81,6 +86,9 @@ public class SpeedTestFactory {
                                 String.format(Display.getViewResourceBundle().getString("speedTest.end"),
                                               Display.getViewResourceBundle().getString("speedtest.type." + EnumTypes.SpeedTestType.valueOf(aInType)).toUpperCase()),
                                 EnumTypes.MessageLevel.INFO));
+
+                PeriodicSpeedTest.getInstance().addErrorToEmail(aInTime, aInTransferMode, null, Display.getMessagesResourceBundle().getString("generalEmail.speedTest.stop"));
+
             }
 
             @Override

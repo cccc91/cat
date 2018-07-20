@@ -5,6 +5,7 @@ import com.maxmind.geoip2.model.CityResponse;
 
 import javax.rmi.CORBA.Util;
 import java.io.File;
+import java.io.InputStream;
 import java.net.InetAddress;
 
 /**
@@ -19,12 +20,10 @@ public class GeoLocalization {
 
     private GeoLocalization() {
         try {
-            // Copy the geo localization database locally
-            String lTemporaryLocalizationDatabase = Utilities.exportResource("resources/geoLocalization/" + Constants.GEO_LOC_DATABASE, System.getProperty("java.io.tmpdir"));
 
             // Read the database
-            File lDatabase = new File(lTemporaryLocalizationDatabase);
-            geoLocalizationDatabase = new DatabaseReader.Builder(lDatabase).build();
+            InputStream lInputStream = getClass().getResourceAsStream("/resources/geoLocalization/" + Constants.GEO_LOC_DATABASE);
+            geoLocalizationDatabase = new DatabaseReader.Builder(lInputStream).build();
 
             // Get localization of local ip
             InetAddress lLocalIp = InetAddress.getByName(Network.getExternalIp());

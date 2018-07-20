@@ -145,8 +145,8 @@ public class Constants {
     public static final Boolean DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED = true;
     public static final Integer DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD = 1;
     public static final Integer DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET = 0;      // min
-    public static final Integer DEFAULT_SPEED_TEST_REPEAT_DURATION = 30000;       // ms
-    public static final Integer DEFAULT_SPEED_TEST_REPORT_INTERVAL = 300;         // ms
+    public static final Integer DEFAULT_SPEED_TEST_REPEAT_DURATION = 15000;       // ms
+    public static final Integer DEFAULT_SPEED_TEST_REPORT_INTERVAL = 150;         // ms
     public static final Boolean DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED = false;
     public static final Integer DEFAULT_SPEED_TEST_EMAIL_PERIOD = 1;
     public static final Integer DEFAULT_SPEED_TEST_UPLOAD_FILE_SIZE = 100000000;

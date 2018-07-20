@@ -5,7 +5,9 @@ import cclerc.services.*;
 import fr.bmartel.speedtest.model.SpeedTestError;
 import javafx.application.Platform;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
@@ -15,16 +17,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PeriodicSpeedTest implements Runnable {
 
     class Measurement {
 
         private String category;
-        private Long download = 0L;
-        private Long upload = 0L;
+        private Double download = 0d;
+        private Double upload = 0d;
 
-        public Measurement(String aInCategory, Long aInDownload, Long aInUpload) {
+        public Measurement(String aInCategory, Double aInDownload, Double aInUpload) {
             category = aInCategory;
             download = aInDownload;
             upload = aInUpload;
@@ -34,11 +37,11 @@ public class PeriodicSpeedTest implements Runnable {
             return category;
         }
 
-        public Long getDownload() {
+        public Double getDownload() {
             return download;
         }
 
-        public Long getUpload() {
+        public Double getUpload() {
             return upload;
         }
 
@@ -59,7 +62,7 @@ public class PeriodicSpeedTest implements Runnable {
     private String emailContentText;
     private String emailContentHTML;
     private String measurementTemplate;
-    private Long maxSpeed;
+    private Double maxSpeed;
     private List<Measurement> measurements;
 
     // Periodic speed test instance
@@ -67,7 +70,9 @@ public class PeriodicSpeedTest implements Runnable {
 
     private PeriodicSpeedTest() {
         try {
-            measurementTemplate = new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource("resources/templates/speedTestEmailMeasurement.html").toURI())));
+            InputStream lInputStream = getClass().getResourceAsStream("/resources/templates/speedTestEmailMeasurement.html");
+            BufferedReader buffer = new BufferedReader(new InputStreamReader(lInputStream));
+            measurementTemplate = buffer.lines().collect(Collectors.joining("\n"));
         } catch (Exception e) {
             Display.logUnexpectedError(e);
         }
@@ -185,13 +190,15 @@ public class PeriodicSpeedTest implements Runnable {
                 Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getSmtpServerConfigurations().size() != 0 &&
                 !Configuration.getCurrentConfiguration().getEmailConfiguration().getRecipientList().isEmpty(),
                 Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getPreferredSmtpServer());
-        maxSpeed = 0L;
+        maxSpeed = 0d;
         measurements = new ArrayList<>();
         emailContentText = "";
         try {
-//            emailContentHTML = new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource("resources/templates/speedTestEmailBody.html").toURI())));
+            InputStream lInputStream = getClass().getResourceAsStream("/resources/templates/speedTestEmailBody.html");
+            BufferedReader buffer = new BufferedReader(new InputStreamReader(lInputStream));
+            emailContentHTML = buffer.lines().collect(Collectors.joining("\n"));
 //            // TODO : use css
-//            emailContentHTML.replaceAll("#DOWNLOAD", "blue").replaceAll("#UPLOAD#", "purple");
+            emailContentHTML = emailContentHTML.replaceAll("#DOWNLOAD_COLOR#", "blue").replaceAll("#UPLOAD_COLOR#", "purple");
         } catch (Exception e) {
             Display.logUnexpectedError(e);
         }
@@ -219,8 +226,6 @@ public class PeriodicSpeedTest implements Runnable {
                 Display.getMessagesResourceBundle().getString("generalEmail.speedTest.error"), lDate, lTime, lServer,
                 aInTransferMode.toString().toUpperCase(), aInSpeedTestError, aInErrorMessage)
                            + "<br>\n" + emailContentText;
-
-//TODO        emailContentHTML += "";
 
     }
 
@@ -253,8 +258,8 @@ public class PeriodicSpeedTest implements Runnable {
         // Convert rates to the specified unit
         BigDecimal lRatio =
                 BigDecimal.valueOf(Preferences.getInstance().getLongValue(Constants.SPEED_TEST_DISPLAY_UNIT_RATIO_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT));
-        Long lDownload = aInRawBitRates.get(0).divide(lRatio, 1).longValue();
-        Long lUpload = aInRawBitRates.get(1).divide(lRatio, 1).longValue();
+        Double lDownload = aInRawBitRates.get(0).divide(lRatio, 1).doubleValue();
+        Double lUpload = aInRawBitRates.get(1).divide(lRatio, 1).doubleValue();
         if (maxSpeed < lDownload) maxSpeed = lDownload;
         if (maxSpeed < lUpload) maxSpeed = lUpload;
         measurements.add(new Measurement(LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(aInTime).replaceAll("\\d{4} ", "\\\n"), lDownload, lUpload));
@@ -262,9 +267,28 @@ public class PeriodicSpeedTest implements Runnable {
         // Send email if period is reached and compute next email time
         if (System.currentTimeMillis() >= getNextEmailTime()) {
 
-            // Build final HTML
+            Double lScale = 400d / maxSpeed;
 
-//TODO        emailContentHTML += "";
+            // Build final HTML
+            Integer i = 1;
+            for (Measurement lMeasurement: measurements) {
+                Double lScaledDownload = lMeasurement.getDownload() * lScale;
+                Double lScaledUpload = lMeasurement.getUpload() * lScale;
+                String lMeasurementHTML = new String(measurementTemplate);
+                lMeasurementHTML = lMeasurementHTML
+                        .replaceAll("#MEASUREMENT#", i.toString())
+                        .replaceAll("#DOWNLOAD#", String.format("%.1f", lMeasurement.getDownload()))
+                        .replaceAll("#DOWNLOAD_HEIGHT#", String.format("%.1f", lScaledDownload).replaceAll(",", "."))
+                        .replaceAll("#DOWNLOAD_COLOR#", "blue") // TODO
+                        .replaceAll("#UPLOAD#", String.format("%.1f", lMeasurement.getUpload()))
+                        .replaceAll("#UPLOAD_HEIGHT#", String.format("%.1f", lScaledUpload).replaceAll(",", "."))
+                        .replaceAll("#UPLOAD_COLOR#", "purple") // TODO
+                        .replace("#CATEGORY#", lMeasurement.getCategory().replaceAll("\\n", "<br>"));
+
+                emailContentHTML = emailContentHTML.replaceAll("#MEASUREMENTS#", lMeasurementHTML + "\n#MEASUREMENTS#");
+
+            }
+            emailContentHTML = emailContentHTML.replaceAll("#MEASUREMENTS#", "");
 
             sendEmail();
             computeNextEmailTime();
@@ -287,7 +311,7 @@ public class PeriodicSpeedTest implements Runnable {
 
         email.sendMail(
                 String.format(Display.getMessagesResourceBundle().getString("generalEmail.speedTest.subject"), lLocalHostName),
-                emailContentText);
+                emailContentText + "<br>\n" + emailContentHTML);
 
     }
 
