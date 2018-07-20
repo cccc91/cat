@@ -175,6 +175,7 @@ public class PeriodicSpeedTest implements Runnable {
      * Computes next time email should be sent
      */
     public  void computeNextEmailTime() {
+        // TODO: use configuration if global monitoring email is enabled
         nextEmailTime = Utilities.nextExecutionTime(
                 (nextEmailTime == null || nextEmailTime > System.currentTimeMillis()) ? null : nextEmailTime,
                 period * Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD),
@@ -267,6 +268,7 @@ public class PeriodicSpeedTest implements Runnable {
         // Send email if period is reached and compute next email time
         if (System.currentTimeMillis() >= getNextEmailTime()) {
 
+            // TODO: in case periodic general email is enabled, don't send the mail but send info to GlobalMonitoring
             Double lScale = 400d / maxSpeed;
 
             // Build final HTML

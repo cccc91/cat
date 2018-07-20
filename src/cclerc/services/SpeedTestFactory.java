@@ -87,7 +87,11 @@ public class SpeedTestFactory {
                                               Display.getViewResourceBundle().getString("speedtest.type." + EnumTypes.SpeedTestType.valueOf(aInType)).toUpperCase()),
                                 EnumTypes.MessageLevel.INFO));
 
-                PeriodicSpeedTest.getInstance().addErrorToEmail(aInTime, aInTransferMode, null, Display.getMessagesResourceBundle().getString("generalEmail.speedTest.stop"));
+                // In case of periodic speed test, manage email if email is allowed
+                if (Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED) &&
+                        aInType.equals(EnumTypes.SpeedTestType.PERIODIC)) {
+                    PeriodicSpeedTest.getInstance().addErrorToEmail(aInTime, aInTransferMode, null, Display.getMessagesResourceBundle().getString("generalEmail.speedTest.stop"));
+                }
 
             }
 
@@ -180,9 +184,7 @@ public class SpeedTestFactory {
                 // In case of periodic speed test, manage email if email is allowed
                 if (Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED) &&
                     aInType.equals(EnumTypes.SpeedTestType.PERIODIC)) {
-
                     PeriodicSpeedTest.getInstance().addMeasurementToEmail(aInTime, aInBitRates, aInOctetRates, aInBitRawRates, aInRawOctetRates);
-
                 }
 
             }
@@ -197,7 +199,11 @@ public class SpeedTestFactory {
                 Cat.getInstance().getController().printConsole(lMessage);
                 Cat.getInstance().getController().printSpeedTest(lMessage);
 
-                PeriodicSpeedTest.getInstance().addErrorToEmail(aInTime, aInTransferMode, aInSpeedTestError, aInErrorMessage);
+                // In case of periodic speed test, manage email if email is allowed
+                if (Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED) &&
+                        aInType.equals(EnumTypes.SpeedTestType.PERIODIC)) {
+                    PeriodicSpeedTest.getInstance().addErrorToEmail(aInTime, aInTransferMode, aInSpeedTestError, aInErrorMessage);
+                }
 
             }
 

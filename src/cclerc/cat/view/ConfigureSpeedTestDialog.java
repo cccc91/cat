@@ -941,14 +941,23 @@ public class ConfigureSpeedTestDialog {
                 Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD).toString());
 
         if (periodicTestEnabledCheckBox.isSelected()) {
+
             periodicTestPeriodTextField.setDisable(false);
             periodicTestOffsetTextField.setDisable(false);
-            periodicTestEmailEnabledCheckBox.setDisable(false);
-            if (periodicTestEmailEnabledCheckBox.isSelected()) {
-                periodicTestEmailPeriodTextField.setDisable(false);
-            } else {
+
+            if (Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getSmtpServerConfigurations().size() == 0 ||
+                    Configuration.getCurrentConfiguration().getEmailConfiguration().getRecipientList().isEmpty()) {
+                periodicTestEmailEnabledCheckBox.setDisable(true);
                 periodicTestEmailPeriodTextField.setDisable(true);
+            } else {
+                periodicTestEmailEnabledCheckBox.setDisable(false);
+                if (periodicTestEmailEnabledCheckBox.isSelected()) {
+                    periodicTestEmailPeriodTextField.setDisable(false);
+                } else {
+                    periodicTestEmailPeriodTextField.setDisable(true);
+                }
             }
+
         } else {
             periodicTestPeriodTextField.setDisable(true);
             periodicTestOffsetTextField.setDisable(true);
