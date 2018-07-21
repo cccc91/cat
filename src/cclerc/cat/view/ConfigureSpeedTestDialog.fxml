@@ -158,7 +158,7 @@
                         <TextField fx:id="uploadFileSizeTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                         <TextField fx:id="repeatDurationTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                         <TextField fx:id="reportIntervalTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                        <HBox alignment="CENTER_LEFT" spacing="1.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                        <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
                            <children>
                               <TextField fx:id="periodicTestPeriodTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" />
                               <RadioButton fx:id="minutesRadioButton" mnemonicParsing="false" onAction="#setUnitToMinutes" text="%period.minutes" />
@@ -184,7 +184,7 @@
                         <Insets left="50.0" right="50.0" />
                      </BorderPane.margin>
                      <padding>
-                        <Insets left="10.0" right="10.0" />
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                   </GridPane>
                </center>

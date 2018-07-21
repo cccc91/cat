@@ -179,6 +179,8 @@ public class SpeedTestFactory {
                         aInOctetRates.get(1).values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + aInOctetRates.get(1).keySet().iterator().next()),
                         aInBitRates.get(1).values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + aInBitRates.get(1).keySet().iterator().next()));
                 Cat.getInstance().getController().printConsole(new Message(lMessage, EnumTypes.MessageLevel.INFO));
+                Thread.currentThread().setName(EnumTypes.SpeedTestType.valueOf(aInType).substring(0, 1).toUpperCase() + EnumTypes.SpeedTestType.valueOf(aInType).substring(1) +
+                                               " SpeedTest Thread");
                 Display.getLogger().info(lMessage);
 
                 // In case of periodic speed test, manage email if email is allowed

@@ -44,8 +44,19 @@ public class Constants {
     public final static int MIN_CONNECTION_LOST_THRESHOLD  = 1;
     public final static int MAX_CONNECTION_LOST_THRESHOLD  = 5;
 
+    // Units
+    public static final Long Kbs = 1024L;
+    public static final Long Mbs = 1024 * 1024L;
+    public static final Long KBs = 8 * Kbs;
+    public static final Long MBs = 8 * Mbs;
+
+    public static final Integer MINUTES = 1;
+    public static final Integer HOURS = 60;
+    public static final Integer DAYS = 24 * HOURS;
+
     // Global statistics
-    public final static int DEFAULT_GLOBAL_MONITORING_POLLING_PERIOD = 3000;
+    public final static int DEFAULT_GLOBAL_POLLING_PERIOD = 3000;
+    public final static int DEFAULT_PERIODIC_SPEED_TEST_POLLING_PERIOD = 1000;
     public final static Long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD1 = 15 * 60 * 1000L;     // 1 loss every 15 min max (warning)
     public final static Long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD2 = 1 * 60 * 1000L;      // 1 loss every 1 min max  (minor)
     public final static Long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD3 = 10 * 1000L;          // 1 loss every 10 sec max (major)
@@ -114,6 +125,16 @@ public class Constants {
     public static final boolean DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE = true;
     public static final boolean DEFAULT_ENABLE_DETAIL_TOOLTIP_PREFERENCE = true;
 
+    public static final String PERIODIC_REPORTS_ENABLED_PREFERENCE = "periodicReports.enable";
+    public static final String PERIODIC_REPORTS_PERIOD_PREFERENCE = "periodicReports.period";
+    public static final String PERIODIC_REPORTS_PERIOD_DISPLAYED_UNIT_PREFERENCE = "periodicReports.displayedPeriodUnit";
+    public static final String PERIODIC_REPORTS_OFFSET_PREFERENCE = "periodicReports.offset";
+
+    public static final Boolean DEFAULT_PERIODIC_REPORTS_ENABLED = false;
+    public static final Integer DEFAULT_PERIODIC_REPORTS_PERIOD = 1;
+    public static final Integer DEFAULT_PERIODIC_REPORTS_PERIOD_DISPLAYED_UNIT = HOURS;
+    public static final Integer DEFAULT_PERIODIC_REPORTS_OFFSET = 0;
+
     // Speed test preferences
     public static final String SPEED_TEST_GET_SERVERS_URL = "http://c.speedtest.net/speedtest-servers-static.php";
     public static final String SPEED_TEST_NAME_FILTER_PREFERENCE = "speedTest.filter.name";
@@ -136,7 +157,7 @@ public class Constants {
     public static final String SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE = "speedTest.emailReportPeriod";
     public static final String SPEED_TEST_UPLOAD_FILE_SIZE_PREFERENCE = "speedTest.uploadFileSize";
     public static final String SPEED_TEST_DISPLAY_UNIT_RATIO_PREFERENCE = "speedTest.displayUnitRatio";
-    public static final String SPEED_TEST_DISPLAY_UNIT_KEY_PREFERENCE = "speedTest.displayUnitKey";
+    public static final String SPEED_TEST_DISPLAYED_KEY_UNIT_PREFERENCE = "speedTest.displayedKeyUnit";
     public static final String SPEED_TEST_DISPLAY_UNIT_PERIOD_PREFERENCE = "speedTest.displayUnitPeriod";
 
     public static final Integer DEFAULT_SPEED_TEST_SOCKET_TIMEOUT = 10000;
@@ -150,15 +171,8 @@ public class Constants {
     public static final Boolean DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED = false;
     public static final Integer DEFAULT_SPEED_TEST_EMAIL_PERIOD = 1;
     public static final Integer DEFAULT_SPEED_TEST_UPLOAD_FILE_SIZE = 100000000;
-    public static final Long Kbs = 1024L;
-    public static final Long Mbs = 1024 * 1024L;
-    public static final Long KBs = 8 * Kbs;
-    public static final Long MBs = 8 * Mbs;
     public static final Long DEFAULT_SPEED_TEST_DISPLAY_UNIT = Mbs;
-    public static final String DEFAULT_SPEED_TEST_DISPLAY_UNIT_KEY = "bitRate.2";
-    public static final Integer MINUTES = 1;
-    public static final Integer HOURS = 60;
-    public static final Integer DAYS = 24 * HOURS;
+    public static final String DEFAULT_SPEED_TEST_DISPLAYED_KEY_UNIT = "bitRate.2";
     public static final Integer DEFAULT_SPEED_TEST_DISPLAY_UNIT_PERIOD = HOURS;
 
 

@@ -14,7 +14,7 @@
 
         <RollingFile name="fileLogger" fileName="${basePath}/${baseName}.log" filePattern="${basePath}/$${date:yyyy-MM}/${baseName}-%d{yyyy-MM-dd}-%i.log">
             <PatternLayout>
-                <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%25t] %c{1} - %msg%n</pattern>
+                <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%26t] %c{1} - %msg%n</pattern>
             </PatternLayout>
             <Policies>
                 <OnStartupTriggeringPolicy minSize="0" />
@@ -24,7 +24,7 @@
         </RollingFile>
 
         <Console name="console" target="SYSTEM_OUT">
-            <PatternLayout   pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%25t] %c{1} - %msg%n" />
+            <PatternLayout   pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%26t] %c{1} - %msg%n" />
         </Console>
 
     </Appenders>

@@ -52,6 +52,123 @@ public class CatView {
     private final long MIN_DISPLAYED_SPEED_TEST_DURATION = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration().getMinDisplayedSpeedTestDuration();
     private final long MAX_DISPLAYED_SPEED_TEST_DURATION = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration().getMaxDisplayedSpeedTestDuration();
 
+    // FXML
+    @FXML private Label nameLabel;
+    @FXML private Label nameCountLabel;
+    @FXML private Label pingsCountLabel;
+    @FXML private Label lostConnectionsCountLabel;
+    @FXML private Label lastLostConnectionTimeLabel;
+    @FXML private Label lastLostConnectionDetailsLabel;
+
+    @FXML private GridPane interfaceTypeSummaries;
+    @FXML private TabPane wanMonitoring;
+    @FXML private Tab wan1MonitoringTab;
+    @FXML private Tab wan2MonitoringTab;
+    @FXML private GridPane wan1MonitoringGridPane;
+    @FXML private GridPane wan2MonitoringGridPane;
+    @FXML private TabPane lanMonitoring;
+    @FXML private Tab lan1MonitoringTab;
+    @FXML private Tab lan2MonitoringTab;
+    @FXML private GridPane lan1MonitoringGridPane;
+    @FXML private GridPane lan2MonitoringGridPane;
+    @FXML private ImageView pauseButtonImageView;
+    @FXML private ImageView emailButtonImageView;
+
+    @FXML private ImageView clearConsoleButtonImageView;
+    @FXML private ImageView generalEmailButtonImageView;
+    @FXML private RadioButton activeAlarmsButton;
+    @FXML private RadioButton historicalAlarmsButton;
+    @FXML private Label activeAlarmsCountLabel;
+    @FXML private Label historicalAlarmsCountLabel;
+
+    @FXML private ImageView globalStateImageView;
+    @FXML private ImageView wanStateImageView;
+    @FXML private ImageView lanStateImageView;
+    @FXML private ImageView networkInterface1ImageView;
+    @FXML private ImageView networkInterface2ImageView;
+
+    @FXML private TextField activeAlarmsFilterTextField;
+    @FXML private TextField historicalAlarmsFilterTextField;
+
+    @FXML private TableView<Alarm> activateAlarmsTable;
+    @FXML private TableColumn<Alarm, String> activeAlarmStateColumn;
+    @FXML private TableColumn<Alarm, String> activeAlarmSeverityColumn;
+    @FXML private TableColumn<Alarm, Integer> activeAlarmIdColumn;
+    @FXML private TableColumn<Alarm, String> activeAlarmNameColumn;
+    @FXML private TableColumn<Alarm, String> activeAlarmSiteColumn;
+    @FXML private TableColumn<Alarm, String> activeAlarmObjectTypeColumn;
+    @FXML private TableColumn<Alarm, String> activeAlarmObjectNameColumn;
+    @FXML private TableColumn<Alarm, Integer> activeAlarmOccurrencesColumn;
+    @FXML private TableColumn<Alarm, Date> activeAlarmRaiseDateColumn;
+    @FXML private TableColumn<Alarm, Date> activeAlarmModificationDateColumn;
+    @FXML private TableColumn<Alarm, Date> activeAlarmClearDateColumn;
+    @FXML private TableColumn<Alarm, String> activeAlarmTypeColumn;
+    @FXML private TableColumn<Alarm, String> activeAlarmProbableCauseColumn;
+    @FXML private TableColumn<Alarm, String> activeAlarmAdditionalInfoColumn;
+    @FXML private TableColumn<Alarm, String> activeAlarmRemedialActionColumn;
+
+    @FXML private TableView<Alarm> historicalAlarmsTable;
+    @FXML private TableColumn<Alarm, String> historicalAlarmStateColumn;
+    @FXML private TableColumn<Alarm, String> historicalAlarmSeverityColumn;
+    @FXML private TableColumn<Alarm, Integer> historicalAlarmIdColumn;
+    @FXML private TableColumn<Alarm, String> historicalAlarmNameColumn;
+    @FXML private TableColumn<Alarm, String> historicalAlarmSiteColumn;
+    @FXML private TableColumn<Alarm, String> historicalAlarmObjectTypeColumn;
+    @FXML private TableColumn<Alarm, String> historicalAlarmObjectNameColumn;
+    @FXML private TableColumn<Alarm, Integer> historicalAlarmOccurrencesColumn;
+    @FXML private TableColumn<Alarm, Date> historicalAlarmRaiseDateColumn;
+    @FXML private TableColumn<Alarm, Date> historicalAlarmModificationDateColumn;
+    @FXML private TableColumn<Alarm, Date> historicalAlarmClearDateColumn;
+    @FXML private TableColumn<Alarm, String> historicalAlarmTypeColumn;
+    @FXML private TableColumn<Alarm, String> historicalAlarmProbableCauseColumn;
+    @FXML private TableColumn<Alarm, String> historicalAlarmAdditionalInfoColumn;
+    @FXML private TableColumn<Alarm, String> historicalAlarmRemedialActionColumn;
+
+    @FXML private TabPane generalTabPane;
+    @FXML private TabPane chartTabPane;
+
+    @FXML private ScrollPane consoleScrollPane;
+    @FXML private TextFlow consoleTextFlow;
+    @FXML private Tab consoleTab;
+
+    @FXML private ScrollPane speedTestScrollPane;
+    @FXML private TextFlow speedTestTextFlow;
+    @FXML private Tab speedTestTab;
+    @FXML private Label speedTestServerLabel;
+    @FXML private Label speedTestNextPeriodTitleLabel;
+    @FXML private Label speedTestNextPeriodLabel;
+    @FXML private Button speedTestStartStopButton;
+    @FXML private Button speedTestConfigureButton;
+
+    @FXML private HBox pingLineChartContainer;
+    @FXML private CheckBox pingLineManageCheckBox;
+    @FXML private CheckBox pingLineLanFilterCheckBox;
+    @FXML private CheckBox pingLineWanFilterCheckBox;
+    @FXML private CheckBox pingLineInterface1FilterCheckBox;
+    @FXML private CheckBox pingLineInterface2FilterCheckBox;
+    @FXML private Slider pingLineChartVerticalZoomSlider;
+    @FXML private Slider pingLineChartHorizontalMoveSlider;
+    @FXML private Slider pingLineChartHorizontalZoomSlider;
+
+    @FXML private HBox liveSpeedTestChartContainer;
+
+    @FXML private HBox speedTestBarChartContainer;
+    @FXML private CheckBox speedTestManageCheckBox;
+    @FXML private CheckBox speedTestDownloadFilterCheckBox;
+    @FXML private CheckBox speedTestUploadFilterCheckBox;
+    @FXML private Slider speedTestBarChartVerticalZoomSlider;
+    @FXML private Slider speedTestBarChartHorizontalMoveSlider;
+    @FXML private Slider speedTestBarChartHorizontalZoomSlider;
+
+    @FXML CheckBox periodicReportEnabledCheckBox;
+    @FXML TextField periodicReportPeriodTextField;
+    @FXML RadioButton minutesRadioButton;
+    @FXML RadioButton hoursRadioButton;
+    @FXML RadioButton daysRadioButton;
+    @FXML TextField periodicReportOffsetTextField;
+    @FXML Button applyPeriodicReportsConfigurationButton;
+    @FXML Button cancelPeriodicReportsConfigurationButton;
+
     // Display management
     private Map<EnumTypes.AddressType, TabPane> monitoringTabPanes = new HashMap<>();
     private Map<EnumTypes.AddressType, List<Tab>> monitoringTabs = new HashMap<>();
@@ -332,113 +449,9 @@ public class CatView {
     private XYChart.Series<Number, Number> liveSpeedTestDownloadSeries = new XYChart.Series<>();
     private XYChart.Series<Number, Number> liveSpeedTestUploadSeries = new XYChart.Series<>();
 
-    // FXML
-    @FXML private Label nameLabel;
-    @FXML private Label nameCountLabel;
-    @FXML private Label pingsCountLabel;
-    @FXML private Label lostConnectionsCountLabel;
-    @FXML private Label lastLostConnectionTimeLabel;
-    @FXML private Label lastLostConnectionDetailsLabel;
-
-    @FXML private GridPane interfaceTypeSummaries;
-    @FXML private TabPane wanMonitoring;
-    @FXML private Tab wan1MonitoringTab;
-    @FXML private Tab wan2MonitoringTab;
-    @FXML private GridPane wan1MonitoringGridPane;
-    @FXML private GridPane wan2MonitoringGridPane;
-    @FXML private TabPane lanMonitoring;
-    @FXML private Tab lan1MonitoringTab;
-    @FXML private Tab lan2MonitoringTab;
-    @FXML private GridPane lan1MonitoringGridPane;
-    @FXML private GridPane lan2MonitoringGridPane;
-    @FXML private ImageView pauseButtonImageView;
-    @FXML private ImageView emailButtonImageView;
-
-    @FXML private ImageView clearConsoleButtonImageView;
-    @FXML private ImageView generalEmailButtonImageView;
-    @FXML private RadioButton activeAlarmsButton;
-    @FXML private RadioButton historicalAlarmsButton;
-    @FXML private Label activeAlarmsCountLabel;
-    @FXML private Label historicalAlarmsCountLabel;
-
-    @FXML private ImageView globalStateImageView;
-    @FXML private ImageView wanStateImageView;
-    @FXML private ImageView lanStateImageView;
-    @FXML private ImageView networkInterface1ImageView;
-    @FXML private ImageView networkInterface2ImageView;
-
-    @FXML private TextField activeAlarmsFilterTextField;
-    @FXML private TextField historicalAlarmsFilterTextField;
-
-    @FXML private TableView<Alarm> activateAlarmsTable;
-    @FXML private TableColumn<Alarm, String> activeAlarmStateColumn;
-    @FXML private TableColumn<Alarm, String> activeAlarmSeverityColumn;
-    @FXML private TableColumn<Alarm, Integer> activeAlarmIdColumn;
-    @FXML private TableColumn<Alarm, String> activeAlarmNameColumn;
-    @FXML private TableColumn<Alarm, String> activeAlarmSiteColumn;
-    @FXML private TableColumn<Alarm, String> activeAlarmObjectTypeColumn;
-    @FXML private TableColumn<Alarm, String> activeAlarmObjectNameColumn;
-    @FXML private TableColumn<Alarm, Integer> activeAlarmOccurrencesColumn;
-    @FXML private TableColumn<Alarm, Date> activeAlarmRaiseDateColumn;
-    @FXML private TableColumn<Alarm, Date> activeAlarmModificationDateColumn;
-    @FXML private TableColumn<Alarm, Date> activeAlarmClearDateColumn;
-    @FXML private TableColumn<Alarm, String> activeAlarmTypeColumn;
-    @FXML private TableColumn<Alarm, String> activeAlarmProbableCauseColumn;
-    @FXML private TableColumn<Alarm, String> activeAlarmAdditionalInfoColumn;
-    @FXML private TableColumn<Alarm, String> activeAlarmRemedialActionColumn;
-
-    @FXML private TableView<Alarm> historicalAlarmsTable;
-    @FXML private TableColumn<Alarm, String> historicalAlarmStateColumn;
-    @FXML private TableColumn<Alarm, String> historicalAlarmSeverityColumn;
-    @FXML private TableColumn<Alarm, Integer> historicalAlarmIdColumn;
-    @FXML private TableColumn<Alarm, String> historicalAlarmNameColumn;
-    @FXML private TableColumn<Alarm, String> historicalAlarmSiteColumn;
-    @FXML private TableColumn<Alarm, String> historicalAlarmObjectTypeColumn;
-    @FXML private TableColumn<Alarm, String> historicalAlarmObjectNameColumn;
-    @FXML private TableColumn<Alarm, Integer> historicalAlarmOccurrencesColumn;
-    @FXML private TableColumn<Alarm, Date> historicalAlarmRaiseDateColumn;
-    @FXML private TableColumn<Alarm, Date> historicalAlarmModificationDateColumn;
-    @FXML private TableColumn<Alarm, Date> historicalAlarmClearDateColumn;
-    @FXML private TableColumn<Alarm, String> historicalAlarmTypeColumn;
-    @FXML private TableColumn<Alarm, String> historicalAlarmProbableCauseColumn;
-    @FXML private TableColumn<Alarm, String> historicalAlarmAdditionalInfoColumn;
-    @FXML private TableColumn<Alarm, String> historicalAlarmRemedialActionColumn;
-
-    @FXML private TabPane generalTabPane;
-    @FXML private TabPane chartTabPane;
-
-    @FXML private ScrollPane consoleScrollPane;
-    @FXML private TextFlow consoleTextFlow;
-    @FXML private Tab consoleTab;
-
-    @FXML private ScrollPane speedTestScrollPane;
-    @FXML private TextFlow speedTestTextFlow;
-    @FXML private Tab speedTestTab;
-    @FXML private Label speedTestServerLabel;
-    @FXML private Label speedTestNextPeriodTitleLabel;
-    @FXML private Label speedTestNextPeriodLabel;
-    @FXML private Button speedTestStartStopButton;
-    @FXML private Button speedTestConfigureButton;
-
-    @FXML private HBox pingLineChartContainer;
-    @FXML private CheckBox pingLineManageCheckBox;
-    @FXML private CheckBox pingLineLanFilterCheckBox;
-    @FXML private CheckBox pingLineWanFilterCheckBox;
-    @FXML private CheckBox pingLineInterface1FilterCheckBox;
-    @FXML private CheckBox pingLineInterface2FilterCheckBox;
-    @FXML private Slider pingLineChartVerticalZoomSlider;
-    @FXML private Slider pingLineChartHorizontalMoveSlider;
-    @FXML private Slider pingLineChartHorizontalZoomSlider;
-
-    @FXML private HBox liveSpeedTestChartContainer;
-
-    @FXML private HBox speedTestBarChartContainer;
-    @FXML private CheckBox speedTestManageCheckBox;
-    @FXML private CheckBox speedTestDownloadFilterCheckBox;
-    @FXML private CheckBox speedTestUploadFilterCheckBox;
-    @FXML private Slider speedTestBarChartVerticalZoomSlider;
-    @FXML private Slider speedTestBarChartHorizontalMoveSlider;
-    @FXML private Slider speedTestBarChartHorizontalZoomSlider;
+    // Periodic reports configuration
+    private boolean hasPeriodicReportsConfigurationChanged = false;
+    private List<Object> periodicReportsErroredFields = new ArrayList<>();
 
     @FXML private void initialize() {
 
@@ -682,6 +695,10 @@ public class CatView {
             speedTestBarChartVerticalZoomSlider.setTooltip(lSpeedTestVerticalZoomSliderTooltip);
 
         }
+
+        // Periodic reports configuration
+        preparePeriodicReportsConfigurationDisplay();
+        setPeriodicTestsConfigurationStyles();
 
     }
 
@@ -1382,6 +1399,52 @@ public class CatView {
     private ChangeListener<Number> speedTestBarsVerticalSliderChangeListener = (obs, oldValue, newValue) -> {
         zoomSpeedTestYAxis();
     };
+
+    private ChangeListener<String> integerTextFieldChangeListener(TextField aInTextField, String aInPreference, Integer aInDefaultValue) {
+        return (obs, oldValue, newValue) -> {
+            try {
+                Integer.valueOf(newValue);
+                periodicReportsErroredFields.remove(aInTextField);
+                Styles.setTextFieldStyle(aInTextField, Preferences.getInstance().getIntegerValue(aInPreference, aInDefaultValue), Integer.valueOf(newValue), aInDefaultValue);
+                checkPeriodicReportsConfigurationChanges();
+            } catch (NumberFormatException e) {
+                aInTextField.setId("bad-value");
+                periodicReportsErroredFields.add(aInTextField);
+                applyPeriodicReportsConfigurationButton.setDisable(true);
+                cancelPeriodicReportsConfigurationButton.setDisable(false);
+            }
+        };
+    }
+
+    /**
+     * Listener on changes on an boolean text field
+     * @return Listener
+     */
+    private ChangeListener<Boolean> booleanTextFieldChangeListener(CheckBox aInCheckBox, String aInPreference, Boolean aInDefaultValue) {
+
+        return (obs, oldValue, newValue) -> {
+            Styles.setCheckBoxStyle(aInCheckBox, Preferences.getInstance().getBooleanValue(aInPreference, aInDefaultValue), newValue, aInDefaultValue);
+            checkPeriodicReportsConfigurationChanges();
+
+            if (aInCheckBox.equals(periodicReportEnabledCheckBox)) {
+                if (newValue) {
+                    periodicReportPeriodTextField.setDisable(false);
+                    periodicReportOffsetTextField.setDisable(false);
+                    minutesRadioButton.setDisable(false);
+                    hoursRadioButton.setDisable(false);
+                    daysRadioButton.setDisable(false);
+                } else {
+                    periodicReportPeriodTextField.setDisable(true);
+                    periodicReportOffsetTextField.setDisable(true);
+                    minutesRadioButton.setDisable(true);
+                    hoursRadioButton.setDisable(true);
+                    daysRadioButton.setDisable(true);
+                }
+            }
+
+        };
+
+    }
 
     // GETTERS
 
@@ -2813,7 +2876,7 @@ public class CatView {
         speedTestStartStopButton.setDisable(false);
         if (aInHasUnitChanged) {
             String lDisplayUnit = Display.getViewResourceBundle().getString(
-                    Preferences.getInstance().getValue(Constants.SPEED_TEST_DISPLAY_UNIT_KEY_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT_KEY));
+                    Preferences.getInstance().getValue(Constants.SPEED_TEST_DISPLAYED_KEY_UNIT_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAYED_KEY_UNIT));
             liveSpeedTestDownloadSeries.getData().clear();
             liveSpeedTestUploadSeries.getData().clear();
             liveSpeedTestChart.getYAxis().setLabel(Display.getViewResourceBundle().getString("catView.liveSpeedTestChartView.lineChart.yAxis.title") + " (" + lDisplayUnit + ")");
@@ -2882,6 +2945,140 @@ public class CatView {
             }
         }
 
+
+    }
+
+    /**
+     * Set unit to minutes
+     */
+    @FXML private void setUnitToMinutes() {
+        hoursRadioButton.setSelected(false);
+        daysRadioButton.setSelected(false);
+        periodicReportPeriodTextField.setText("0");
+        checkPeriodicReportsConfigurationChanges();
+    }
+
+    /**
+     * Set unit to hours
+     */
+    @FXML private void setUnitToHours() {
+        minutesRadioButton.setSelected(false);
+        daysRadioButton.setSelected(false);
+        checkPeriodicReportsConfigurationChanges();
+    }
+
+    /**
+     * Set unit to days
+     */
+    @FXML private void setUnitToDays() {
+        minutesRadioButton.setSelected(false);
+        hoursRadioButton.setSelected(false);
+        checkPeriodicReportsConfigurationChanges();
+    }
+
+    /**
+     * Saves the periodic reports configuration
+     */
+    @FXML private void applyPeriodicReportsConfiguration() {
+
+        Preferences.getInstance().saveValue(Constants.PERIODIC_REPORTS_ENABLED_PREFERENCE, periodicReportEnabledCheckBox.isSelected());
+        Preferences.getInstance().saveValue(Constants.PERIODIC_REPORTS_PERIOD_PREFERENCE, periodicReportPeriodTextField.getText());
+        Integer lDisplayedUnitPeriod;
+        if (minutesRadioButton.isSelected()) {
+            lDisplayedUnitPeriod = Constants.MINUTES;
+        } else if (hoursRadioButton.isSelected()) {
+            lDisplayedUnitPeriod = Constants.HOURS;
+        } else {
+            lDisplayedUnitPeriod = Constants.DAYS;
+        }
+        Preferences.getInstance().saveValue(Constants.PERIODIC_REPORTS_PERIOD_DISPLAYED_UNIT_PREFERENCE, lDisplayedUnitPeriod);
+        Preferences.getInstance().saveValue(Constants.PERIODIC_REPORTS_OFFSET_PREFERENCE, periodicReportOffsetTextField.getText());
+
+        setPeriodicTestsConfigurationStyles();
+
+        hasPeriodicReportsConfigurationChanged = false;
+        applyPeriodicReportsConfigurationButton.setDisable(true);
+        cancelPeriodicReportsConfigurationButton.setDisable(true);
+
+    }
+
+    /**
+     * Cancels the changes to the periodic reports configuration
+     */
+    @FXML private void cancelPeriodicReportsConfiguration() {
+
+    }
+
+    /**
+     * Displays the current value of periodic reports configuration controls and adds change listeners on this controls
+     */
+    private void preparePeriodicReportsConfigurationDisplay() {
+
+        periodicReportEnabledCheckBox.setSelected(
+                Preferences.getInstance().getBooleanValue(Constants.PERIODIC_REPORTS_ENABLED_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_ENABLED));
+        periodicReportEnabledCheckBox.selectedProperty().addListener(booleanTextFieldChangeListener(
+                periodicReportEnabledCheckBox, Constants.PERIODIC_REPORTS_ENABLED_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_ENABLED));
+
+        periodicReportPeriodTextField.setText(
+                Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_PERIOD_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_PERIOD).toString());
+        periodicReportPeriodTextField.textProperty().addListener(integerTextFieldChangeListener(
+                periodicReportPeriodTextField, Constants.PERIODIC_REPORTS_PERIOD_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_PERIOD));
+
+        Integer lDisplayedPeriodUnit =
+                Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_PERIOD_DISPLAYED_UNIT_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_PERIOD_DISPLAYED_UNIT);
+        if (lDisplayedPeriodUnit.equals(Constants.MINUTES)) minutesRadioButton.setSelected(true);
+        else if (lDisplayedPeriodUnit.equals(Constants.HOURS)) hoursRadioButton.setSelected(true);
+        else daysRadioButton.setSelected(true);
+
+        periodicReportOffsetTextField.setText(
+                Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_OFFSET_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_OFFSET).toString());
+        periodicReportOffsetTextField.textProperty().addListener(integerTextFieldChangeListener(
+                periodicReportOffsetTextField, Constants.PERIODIC_REPORTS_OFFSET_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_OFFSET));
+
+    }
+
+    /**
+     * Checks if periodic reports configuration has changed and sets Apply and Cancel buttons accordynglu
+     */
+    private void checkPeriodicReportsConfigurationChanges() {
+
+        if (periodicReportEnabledCheckBox.isSelected() ==
+            Preferences.getInstance().getBooleanValue(Constants.PERIODIC_REPORTS_ENABLED_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_ENABLED) &&
+            Integer.valueOf(periodicReportPeriodTextField.getText()).equals(
+                    Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_PERIOD_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_PERIOD)) &&
+            Integer.valueOf(periodicReportOffsetTextField.getText()).equals(
+                    Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_OFFSET_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_OFFSET))) {
+            hasPeriodicReportsConfigurationChanged = false;
+        } else {
+            hasPeriodicReportsConfigurationChanged = true;
+        }
+
+        // Set apply and cancel buttons state, depending on changes and errors
+        if (periodicReportsErroredFields.size() == 0) {
+            if (hasPeriodicReportsConfigurationChanged) {
+                applyPeriodicReportsConfigurationButton.setDisable(false);
+                cancelPeriodicReportsConfigurationButton.setDisable(false);
+            } else {
+                applyPeriodicReportsConfigurationButton.setDisable(true);
+                cancelPeriodicReportsConfigurationButton.setDisable(true);
+            }
+        }  else {
+            applyPeriodicReportsConfigurationButton.setDisable(true);
+            cancelPeriodicReportsConfigurationButton.setDisable(false);
+        }
+
+    }
+
+    /**
+     * Sets display style to periodic reports configuration controls
+     */
+    private void setPeriodicTestsConfigurationStyles() {
+        Styles.setCheckBoxStyle(periodicReportEnabledCheckBox, periodicReportEnabledCheckBox.isSelected(), periodicReportEnabledCheckBox.isSelected(),
+                                 Constants.DEFAULT_PERIODIC_REPORTS_ENABLED);
+        Styles.setTextFieldStyle(periodicReportPeriodTextField, Integer.valueOf(periodicReportPeriodTextField.getText()), Integer.valueOf(periodicReportPeriodTextField.getText()),
+                                 Constants.DEFAULT_PERIODIC_REPORTS_PERIOD);
+        Styles.setTextFieldStyle(periodicReportOffsetTextField, Integer.valueOf(periodicReportOffsetTextField.getText()), Integer.valueOf(periodicReportOffsetTextField.getText()),
+                                 Constants.DEFAULT_PERIODIC_REPORTS_OFFSET);
 
     }
 

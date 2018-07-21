@@ -2,7 +2,6 @@ package cclerc.cat.view;
 
 import cclerc.cat.Cat;
 import cclerc.cat.Configuration.Configuration;
-import cclerc.cat.GlobalMonitoring;
 import cclerc.cat.PeriodicSpeedTest;
 import cclerc.cat.model.SpeedTestServer;
 import cclerc.services.*;
@@ -394,7 +393,7 @@ public class ConfigureSpeedTestDialog {
             try {
                 Integer.valueOf(newValue);
                 erroredFields.remove(aInTextField);
-                setTextFieldStyle(aInTextField, Preferences.getInstance().getIntegerValue(aInPreference, aInDefaultValue), Integer.valueOf(newValue), aInDefaultValue);
+                Styles.setTextFieldStyle(aInTextField, Preferences.getInstance().getIntegerValue(aInPreference, aInDefaultValue), Integer.valueOf(newValue), aInDefaultValue);
                 checkChanges();
                 if (erroredFields.size() == 0 && hasConfigurationChanged) saveButton.setDisable(false);
             } catch (NumberFormatException e) {
@@ -414,7 +413,7 @@ public class ConfigureSpeedTestDialog {
             try {
                 Long.valueOf(newValue);
                 erroredFields.remove(aInTextField);
-                setTextFieldStyle(aInTextField, Preferences.getInstance().getLongValue(aInPreference, aInDefaultValue), Long.valueOf(newValue), aInDefaultValue);
+                Styles.setTextFieldStyle(aInTextField, Preferences.getInstance().getLongValue(aInPreference, aInDefaultValue), Long.valueOf(newValue), aInDefaultValue);
                 checkChanges();
                 if (erroredFields.size() == 0 && hasConfigurationChanged) saveButton.setDisable(false);
             } catch (NumberFormatException e) {
@@ -433,7 +432,7 @@ public class ConfigureSpeedTestDialog {
 
         return (obs, oldValue, newValue) -> {
             erroredFields.remove(aInCheckBox);
-            setCheckBoxStyle(aInCheckBox, Preferences.getInstance().getBooleanValue(aInPreference, aInDefaultValue), newValue, aInDefaultValue);
+            Styles.setCheckBoxStyle(aInCheckBox, Preferences.getInstance().getBooleanValue(aInPreference, aInDefaultValue), newValue, aInDefaultValue);
             checkChanges();
             if (erroredFields.size() == 0 && hasConfigurationChanged) saveButton.setDisable(false);
 
@@ -579,100 +578,32 @@ public class ConfigureSpeedTestDialog {
 
     }
 
-    /**
-     * Sets integer text fields style depending on the value
-     * @param aInTextField    Text field to style
-     * @param aInInitialValue Initial value of the text field
-     * @param aInNewValue     New value of the text field
-     * @param aInDefaultValue Default value of the text field
-     */
-    private void setTextFieldStyle(TextField aInTextField, Integer aInInitialValue, Integer aInNewValue, Integer aInDefaultValue) {
-        if (Integer.valueOf(aInNewValue).equals(aInDefaultValue)) {
-            if (aInNewValue.equals(aInInitialValue)) {
-                aInTextField.setId("default-value");
-            } else {
-                aInTextField.setId("default-new-value");
-            }
-        } else {
-            if (aInNewValue.equals(aInInitialValue)) {
-                aInTextField.setId("");
-            } else {
-                aInTextField.setId("new-value");
-            }
-        }
-    }
-
-    /**
-     * Sets long text fields style depending on the value
-     * @param aInTextField    Text field to style
-     * @param aInInitialValue Initial value of the text field
-     * @param aInNewValue     New value of the text field
-     * @param aInDefaultValue Default value of the text field
-     */
-    private void setTextFieldStyle(TextField aInTextField, Long aInInitialValue, Long aInNewValue, Long aInDefaultValue) {
-        if (Long.valueOf(aInNewValue).equals(aInDefaultValue)) {
-            if (aInNewValue.equals(aInInitialValue)) {
-                aInTextField.setId("default-value");
-            } else {
-                aInTextField.setId("default-new-value");
-            }
-        } else {
-            if (aInNewValue.equals(aInInitialValue)) {
-                aInTextField.setId("");
-            } else {
-                aInTextField.setId("new-value");
-            }
-        }
-    }
-
-    /**
-     * Sets check boxes style depending on the value
-     * @param aInCheckBox     Check box to style
-     * @param aInInitialValue Initial value of the check box
-     * @param aInNewValue     New value of the check box
-     * @param aInDefaultValue Default value of the check box
-     */
-    private void setCheckBoxStyle(CheckBox aInCheckBox, Boolean aInInitialValue, Boolean aInNewValue, Boolean aInDefaultValue) {
-        if (aInNewValue == aInDefaultValue) {
-            if (aInNewValue == aInInitialValue) {
-                aInCheckBox.setId("default-value");
-            } else {
-                aInCheckBox.setId("default-new-value");
-            }
-        } else {
-            if (aInNewValue == aInInitialValue) {
-                aInCheckBox.setId("");
-            } else {
-                aInCheckBox.setId("new-value");
-            }
-        }
-    }
 
     /**
      * Set style of all controls
      */
     private void setStyles() {
-        setTextFieldStyle(socketTimeoutTextField, Integer.valueOf(socketTimeoutTextField.getText()), Integer.valueOf(socketTimeoutTextField.getText()),
+        Styles.setTextFieldStyle(socketTimeoutTextField, Integer.valueOf(socketTimeoutTextField.getText()), Integer.valueOf(socketTimeoutTextField.getText()),
                 Constants.DEFAULT_SPEED_TEST_SOCKET_TIMEOUT);
-        setTextFieldStyle(downloadSetupTimeTextField, Long.valueOf(downloadSetupTimeTextField.getText()), Long.valueOf(downloadSetupTimeTextField.getText()),
+        Styles.setTextFieldStyle(downloadSetupTimeTextField, Long.valueOf(downloadSetupTimeTextField.getText()), Long.valueOf(downloadSetupTimeTextField.getText()),
                 Constants.DEFAULT_SPEED_TEST_DOWNLOAD_SETUP_TIME);
-        setTextFieldStyle(uploadSetupTimeTextField, Long.valueOf(uploadSetupTimeTextField.getText()), Long.valueOf(uploadSetupTimeTextField.getText()),
+        Styles.setTextFieldStyle(uploadSetupTimeTextField, Long.valueOf(uploadSetupTimeTextField.getText()), Long.valueOf(uploadSetupTimeTextField.getText()),
                           Constants.DEFAULT_SPEED_TEST_UPLOAD_SETUP_TIME);
-        setTextFieldStyle(uploadFileSizeTextField, Integer.valueOf(uploadFileSizeTextField.getText()), Integer.valueOf(uploadFileSizeTextField.getText()),
+        Styles.setTextFieldStyle(uploadFileSizeTextField, Integer.valueOf(uploadFileSizeTextField.getText()), Integer.valueOf(uploadFileSizeTextField.getText()),
                           Constants.DEFAULT_SPEED_TEST_UPLOAD_FILE_SIZE);
-        setTextFieldStyle(repeatDurationTextField, Integer.valueOf(repeatDurationTextField.getText()), Integer.valueOf(repeatDurationTextField.getText()),
+        Styles.setTextFieldStyle(repeatDurationTextField, Integer.valueOf(repeatDurationTextField.getText()), Integer.valueOf(repeatDurationTextField.getText()),
                           Constants.DEFAULT_SPEED_TEST_REPEAT_DURATION);
-        setTextFieldStyle(reportIntervalTextField, Integer.valueOf(reportIntervalTextField.getText()), Integer.valueOf(reportIntervalTextField.getText()),
+        Styles.setTextFieldStyle(reportIntervalTextField, Integer.valueOf(reportIntervalTextField.getText()), Integer.valueOf(reportIntervalTextField.getText()),
                           Constants.DEFAULT_SPEED_TEST_REPORT_INTERVAL);
-        setCheckBoxStyle(periodicTestEnabledCheckBox, periodicTestEnabledCheckBox.isSelected(), periodicTestEnabledCheckBox.isSelected(),
+        Styles.setCheckBoxStyle(periodicTestEnabledCheckBox, periodicTestEnabledCheckBox.isSelected(), periodicTestEnabledCheckBox.isSelected(),
                 Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_ENABLED);
-        setTextFieldStyle(periodicTestPeriodTextField, Integer.valueOf(periodicTestPeriodTextField.getText()), Integer.valueOf(periodicTestPeriodTextField.getText()),
+        Styles.setTextFieldStyle(periodicTestPeriodTextField, Integer.valueOf(periodicTestPeriodTextField.getText()), Integer.valueOf(periodicTestPeriodTextField.getText()),
                           Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD);
-        setTextFieldStyle(periodicTestOffsetTextField, Integer.valueOf(periodicTestOffsetTextField.getText()), Integer.valueOf(periodicTestOffsetTextField.getText()),
+        Styles.setTextFieldStyle(periodicTestOffsetTextField, Integer.valueOf(periodicTestOffsetTextField.getText()), Integer.valueOf(periodicTestOffsetTextField.getText()),
                           Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET);
-        setCheckBoxStyle(periodicTestEmailEnabledCheckBox, periodicTestEmailEnabledCheckBox.isSelected(), periodicTestEmailEnabledCheckBox.isSelected(),
+        Styles.setCheckBoxStyle(periodicTestEmailEnabledCheckBox, periodicTestEmailEnabledCheckBox.isSelected(), periodicTestEmailEnabledCheckBox.isSelected(),
                          Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED);
-        setTextFieldStyle(periodicTestEmailPeriodTextField, Integer.valueOf(periodicTestEmailPeriodTextField.getText()), Integer.valueOf(periodicTestEmailPeriodTextField.getText()),
+        Styles.setTextFieldStyle(periodicTestEmailPeriodTextField, Integer.valueOf(periodicTestEmailPeriodTextField.getText()), Integer.valueOf(periodicTestEmailPeriodTextField.getText()),
                           Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD);
     }
 
@@ -724,6 +655,7 @@ public class ConfigureSpeedTestDialog {
     @FXML private void setUnitToMinutes() {
         hoursRadioButton.setSelected(false);
         daysRadioButton.setSelected(false);
+        periodicTestOffsetTextField.setText("0");
         checkChanges();
     }
 
@@ -808,9 +740,9 @@ public class ConfigureSpeedTestDialog {
             lDisplayedUnitKey = "octetRate.2";
         }
         boolean hasUnitChanged =
-                !Preferences.getInstance().getValue(Constants.SPEED_TEST_DISPLAY_UNIT_KEY_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAY_UNIT_KEY).equals(lDisplayedUnitKey);
+                !Preferences.getInstance().getValue(Constants.SPEED_TEST_DISPLAYED_KEY_UNIT_PREFERENCE, Constants.DEFAULT_SPEED_TEST_DISPLAYED_KEY_UNIT).equals(lDisplayedUnitKey);
         Preferences.getInstance().saveValue(Constants.SPEED_TEST_DISPLAY_UNIT_RATIO_PREFERENCE, lDisplayedUnitRatio);
-        Preferences.getInstance().saveValue(Constants.SPEED_TEST_DISPLAY_UNIT_KEY_PREFERENCE, lDisplayedUnitKey);
+        Preferences.getInstance().saveValue(Constants.SPEED_TEST_DISPLAYED_KEY_UNIT_PREFERENCE, lDisplayedUnitKey);
 
         Integer lDisplayedUnitPeriod;
         if (minutesRadioButton.isSelected()) {
@@ -873,7 +805,8 @@ public class ConfigureSpeedTestDialog {
             saveButton.setDisable(true);
         } else {
             hasConfigurationChanged = true;
-            saveButton.setDisable(false);
+            if (erroredFields.size() != 0) saveButton.setDisable(true);
+            else saveButton.setDisable(false);
         }
     }
 

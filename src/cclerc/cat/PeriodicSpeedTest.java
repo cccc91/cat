@@ -135,7 +135,7 @@ public class PeriodicSpeedTest implements Runnable {
                 }
             }
 
-            Utilities.sleep(1000);
+            Utilities.sleep(Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration().getPeriodicSpeedTestPollingPeriod());
 
         }
 

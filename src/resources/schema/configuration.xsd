@@ -237,6 +237,7 @@
         <xs:simpleContent>
             <xs:extension base="xs:string">
                 <xs:attribute type="pollingPeriodType" name="pollingPeriod"/>
+                <xs:attribute type="pollingPeriodType" name="periodicSpeedTestPollingPeriod"/>
                 <xs:attribute type="xs:integer" name="meanTimeBetweenTwoConnectionsLostThreshold1"/>
                 <xs:attribute type="xs:integer" name="meanTimeBetweenTwoConnectionsLostThreshold2"/>
                 <xs:attribute type="xs:integer" name="meanTimeBetweenTwoConnectionsLostThreshold3"/>
