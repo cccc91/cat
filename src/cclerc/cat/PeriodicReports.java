@@ -100,6 +100,8 @@ public class PeriodicReports implements Runnable {
 
     }
 
+    // METHODS
+
     /**
      * Builds a new report email
      */

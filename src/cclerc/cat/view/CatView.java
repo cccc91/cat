@@ -691,6 +691,29 @@ public class CatView {
             Tooltip lSpeedTestVerticalZoomSliderTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.speedTestChart.tooltip.verticalZoomSlider"));
             speedTestBarChartVerticalZoomSlider.setTooltip(lSpeedTestVerticalZoomSliderTooltip);
 
+            String lTooltipText;
+            Tooltip lTooltip;
+
+            lTooltipText = Display.getViewResourceBundle().getString("catView.reports.tooltip.enabled");
+            lTooltip = new Tooltip(lTooltipText);
+            Tooltip.install(periodicReportEnabledCheckBox, lTooltip);
+
+            lTooltipText = Display.getViewResourceBundle().getString("catView.reports.tooltip.period");
+            lTooltip = new Tooltip(lTooltipText);
+            Tooltip.install(periodicReportPeriodTextField, lTooltip);
+
+            lTooltipText = Display.getViewResourceBundle().getString("catView.reports.tooltip.offset");
+            lTooltip = new Tooltip(lTooltipText);
+            Tooltip.install(periodicReportOffsetTextField, lTooltip);
+
+            lTooltipText = Display.getViewResourceBundle().getString("catView.applyPeriodicReportsConfiguration");
+            lTooltip = new Tooltip(lTooltipText);
+            Tooltip.install(applyPeriodicReportsConfigurationButton, lTooltip);
+
+            lTooltipText = Display.getViewResourceBundle().getString("catView.cancelPeriodicReportsConfiguration");
+            lTooltip = new Tooltip(lTooltipText);
+            Tooltip.install(cancelPeriodicReportsConfigurationButton, lTooltip);
+
         }
 
         // Periodic reports configuration

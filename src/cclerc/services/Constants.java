@@ -131,8 +131,8 @@ public class Constants {
     public static final String PERIODIC_REPORTS_PERIOD_DISPLAYED_UNIT_PREFERENCE = "periodicReports.displayedPeriodUnit";
     public static final String PERIODIC_REPORTS_OFFSET_PREFERENCE = "periodicReports.offset";
 
-    public static final Boolean DEFAULT_PERIODIC_REPORTS_ENABLED = false;
-    public static final Integer DEFAULT_PERIODIC_REPORTS_PERIOD = 1;
+    public static final Boolean DEFAULT_PERIODIC_REPORTS_ENABLED = true;
+    public static final Integer DEFAULT_PERIODIC_REPORTS_PERIOD = 12;
     public static final Integer DEFAULT_PERIODIC_REPORTS_PERIOD_DISPLAYED_UNIT = HOURS;
     public static final Integer DEFAULT_PERIODIC_REPORTS_OFFSET = 1;
 
