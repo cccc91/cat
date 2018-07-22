@@ -76,13 +76,14 @@ public class PeriodicReports implements Runnable {
         nextExecutionTime = Utilities.nextExecutionTime((nextExecutionTime == null || nextExecutionTime > System.currentTimeMillis()) ? null : nextExecutionTime, period, offset);
         if (!initialization) {
             if (periodicReportsEnabled)
-            Cat.getInstance().getController().printConsole(
-                    new Message(String.format(Display.getViewResourceBundle().getString("globalMonitoring.reports.next"),
-                                              LocaleUtilities.getInstance().getDateFormat().format(new Date(nextExecutionTime)),
-                                              LocaleUtilities.getInstance().getTimeFormat().format(new Date(nextExecutionTime).getTime())),
-                                EnumTypes.MessageLevel.INFO));
+                Cat.getInstance().getController().printConsole(
+                        new Message(String.format(Display.getViewResourceBundle().getString("globalMonitoring.reports.next"),
+                                                  LocaleUtilities.getInstance().getDateFormat().format(new Date(nextExecutionTime)),
+                                                  LocaleUtilities.getInstance().getTimeFormat().format(new Date(nextExecutionTime).getTime())),
+                                    EnumTypes.MessageLevel.INFO));
             else
-                new Message(Display.getViewResourceBundle().getString("globalMonitoring.reports.disable"), EnumTypes.MessageLevel.INFO);
+                Cat.getInstance().getController().printConsole(
+                        new Message(Display.getViewResourceBundle().getString("globalMonitoring.reports.disable"), EnumTypes.MessageLevel.INFO));
 
         } else {
             if (periodicReportsEnabled)
@@ -92,7 +93,8 @@ public class PeriodicReports implements Runnable {
                                                   LocaleUtilities.getInstance().getTimeFormat().format(new Date(nextExecutionTime).getTime())),
                                     EnumTypes.MessageLevel.INFO));
             else
-                new Message(Display.getViewResourceBundle().getString("globalMonitoring.reports.start.disable"), EnumTypes.MessageLevel.INFO);
+                Cat.getInstance().getController().printConsole(
+                        new Message(Display.getViewResourceBundle().getString("globalMonitoring.reports.start.disable"), EnumTypes.MessageLevel.INFO));
         }
         initialization = false;
 
