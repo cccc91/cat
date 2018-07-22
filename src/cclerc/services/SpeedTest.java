@@ -152,8 +152,10 @@ public class SpeedTest {
 
         if (testRunning) {
             // Don't take into account completion report, just use average of progress reports
-            bitRate = bitRate.divide(new BigDecimal(count), 2);
-            octetRate = octetRate.divide(new BigDecimal(count), 2);
+            if (count != 0) {
+                bitRate = bitRate.divide(new BigDecimal(count), 2);
+                octetRate = octetRate.divide(new BigDecimal(count), 2);
+            }
             Map<Integer, BigDecimal> lBitRate = convertToBestUnit(bitRate);
             Map<Integer, BigDecimal> lOctetRate = convertToBestUnit(octetRate);
             bitRates.add(lBitRate); octetRates.add(lOctetRate);

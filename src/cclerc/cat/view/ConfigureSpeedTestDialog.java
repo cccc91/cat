@@ -2,6 +2,7 @@ package cclerc.cat.view;
 
 import cclerc.cat.Cat;
 import cclerc.cat.Configuration.Configuration;
+import cclerc.cat.PeriodicReports;
 import cclerc.cat.PeriodicSpeedTest;
 import cclerc.cat.model.SpeedTestServer;
 import cclerc.services.*;
@@ -82,8 +83,6 @@ public class ConfigureSpeedTestDialog {
     @FXML CheckBox periodicTestEnabledCheckBox;
     @FXML TextField periodicTestPeriodTextField;
     @FXML TextField periodicTestOffsetTextField;
-    @FXML CheckBox periodicTestEmailEnabledCheckBox;
-    @FXML TextField periodicTestEmailPeriodTextField;
 
     /**
      * Creates instance of ConfigureSpeedTestDialog controller
@@ -301,14 +300,6 @@ public class ConfigureSpeedTestDialog {
         lTooltip = new Tooltip(lTooltipText);
         Tooltip.install(periodicTestOffsetTextField, lTooltip);
 
-        lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.periodicTest.email.enabled");
-        lTooltip = new Tooltip(lTooltipText);
-        Tooltip.install(periodicTestEmailEnabledCheckBox, lTooltip);
-
-        lTooltipText = Display.getViewResourceBundle().getString("configureSpeedTestDialog.tooltip.periodicTest.email.period");
-        lTooltip = new Tooltip(lTooltipText);
-        Tooltip.install(periodicTestEmailPeriodTextField, lTooltip);
-
     }
 
     /**
@@ -377,10 +368,6 @@ public class ConfigureSpeedTestDialog {
                 periodicTestPeriodTextField, Constants.SPEED_TEST_PERIODIC_TEST_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD));
         periodicTestOffsetTextField.textProperty().addListener(integerTextFieldChangeListener(
                 periodicTestOffsetTextField, Constants.SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET));
-        periodicTestEmailEnabledCheckBox.selectedProperty().addListener(booleanTextFieldChangeListener(
-                periodicTestEmailEnabledCheckBox, Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED));
-        periodicTestEmailPeriodTextField.textProperty().addListener(integerTextFieldChangeListener(
-                periodicTestEmailPeriodTextField, Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD));
 
     }
 
@@ -440,20 +427,10 @@ public class ConfigureSpeedTestDialog {
                 if (newValue) {
                     periodicTestPeriodTextField.setDisable(false);
                     periodicTestOffsetTextField.setDisable(false);
-                    periodicTestEmailEnabledCheckBox.setDisable(false);
-                    periodicTestEmailPeriodTextField.setDisable(false);
                 } else {
                     periodicTestPeriodTextField.setDisable(true);
                     periodicTestOffsetTextField.setDisable(true);
-                    periodicTestEmailEnabledCheckBox.setDisable(true);
-                    periodicTestEmailPeriodTextField.setDisable(true);
 
-                }
-            } else if (aInCheckBox.equals(periodicTestEmailEnabledCheckBox)) {
-                if (newValue) {
-                    periodicTestEmailPeriodTextField.setDisable(false);
-                } else {
-                    periodicTestEmailPeriodTextField.setDisable(true);
                 }
             }
 
@@ -601,10 +578,6 @@ public class ConfigureSpeedTestDialog {
                           Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD);
         Styles.setTextFieldStyle(periodicTestOffsetTextField, Integer.valueOf(periodicTestOffsetTextField.getText()), Integer.valueOf(periodicTestOffsetTextField.getText()),
                           Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET);
-        Styles.setCheckBoxStyle(periodicTestEmailEnabledCheckBox, periodicTestEmailEnabledCheckBox.isSelected(), periodicTestEmailEnabledCheckBox.isSelected(),
-                         Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED);
-        Styles.setTextFieldStyle(periodicTestEmailPeriodTextField, Integer.valueOf(periodicTestEmailPeriodTextField.getText()), Integer.valueOf(periodicTestEmailPeriodTextField.getText()),
-                          Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD);
     }
 
     // FXML
@@ -722,8 +695,6 @@ public class ConfigureSpeedTestDialog {
         Preferences.getInstance().saveValue(Constants.SPEED_TEST_PERIODIC_TEST_ENABLED_PREFERENCE, periodicTestEnabledCheckBox.isSelected());
         Preferences.getInstance().saveValue(Constants.SPEED_TEST_PERIODIC_TEST_PERIOD_PREFERENCE, periodicTestPeriodTextField.getText());
         Preferences.getInstance().saveValue(Constants.SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE, periodicTestOffsetTextField.getText());
-        Preferences.getInstance().saveValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, periodicTestEmailEnabledCheckBox.isSelected());
-        Preferences.getInstance().saveValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, periodicTestEmailPeriodTextField.getText());
 
         Long lDisplayedUnitRatio; String lDisplayedUnitKey;
         if (KbsRadioButton.isSelected()) {
@@ -791,10 +762,6 @@ public class ConfigureSpeedTestDialog {
                     Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_PERIODIC_TEST_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD)) &&
             Integer.valueOf(periodicTestOffsetTextField.getText()).equals(
                     Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET)) &&
-            periodicTestEmailEnabledCheckBox.isSelected() ==
-            Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED) &&
-            Integer.valueOf(periodicTestEmailPeriodTextField.getText()).equals(
-                    Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD)) &&
             ((lThroughputDisplayedUnit.equals(Constants.Kbs) && KbsRadioButton.isSelected()) || (lThroughputDisplayedUnit.equals(Constants.Mbs) && MbsRadioButton.isSelected()) ||
              (lThroughputDisplayedUnit.equals(Constants.KBs) && KBsRadioButton.isSelected()) || (lThroughputDisplayedUnit.equals(Constants.MBs) && MBsRadioButton.isSelected()))  &&
             ((lPeriodDisplayedUnit.equals(Constants.MINUTES) && minutesRadioButton.isSelected()) ||
@@ -868,35 +835,13 @@ public class ConfigureSpeedTestDialog {
                 Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_PERIODIC_TEST_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_PERIOD).toString());
         periodicTestOffsetTextField.setText(
                 Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET).toString());
-        periodicTestEmailEnabledCheckBox.setSelected(
-                Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED));
-        periodicTestEmailPeriodTextField.setText(
-                Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD).toString());
 
         if (periodicTestEnabledCheckBox.isSelected()) {
-
             periodicTestPeriodTextField.setDisable(false);
             periodicTestOffsetTextField.setDisable(false);
-
-            if (Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getSmtpServerConfigurations().size() == 0 ||
-                    Configuration.getCurrentConfiguration().getEmailConfiguration().getRecipientList().isEmpty()) {
-                periodicTestEmailEnabledCheckBox.setDisable(true);
-                periodicTestEmailPeriodTextField.setDisable(true);
-            } else {
-                periodicTestEmailEnabledCheckBox.setDisable(false);
-                if (periodicTestEmailEnabledCheckBox.isSelected()) {
-                    periodicTestEmailPeriodTextField.setDisable(false);
-                } else {
-                    periodicTestEmailPeriodTextField.setDisable(true);
-                }
-            }
-
         } else {
             periodicTestPeriodTextField.setDisable(true);
             periodicTestOffsetTextField.setDisable(true);
-            periodicTestEmailEnabledCheckBox.setDisable(true);
-            periodicTestEmailPeriodTextField.setDisable(true);
-
         }
 
     }

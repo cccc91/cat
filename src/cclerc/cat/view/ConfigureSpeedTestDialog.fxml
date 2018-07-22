@@ -127,8 +127,6 @@
                         <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
                         <Label styleClass="attributeName" text="%configureSpeedTestDialog.socketTimeout" GridPane.rowIndex="2" />
@@ -143,8 +141,6 @@
                         <Label styleClass="attributeName" text="%configureSpeedTestDialog.periodicTest.enabled" GridPane.rowIndex="9" />
                         <Label styleClass="attributeName" text="%configureSpeedTestDialog.periodicTest.period" GridPane.rowIndex="10" />
                         <Label styleClass="attributeName" text="%configureSpeedTestDialog.periodicTest.offset" GridPane.rowIndex="11" />
-                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.periodicTest.email.enabled" GridPane.rowIndex="12" />
-                        <Label styleClass="attributeName" text="%configureSpeedTestDialog.periodicTest.email.period" GridPane.rowIndex="13" />
                         <HBox alignment="CENTER_LEFT">
                            <children>
                               <Label styleClass="attributeValueMain" text="%configureSpeedTestDialog.speedTest" />
@@ -167,9 +163,7 @@
                            </children>
                         </HBox>
                         <TextField fx:id="periodicTestOffsetTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                        <TextField fx:id="periodicTestEmailPeriodTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="25" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="13" />
                         <CheckBox fx:id="periodicTestEnabledCheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                        <CheckBox fx:id="periodicTestEmailEnabledCheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="12" />
                         <Label styleClass="attributeName" text="%configureSpeedTestDialog.displayedUnit" GridPane.rowIndex="1" />
                         <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>

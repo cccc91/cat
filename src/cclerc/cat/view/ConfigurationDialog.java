@@ -96,6 +96,7 @@ public class ConfigurationDialog {
     // Global tab
     @FXML TextField globalPollingPeriodTextField;
     @FXML TextField periodicSpeedTestPollingPeriodTextField;
+    @FXML TextField periodicReportsPollingPeriodTextField;
     @FXML TextField globalConnectionsLostForgetTimeTextField;
     @FXML TextField globalMeanTimeBetweenTwoConnectionsLostThreshold1TextField;
     @FXML TextField globalMeanTimeBetweenTwoConnectionsLostThreshold2TextField;
@@ -901,6 +902,7 @@ public class ConfigurationDialog {
         Map<String, TextField> lGlobalConfigurationTextFields = new HashMap<>();  // Global configuration text fields
         lGlobalConfigurationTextFields.put("PollingPeriod", globalPollingPeriodTextField);
         lGlobalConfigurationTextFields.put("PeriodicSpeedTestPollingPeriod", periodicSpeedTestPollingPeriodTextField);
+        lGlobalConfigurationTextFields.put("PeriodicReportsPollingPeriod", periodicReportsPollingPeriodTextField);
         lGlobalConfigurationTextFields.put("ConnectionsLostForgetTime", globalConnectionsLostForgetTimeTextField);
         lGlobalConfigurationTextFields.put("MeanTimeBetweenTwoConnectionsLostThreshold1", globalMeanTimeBetweenTwoConnectionsLostThreshold1TextField);
         lGlobalConfigurationTextFields.put("MeanTimeBetweenTwoConnectionsLostThreshold2", globalMeanTimeBetweenTwoConnectionsLostThreshold2TextField);

@@ -12,15 +12,16 @@ import java.util.List;
  */
 public class GlobalMonitoringConfiguration extends AbstractConfiguration {
 
-    private static final List<String> ATTRIBUTE_NAMES = new ArrayList<>(Arrays.asList("pollingPeriod", "periodicSpeedTestPollingPeriod", "meanTimeBetweenTwoConnectionsLostThreshold1",
-                                                                                      "meanTimeBetweenTwoConnectionsLostThreshold2", "meanTimeBetweenTwoConnectionsLostThreshold3",
-                                                                                      "connectionsLostForgetTime",
+    private static final List<String> ATTRIBUTE_NAMES = new ArrayList<>(Arrays.asList("pollingPeriod", "periodicSpeedTestPollingPeriod", "periodicReportsPollingPeriod",
+                                                                                      "meanTimeBetweenTwoConnectionsLostThreshold1", "meanTimeBetweenTwoConnectionsLostThreshold2",
+                                                                                      "meanTimeBetweenTwoConnectionsLostThreshold3", "connectionsLostForgetTime",
                                                                                       "maxStoredPingDuration", "minDisplayedPingDuration", "maxDisplayedPingDuration",
                                                                                       "maxStoredSpeedTestDuration", "minDisplayedSpeedTestDuration", "maxDisplayedSpeedTestDuration"));
 
     // Accessed by introspection
     protected static final Integer DEFAULT_POLLING_PERIOD = Constants.DEFAULT_GLOBAL_POLLING_PERIOD;
     protected static final Integer DEFAULT_PERIODIC_SPEED_TEST_POLLING_PERIOD = Constants.DEFAULT_PERIODIC_SPEED_TEST_POLLING_PERIOD;
+    protected static final Integer DEFAULT_PERIODIC_REPORTS_POLLING_PERIOD = Constants.DEFAULT_PERIODIC_REPORTS_POLLING_PERIOD;
     protected static final Long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD1 = Constants.DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD1;
     protected static final Long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD2 = Constants.DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD2;
     protected static final Long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD3 = Constants.DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD3;
@@ -34,6 +35,7 @@ public class GlobalMonitoringConfiguration extends AbstractConfiguration {
 
     protected Integer pollingPeriod;
     protected Integer periodicSpeedTestPollingPeriod;
+    protected Integer periodicReportsPollingPeriod;
     protected Long meanTimeBetweenTwoConnectionsLostThreshold1;
     protected Long meanTimeBetweenTwoConnectionsLostThreshold2;
     protected Long meanTimeBetweenTwoConnectionsLostThreshold3;
@@ -60,6 +62,14 @@ public class GlobalMonitoringConfiguration extends AbstractConfiguration {
             if (Integer.valueOf(aInPollingPeriod) > Constants.MAX_POLLING_PERIOD || Integer.valueOf(aInPollingPeriod) < Constants.MIN_POLLING_PERIOD)
                 throw new NumberFormatException();
             periodicSpeedTestPollingPeriod = Integer.valueOf(aInPollingPeriod);
+        }
+    }
+
+    public void setPeriodicReportsPollingPeriod(String aInPollingPeriod) throws NumberFormatException {
+        if ((aInPollingPeriod != null) && !Integer.valueOf(aInPollingPeriod).equals(periodicReportsPollingPeriod)) {
+            if (Integer.valueOf(aInPollingPeriod) > Constants.MAX_POLLING_PERIOD || Integer.valueOf(aInPollingPeriod) < Constants.MIN_POLLING_PERIOD)
+                throw new NumberFormatException();
+            periodicReportsPollingPeriod = Integer.valueOf(aInPollingPeriod);
         }
     }
 
@@ -133,6 +143,10 @@ public class GlobalMonitoringConfiguration extends AbstractConfiguration {
         return periodicSpeedTestPollingPeriod;
     }
 
+    public Integer getPeriodicReportsPollingPeriod() {
+        return periodicReportsPollingPeriod;
+    }
+
     public Long getMeanTimeBetweenTwoConnectionsLostThreshold1() {
         return meanTimeBetweenTwoConnectionsLostThreshold1;
     }
@@ -187,6 +201,7 @@ public class GlobalMonitoringConfiguration extends AbstractConfiguration {
         super("globalMonitoringConfiguration", aInConfiguration, "globalMonitoring", ATTRIBUTE_NAMES);
         pollingPeriod = DEFAULT_POLLING_PERIOD;
         periodicSpeedTestPollingPeriod = DEFAULT_PERIODIC_SPEED_TEST_POLLING_PERIOD;
+        periodicReportsPollingPeriod = DEFAULT_PERIODIC_REPORTS_POLLING_PERIOD;
         meanTimeBetweenTwoConnectionsLostThreshold1 = DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD1;
         meanTimeBetweenTwoConnectionsLostThreshold2 = DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD2;
         meanTimeBetweenTwoConnectionsLostThreshold3 = DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD3;

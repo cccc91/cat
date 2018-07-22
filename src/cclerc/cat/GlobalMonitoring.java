@@ -417,8 +417,9 @@ public class GlobalMonitoring {
         Thread lThread = new Thread(periodicCheck);
         lThread.start();
 
-        // Launch periodic speed test
+        // Launch periodic speed test and periodic reports
         PeriodicSpeedTest.getInstance().start();
+        PeriodicReports.getInstance().start();
 
         // For test only - to be disabled when not useful
         if (TEST_ENABLE) {

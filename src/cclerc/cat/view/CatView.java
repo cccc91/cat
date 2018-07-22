@@ -1,10 +1,7 @@
 package cclerc.cat.view;
 
-import cclerc.cat.Cat;
+import cclerc.cat.*;
 import cclerc.cat.Configuration.Configuration;
-import cclerc.cat.GlobalMonitoring;
-import cclerc.cat.MonitoringJob;
-import cclerc.cat.PeriodicSpeedTest;
 import cclerc.cat.model.Alarm;
 import cclerc.services.*;
 import com.sun.javafx.charts.Legend;
@@ -532,7 +529,7 @@ public class CatView {
                     }
                 });
 
-        printConsole(new Message(Display.getViewResourceBundle().getString("catView.console.startApplication"), EnumTypes.MessageLevel.INFO));
+//        printConsole(new Message(Display.getViewResourceBundle().getString("catView.console.startApplication"), EnumTypes.MessageLevel.INFO));
 
         firstDisplay.put(speedTestTextFlow, true);
         tabs.put(speedTestTextFlow, speedTestTab);
@@ -699,6 +696,7 @@ public class CatView {
         // Periodic reports configuration
         preparePeriodicReportsConfigurationDisplay();
         setPeriodicTestsConfigurationStyles();
+        checkPeriodicReportsConfigurationChanges();
 
     }
 
@@ -2290,6 +2288,7 @@ public class CatView {
                                 lPingPoint.getPoint(), "line-" + lPingLine.getId() + "-" + EnumTypes.ServerType.valueOf(lPingPoint.getServerType())));
                     }
                 } else {
+                    // Prevent memory leaks
                     lPingPoint.getPoint().setNode(null);
                 }
 
@@ -2954,7 +2953,7 @@ public class CatView {
     @FXML private void setUnitToMinutes() {
         hoursRadioButton.setSelected(false);
         daysRadioButton.setSelected(false);
-        periodicReportPeriodTextField.setText("0");
+//        periodicReportOffsetTextField.setText("0");
         checkPeriodicReportsConfigurationChanges();
     }
 
@@ -2995,6 +2994,7 @@ public class CatView {
         Preferences.getInstance().saveValue(Constants.PERIODIC_REPORTS_OFFSET_PREFERENCE, periodicReportOffsetTextField.getText());
 
         setPeriodicTestsConfigurationStyles();
+        PeriodicReports.getInstance().loadConfiguration();
 
         hasPeriodicReportsConfigurationChanged = false;
         applyPeriodicReportsConfigurationButton.setDisable(true);

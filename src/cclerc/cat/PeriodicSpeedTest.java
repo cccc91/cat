@@ -4,17 +4,11 @@ import cclerc.cat.Configuration.Configuration;
 import cclerc.services.*;
 import fr.bmartel.speedtest.model.SpeedTestError;
 import javafx.application.Platform;
-import javafx.css.FontCssMetaData;
-import javafx.css.PseudoClass;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.net.InetAddress;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,13 +17,83 @@ import java.util.stream.Collectors;
 
 public class PeriodicSpeedTest implements Runnable {
 
-    class Measurement {
+    class RawMeasurement {
+
+        private String date;
+        private String server;
+        private String download;
+        private String upload;
+        private String error;
+        private EnumTypes.SpeedTestMode transferMode;
+
+        public RawMeasurement(long aInTime, List<Map<Integer, BigDecimal>> aInBitRates, List<Map<Integer, BigDecimal>> aInOctetRates) {
+
+            date = LocaleUtilities.getInstance().getDateFormat().format(new Date(aInTime)) + " " +
+                   LocaleUtilities.getInstance().getTimeFormat().format(new Date(aInTime).getTime());
+
+            server = (Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_SPONSOR_PREFERENCE, "").equals(""))
+                             ? Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE)
+                             : Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_SPONSOR_PREFERENCE);
+
+            download = String.format(
+                    "%.1f %s (%.0f %s)",
+                    aInOctetRates.get(0).values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + aInOctetRates.get(0).keySet().iterator().next()),
+                    aInBitRates.get(0).values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + aInBitRates.get(0).keySet().iterator().next()));
+
+            upload = String.format(
+                    "%.1f %s (%.0f %s)",
+                    aInOctetRates.get(1).values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + aInOctetRates.get(1).keySet().iterator().next()),
+                    aInBitRates.get(1).values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + aInBitRates.get(1).keySet().iterator().next()));
+
+        }
+
+        public RawMeasurement(long aInTime, EnumTypes.SpeedTestMode aInTransferMode, String aInError) {
+
+            date = LocaleUtilities.getInstance().getDateFormat().format(new Date(aInTime)) + " " +
+                   LocaleUtilities.getInstance().getTimeFormat().format(new Date(aInTime).getTime());
+
+            server = (Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_SPONSOR_PREFERENCE, "").equals(""))
+                     ? Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE)
+                     : Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_SPONSOR_PREFERENCE);
+
+            error = aInError;
+            transferMode = aInTransferMode;
+
+        }
+
+        public String getDate() {
+            return date;
+        }
+
+        public String getServer() {
+            return server;
+        }
+
+        public String getDownload() {
+            return download;
+        }
+
+        public String getUpload() {
+            return upload;
+        }
+
+        public String getError() {
+            return error;
+        }
+
+        public EnumTypes.SpeedTestMode getTransferMode() {
+            return transferMode;
+        }
+
+    }
+
+    class BarChartMeasurement {
 
         private String category;
         private Double download = 0d;
         private Double upload = 0d;
 
-        public Measurement(String aInCategory, Double aInDownload, Double aInUpload) {
+        public BarChartMeasurement(String aInCategory, Double aInDownload, Double aInUpload) {
             category = aInCategory;
             download = aInDownload;
             upload = aInUpload;
@@ -48,6 +112,7 @@ public class PeriodicSpeedTest implements Runnable {
         }
 
     }
+
     private final int MAX_NUMBER_OF_RETRIES = 1;
 
     private boolean running = true;
@@ -57,15 +122,14 @@ public class PeriodicSpeedTest implements Runnable {
     private int period;
     private int offset;
     private Long nextExecutionTime;
-    private Long nextEmailTime;
     private String uploadUrl;
     private String downloadUrl;
-    private Email email;
-    private String emailContentText;
-    private String emailContentHTML;
-    private String measurementTemplate;
+    private String report;
+    private String rawResultTemplate;
+    private String barChartMeasurementTemplate;
     private Double maxSpeed;
-    private List<Measurement> measurements;
+    private List<BarChartMeasurement> barChartMeasurements;
+    private List<RawMeasurement> rawMeasurements;
     private String downloadColor;
     private String uploadColor;
 
@@ -75,10 +139,15 @@ public class PeriodicSpeedTest implements Runnable {
     private PeriodicSpeedTest() {
         try {
 
-            // Load measurement template
-            InputStream lSpeedTestMeasurementInputStream = getClass().getResourceAsStream("/resources/templates/speedTestEmailMeasurement.html");
-            BufferedReader lSpeedTestBuffer = new BufferedReader(new InputStreamReader(lSpeedTestMeasurementInputStream));
-            measurementTemplate = lSpeedTestBuffer.lines().collect(Collectors.joining("\n"));
+            // Load raw result template
+            InputStream lRawResultInputStream = getClass().getResourceAsStream("/resources/templates/speedTestReportRawResult.html");
+            BufferedReader lRawResultBuffer = new BufferedReader(new InputStreamReader(lRawResultInputStream));
+            rawResultTemplate = lRawResultBuffer.lines().collect(Collectors.joining("\n"));
+
+            // Load bar chart measurement template
+            InputStream lBarChartMeasurementInputStream = getClass().getResourceAsStream("/resources/templates/speedTestReportBarChartMeasurement.html");
+            BufferedReader lBarChartMeasurementBuffer = new BufferedReader(new InputStreamReader(lBarChartMeasurementInputStream));
+            barChartMeasurementTemplate = lBarChartMeasurementBuffer.lines().collect(Collectors.joining("\n"));
 
             // Retrieve information from CSS
             InputStream lCssInputStream = getClass().getResourceAsStream("/resources/css/view.css");
@@ -86,7 +155,7 @@ public class PeriodicSpeedTest implements Runnable {
             String lCss = lCssBuffer.lines().collect(Collectors.joining());
             downloadColor = lCss.replaceAll(".*chart-download-periodic", "").replaceAll("}.*", "").replaceAll(".*-fx-stroke[^:]*:[ ]*([^;]*);.*", "$1");
             uploadColor = lCss.replaceAll(".*chart-upload-periodic", "").replaceAll("}.*", "").replaceAll(".*-fx-stroke[^:]*:[ ]*([^;]*);.*", "$1");
-            measurementTemplate = measurementTemplate.replaceAll("#DOWNLOAD_COLOR#", downloadColor).replaceAll("#UPLOAD_COLOR#", uploadColor);
+            barChartMeasurementTemplate = barChartMeasurementTemplate.replaceAll("#DOWNLOAD_COLOR#", downloadColor).replaceAll("#UPLOAD_COLOR#", uploadColor);
 
         } catch (Exception e) {
             Display.logUnexpectedError(e);
@@ -111,7 +180,7 @@ public class PeriodicSpeedTest implements Runnable {
 
         // Initialize speed test data
         loadConfiguration();
-        resetEmail();
+        resetReport();
 
         while (running) {
 
@@ -153,10 +222,6 @@ public class PeriodicSpeedTest implements Runnable {
         return speedTest;
     }
 
-    public long getNextEmailTime() {
-        return nextEmailTime;
-    }
-
     // METHODS
 
     /**
@@ -177,7 +242,6 @@ public class PeriodicSpeedTest implements Runnable {
                 Constants.SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE, Constants.DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET);
         nextExecutionTime = Utilities.nextExecutionTime(
                 (nextExecutionTime == null || nextExecutionTime > System.currentTimeMillis()) ? null : nextExecutionTime, period, offset);
-        computeNextEmailTime();
         if (Cat.getInstance().displayGraphicalInterface()) {
             Platform.runLater(() -> {
                 Cat.getInstance().getController().setSpeedTestNextPeriodLabel(LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(nextExecutionTime));
@@ -187,88 +251,53 @@ public class PeriodicSpeedTest implements Runnable {
     }
 
     /**
-     * Computes next time email should be sent
+     * Builds a new report, all previous data are lost
      */
-    public  void computeNextEmailTime() {
-        // TODO: use configuration if global monitoring email is enabled
-        nextEmailTime = Utilities.nextExecutionTime(
-                (nextEmailTime == null || nextEmailTime > System.currentTimeMillis()) ? null : nextEmailTime,
-                period * Preferences.getInstance().getIntegerValue(Constants.SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_PERIOD),
-                offset);
-    }
-
-    /**
-     * Builds a new report email, all previous data are lost
-     */
-    public void resetEmail() {
-        email = new Email(
-                States.getInstance().getBooleanValue((Cat.getInstance().getController().BuildStatePropertyName(Constants.SEND_MAIL_STATE)), true) &&
-                Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getSmtpServerConfigurations().size() != 0 &&
-                !Configuration.getCurrentConfiguration().getEmailConfiguration().getRecipientList().isEmpty(),
-                Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getPreferredSmtpServer());
+    public void resetReport() {
         maxSpeed = 0d;
-        measurements = new ArrayList<>();
-        emailContentText = "";
+        barChartMeasurements = new ArrayList<>();
+        rawMeasurements = new ArrayList<>();
         try {
-            InputStream lInputStream = getClass().getResourceAsStream("/resources/templates/speedTestEmailBody.html");
+            InputStream lInputStream = getClass().getResourceAsStream("/resources/templates/speedTestReportBody.html");
             BufferedReader buffer = new BufferedReader(new InputStreamReader(lInputStream));
-            emailContentHTML = buffer.lines().collect(Collectors.joining("\n"));
-            emailContentHTML = emailContentHTML.replaceAll("#DOWNLOAD_COLOR#", downloadColor).replaceAll("#UPLOAD_COLOR#", uploadColor);
+            report = buffer.lines().collect(Collectors.joining("\n"));
+            report = report.replaceAll("#DOWNLOAD_COLOR#", downloadColor).replaceAll("#UPLOAD_COLOR#", uploadColor)
+                           .replaceAll("#SPEED_TEST_TITLE#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.speedTest.title"))
+                           .replaceAll("#RAW_RESULTS_TITLE#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.speedTest.rawResults"))
+                           .replaceAll("#BAR_CHART_TITLE#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.speedTest.barChart"))
+                           .replaceAll("#SPEEDTEST_DATE_HEADER#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.speedTest.rawResults.date"))
+                           .replaceAll("#SPEEDTEST_SERVER_HEADER#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.speedTest.rawResults.server"))
+                           .replaceAll("#SPEEDTEST_DOWNLOAD_HEADER#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.speedTest.rawResults.download"))
+                           .replaceAll("#SPEEDTEST_UPLOAD_HEADER#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.speedTest.rawResults.upload"));
         } catch (Exception e) {
             Display.logUnexpectedError(e);
         }
 
-
     }
 
     /**
-     * Adds error to report email body
+     * Adds error to report report
      * @param aInTime           time of the error
      * @param aInTransferMode   transfer mode (download or upload) during which the error occurred
      * @param aInSpeedTestError speed test error
      * @param aInErrorMessage   detailed message
      */
-    public void addErrorToEmail(long aInTime, EnumTypes.SpeedTestMode aInTransferMode, SpeedTestError aInSpeedTestError, String aInErrorMessage) {
+    public void addErrorToReport(long aInTime, EnumTypes.SpeedTestMode aInTransferMode, SpeedTestError aInSpeedTestError, String aInErrorMessage) {
 
-        String lDate = LocaleUtilities.getInstance().getDateFormat().format(new Date(aInTime));
-        String lTime = LocaleUtilities.getInstance().getTimeFormat().format(new Date(aInTime).getTime());
-
-        String lServer = (Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_SPONSOR_PREFERENCE, "").equals(""))
-                         ? Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE)
-                         : Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_SPONSOR_PREFERENCE);
-
-        emailContentText = String.format(
-                Display.getMessagesResourceBundle().getString("generalEmail.speedTest.error"), lDate, lTime, lServer,
-                aInTransferMode.toString().toUpperCase(), aInSpeedTestError, aInErrorMessage)
-                           + "<br>\n" + emailContentText;
-
+        rawMeasurements.add(new RawMeasurement(aInTime, aInTransferMode, String.format(
+                Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.speedTest.error"), aInSpeedTestError, aInErrorMessage)));
     }
 
     /**
-     * Adds a measurement to email body
+     * Adds a measurement to the report
      * @param aInTime          time of the measurement
      * @param aInBitRates      download (index 0) and upload (index 1) bit rates with their unit as a power of 1024 of bits (0 = bits, 1 = kbits, 2 = Mbits)
      * @param aInOctetRates    download (index 0) and upload (index 1) byte rates with their unit as a power of 1024 of bytes (0 = bytes, 1 = kbytes, 2 = Mbytes)
      * @param aInRawBitRates   download (index 0) and upload (index 1) bits per second raw value
      * @param aInRawOctetRates download (index 0) and upload (index 1) bytes per second raw value
      */
-    public void addMeasurementToEmail(long aInTime, List<Map<Integer, BigDecimal>> aInBitRates, List<Map<Integer, BigDecimal>> aInOctetRates,
-                                      List<BigDecimal> aInRawBitRates, List<BigDecimal> aInRawOctetRates) {
-
-        String lDate = LocaleUtilities.getInstance().getDateFormat().format(new Date(aInTime));
-        String lTime = LocaleUtilities.getInstance().getTimeFormat().format(new Date(aInTime).getTime());
-
-        String lServer = (Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_SPONSOR_PREFERENCE, "").equals(""))
-                         ? Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_NAME_PREFERENCE)
-                         : Preferences.getInstance().getValue(Constants.SPEED_TEST_SERVER_SPONSOR_PREFERENCE);
-
-        emailContentText = String.format(
-                Display.getMessagesResourceBundle().getString("generalEmail.speedTest.text"), lDate, lTime, lServer,
-                aInOctetRates.get(0).values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + aInOctetRates.get(0).keySet().iterator().next()),
-                aInBitRates.get(0).values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + aInBitRates.get(0).keySet().iterator().next()),
-                aInOctetRates.get(1).values().iterator().next(), Display.getViewResourceBundle().getString("octetRate." + aInOctetRates.get(1).keySet().iterator().next()),
-                aInBitRates.get(1).values().iterator().next(), Display.getViewResourceBundle().getString("bitRate." + aInBitRates.get(1).keySet().iterator().next()))
-                           + "<br>\n" + emailContentText;
+    public void addMeasurementToReport(long aInTime, List<Map<Integer, BigDecimal>> aInBitRates, List<Map<Integer, BigDecimal>> aInOctetRates,
+                                       List<BigDecimal> aInRawBitRates, List<BigDecimal> aInRawOctetRates) {
 
         // Convert rates to the specified unit
         BigDecimal lRatio =
@@ -277,55 +306,72 @@ public class PeriodicSpeedTest implements Runnable {
         Double lUpload = aInRawBitRates.get(1).divide(lRatio, 1).doubleValue();
         if (maxSpeed < lDownload) maxSpeed = lDownload;
         if (maxSpeed < lUpload) maxSpeed = lUpload;
-        measurements.add(new Measurement(LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(aInTime).replaceAll("\\d{4} ", "\\\n"), lDownload, lUpload));
-
-        // Send email if period is reached and compute next email time
-        if (System.currentTimeMillis() >= getNextEmailTime()) {
-
-            // TODO: in case periodic general email is enabled, don't send the mail but send info to GlobalMonitoring
-            Double lScale = 400d / maxSpeed;
-
-            // Build final HTML
-            Integer i = 1;
-            for (Measurement lMeasurement: measurements) {
-                Double lScaledDownload = lMeasurement.getDownload() * lScale;
-                Double lScaledUpload = lMeasurement.getUpload() * lScale;
-                String lMeasurementHTML = new String(measurementTemplate);
-                lMeasurementHTML = lMeasurementHTML
-                        .replaceAll("#MEASUREMENT#", i.toString())
-                        .replaceAll("#DOWNLOAD#", String.format("%.1f", lMeasurement.getDownload()))
-                        .replaceAll("#DOWNLOAD_HEIGHT#", String.format("%.1f", lScaledDownload).replaceAll(",", "."))
-                        .replaceAll("#UPLOAD#", String.format("%.1f", lMeasurement.getUpload()))
-                        .replaceAll("#UPLOAD_HEIGHT#", String.format("%.1f", lScaledUpload).replaceAll(",", "."))
-                        .replace("#CATEGORY#", lMeasurement.getCategory().replaceAll("\\n", "<br>"));
-
-                emailContentHTML = emailContentHTML.replaceAll("#MEASUREMENTS#", lMeasurementHTML + "\n#MEASUREMENTS#");
-
-            }
-            emailContentHTML = emailContentHTML.replaceAll("#MEASUREMENTS#", "");
-
-            sendEmail();
-            computeNextEmailTime();
-            resetEmail();
-        }
+        rawMeasurements.add(new RawMeasurement(aInTime, aInBitRates, aInOctetRates));
+        barChartMeasurements.add(new BarChartMeasurement(LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(aInTime).replaceAll("\\d{4} ", "\\\n"), lDownload, lUpload));
 
     }
 
-    /**
-     * Sends report email
-     */
-    public void sendEmail() {
+    public String buildReport() {
 
-        String lLocalHostName = "";
-        try {
-            lLocalHostName = InetAddress.getLocalHost().getHostName();
-        } catch (Exception e) {
-            Display.logUnexpectedError(e);
+        // TODO: configuration
+        Double lScale = 400d / maxSpeed;
+
+        // Build final HTML
+        int i = rawMeasurements.size() - 1;
+        while (i >= 0) {
+
+            RawMeasurement lRawMeasurement = rawMeasurements.get(i);
+
+            String lRawMeasurementHTML = new String(rawResultTemplate);
+
+            if (i == 0 || (i > 0 && rawMeasurements.get(i-1).getError() == null)) {
+                lRawMeasurementHTML = lRawMeasurementHTML
+                        .replaceAll("#SPEED_TEST_DATE#", lRawMeasurement.getDate())
+                        .replaceAll("#SPEEDTEST_SERVER#", lRawMeasurement.getServer())
+                        .replaceAll("#SPEEDTEST_DOWNLOAD#", lRawMeasurement.getDownload())
+                        .replaceAll("#SPEEDTEST_UPLOAD#", lRawMeasurement.getUpload());
+            } else {
+                i--;
+                if (rawMeasurements.get(i).getTransferMode().equals(EnumTypes.SpeedTestMode.DOWNLOAD)) {
+                    lRawMeasurementHTML = lRawMeasurementHTML
+                            .replaceAll("#SPEED_TEST_DATE#", lRawMeasurement.getDate())
+                            .replaceAll("#SPEEDTEST_SERVER#", lRawMeasurement.getServer())
+                            .replaceAll("#SPEEDTEST_DOWNLOAD#", rawMeasurements.get(i).getError())
+                            .replaceAll("#SPEEDTEST_UPLOAD#", (lRawMeasurement.getUpload() == null) ? "" : lRawMeasurement.getUpload());
+                } else {
+                    lRawMeasurementHTML = lRawMeasurementHTML
+                            .replaceAll("#SPEED_TEST_DATE#", lRawMeasurement.getDate())
+                            .replaceAll("#SPEEDTEST_SERVER#", lRawMeasurement.getServer())
+                            .replaceAll("#SPEEDTEST_UPLOAD#", rawMeasurements.get(i).getError())
+                            .replaceAll("#SPEEDTEST_DOWNLOAD#", (lRawMeasurement.getDownload() == null) ? "" : lRawMeasurement.getDownload());
+                }
+            }
+            report = report.replaceAll("#RAW_RESULT#", lRawMeasurementHTML + "\n#RAW_RESULT#");
+            i--;
+
         }
+        report = report.replaceAll("#RAW_RESULT#", "");
 
-        email.sendMail(
-                String.format(Display.getMessagesResourceBundle().getString("generalEmail.speedTest.subject"), lLocalHostName),
-                emailContentText + "<br>\n" + emailContentHTML);
+        Integer lMeasurementNumber = 1;
+        for (BarChartMeasurement lBarChartMeasurement : barChartMeasurements) {
+            Double lScaledDownload = lBarChartMeasurement.getDownload() * lScale;
+            Double lScaledUpload = lBarChartMeasurement.getUpload() * lScale;
+            String lBarChartMeasurementHTML = new String(barChartMeasurementTemplate);
+            lBarChartMeasurementHTML = lBarChartMeasurementHTML
+                    .replaceAll("#MEASUREMENT#", lMeasurementNumber.toString())
+                    .replaceAll("#DOWNLOAD#", String.format("%.1f", lBarChartMeasurement.getDownload()))
+                    .replaceAll("#DOWNLOAD_HEIGHT#", String.format("%.1f", lScaledDownload).replaceAll(",", "."))
+                    .replaceAll("#UPLOAD#", String.format("%.1f", lBarChartMeasurement.getUpload()))
+                    .replaceAll("#UPLOAD_HEIGHT#", String.format("%.1f", lScaledUpload).replaceAll(",", "."))
+                    .replace("#CATEGORY#", lBarChartMeasurement.getCategory().replaceAll("\\n", "<br>"));
+
+            report = report.replaceAll("#MEASUREMENTS#", lBarChartMeasurementHTML + "\n#MEASUREMENTS#");
+            lMeasurementNumber++;
+
+        }
+        report = report.replaceAll("#MEASUREMENTS#", "");
+
+        return report;
 
     }
 

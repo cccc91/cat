@@ -57,6 +57,7 @@ public class Constants {
     // Global statistics
     public final static int DEFAULT_GLOBAL_POLLING_PERIOD = 3000;
     public final static int DEFAULT_PERIODIC_SPEED_TEST_POLLING_PERIOD = 1000;
+    public final static int DEFAULT_PERIODIC_REPORTS_POLLING_PERIOD = 1000;
     public final static Long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD1 = 15 * 60 * 1000L;     // 1 loss every 15 min max (warning)
     public final static Long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD2 = 1 * 60 * 1000L;      // 1 loss every 1 min max  (minor)
     public final static Long DEFAULT_MEAN_TIME_BETWEEN_TWO_CONNECTIONS_LOST_THRESHOLD3 = 10 * 1000L;          // 1 loss every 10 sec max (major)
@@ -153,8 +154,6 @@ public class Constants {
     public static final String SPEED_TEST_PERIODIC_TEST_OFFSET_PREFERENCE = "speedTest.periodicTestOffset";
     public static final String SPEED_TEST_REPEAT_DURATION_PREFERENCE = "speedTest.repeatDuration";
     public static final String SPEED_TEST_REPORT_INTERVAL_PREFERENCE = "speedTest.reportInterval";
-    public static final String SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE = "speedTest.emailReportEnabled";
-    public static final String SPEED_TEST_EMAIL_REPORT_PERIOD_PREFERENCE = "speedTest.emailReportPeriod";
     public static final String SPEED_TEST_UPLOAD_FILE_SIZE_PREFERENCE = "speedTest.uploadFileSize";
     public static final String SPEED_TEST_DISPLAY_UNIT_RATIO_PREFERENCE = "speedTest.displayUnitRatio";
     public static final String SPEED_TEST_DISPLAYED_KEY_UNIT_PREFERENCE = "speedTest.displayedKeyUnit";
@@ -168,8 +167,6 @@ public class Constants {
     public static final Integer DEFAULT_SPEED_TEST_PERIODIC_TEST_OFFSET = 0;      // min
     public static final Integer DEFAULT_SPEED_TEST_REPEAT_DURATION = 15000;       // ms
     public static final Integer DEFAULT_SPEED_TEST_REPORT_INTERVAL = 150;         // ms
-    public static final Boolean DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED = false;
-    public static final Integer DEFAULT_SPEED_TEST_EMAIL_PERIOD = 1;
     public static final Integer DEFAULT_SPEED_TEST_UPLOAD_FILE_SIZE = 100000000;
     public static final Long DEFAULT_SPEED_TEST_DISPLAY_UNIT = Mbs;
     public static final String DEFAULT_SPEED_TEST_DISPLAYED_KEY_UNIT = "bitRate.2";

@@ -43,6 +43,10 @@ public class SpeedTestFactory {
                 // Clear live speed test series
                 if (Cat.getInstance().displayGraphicalInterface()) {
                     Platform.runLater(() -> {
+                        // Prevent memory leaks
+                        for (XYChart.Data lPoint: Cat.getInstance().getController().getLiveSpeedTestDownloadSeries().getData())  lPoint.setNode(null);
+                        for (XYChart.Data lPoint: Cat.getInstance().getController().getLiveSpeedTestUploadSeries().getData())  lPoint.setNode(null);
+                        // Reset data
                         Cat.getInstance().getController().getLiveSpeedTestDownloadSeries().getData().clear();
                         Cat.getInstance().getController().getLiveSpeedTestUploadSeries().getData().clear();
                     });
@@ -87,10 +91,11 @@ public class SpeedTestFactory {
                                               Display.getViewResourceBundle().getString("speedtest.type." + EnumTypes.SpeedTestType.valueOf(aInType)).toUpperCase()),
                                 EnumTypes.MessageLevel.INFO));
 
-                // In case of periodic speed test, manage email if email is allowed
-                if (Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED) &&
+                // In case of periodic speed test, manage reports if reports are allowed
+                if (Preferences.getInstance().getBooleanValue(Constants.PERIODIC_REPORTS_ENABLED_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_ENABLED) &&
                         aInType.equals(EnumTypes.SpeedTestType.PERIODIC)) {
-                    PeriodicSpeedTest.getInstance().addErrorToEmail(aInTime, aInTransferMode, null, Display.getMessagesResourceBundle().getString("generalEmail.speedTest.stop"));
+                    PeriodicSpeedTest.getInstance().addErrorToReport(aInTime, aInTransferMode, null, Display.getMessagesResourceBundle().getString(
+                            "generalEmail.periodicReports.speedTest.stop"));
                 }
 
             }
@@ -183,10 +188,10 @@ public class SpeedTestFactory {
                                                " SpeedTest Thread");
                 Display.getLogger().info(lMessage);
 
-                // In case of periodic speed test, manage email if email is allowed
-                if (Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED) &&
+                // In case of periodic speed test, manage report if reports are allowed
+                if (Preferences.getInstance().getBooleanValue(Constants.PERIODIC_REPORTS_ENABLED_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_ENABLED) &&
                     aInType.equals(EnumTypes.SpeedTestType.PERIODIC)) {
-                    PeriodicSpeedTest.getInstance().addMeasurementToEmail(aInTime, aInBitRates, aInOctetRates, aInBitRawRates, aInRawOctetRates);
+                    PeriodicSpeedTest.getInstance().addMeasurementToReport(aInTime, aInBitRates, aInOctetRates, aInBitRawRates, aInRawOctetRates);
                 }
 
             }
@@ -201,10 +206,10 @@ public class SpeedTestFactory {
                 Cat.getInstance().getController().printConsole(lMessage);
                 Cat.getInstance().getController().printSpeedTest(lMessage);
 
-                // In case of periodic speed test, manage email if email is allowed
-                if (Preferences.getInstance().getBooleanValue(Constants.SPEED_TEST_EMAIL_REPORT_ENABLED_PREFERENCE, Constants.DEFAULT_SPEED_TEST_EMAIL_REPORT_ENABLED) &&
+                // In case of periodic speed test, manage report if reports are allowed
+                if (Preferences.getInstance().getBooleanValue(Constants.PERIODIC_REPORTS_ENABLED_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_ENABLED) &&
                         aInType.equals(EnumTypes.SpeedTestType.PERIODIC)) {
-                    PeriodicSpeedTest.getInstance().addErrorToEmail(aInTime, aInTransferMode, aInSpeedTestError, aInErrorMessage);
+                    PeriodicSpeedTest.getInstance().addErrorToReport(aInTime, aInTransferMode, aInSpeedTestError, aInErrorMessage);
                 }
 
             }
