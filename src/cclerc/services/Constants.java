@@ -134,7 +134,7 @@ public class Constants {
     public static final Boolean DEFAULT_PERIODIC_REPORTS_ENABLED = false;
     public static final Integer DEFAULT_PERIODIC_REPORTS_PERIOD = 1;
     public static final Integer DEFAULT_PERIODIC_REPORTS_PERIOD_DISPLAYED_UNIT = HOURS;
-    public static final Integer DEFAULT_PERIODIC_REPORTS_OFFSET = 0;
+    public static final Integer DEFAULT_PERIODIC_REPORTS_OFFSET = 1;
 
     // Speed test preferences
     public static final String SPEED_TEST_GET_SERVERS_URL = "http://c.speedtest.net/speedtest-servers-static.php";
