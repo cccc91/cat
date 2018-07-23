@@ -706,11 +706,11 @@ public class CatView {
             lTooltip = new Tooltip(lTooltipText);
             Tooltip.install(periodicReportOffsetTextField, lTooltip);
 
-            lTooltipText = Display.getViewResourceBundle().getString("catView.applyPeriodicReportsConfiguration");
+            lTooltipText = Display.getViewResourceBundle().getString("catView.tooltip.applyPeriodicReportsConfiguration");
             lTooltip = new Tooltip(lTooltipText);
             Tooltip.install(applyPeriodicReportsConfigurationButton, lTooltip);
 
-            lTooltipText = Display.getViewResourceBundle().getString("catView.cancelPeriodicReportsConfiguration");
+            lTooltipText = Display.getViewResourceBundle().getString("catView.tooltip.cancelPeriodicReportsConfiguration");
             lTooltip = new Tooltip(lTooltipText);
             Tooltip.install(cancelPeriodicReportsConfigurationButton, lTooltip);
 
@@ -2418,7 +2418,7 @@ public class CatView {
 
             }
 
-            if (lSpeedTestBar.getSeries().getData().size() -1 > 0) {
+            if (lSpeedTestBar.getSeries().getData().size() - 1 > 0) {
 
                 speedTestBarChart.setLegendVisible(true);
                 XYChart.Data lLastChartPoint = lSpeedTestBar.getSeries().getData().get(lSpeedTestBar.getSeries().getData().size() - 1);
