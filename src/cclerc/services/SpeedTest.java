@@ -77,6 +77,7 @@ public class SpeedTest {
                     fillRates();
                     speedTestInterface.reportFinalResult(startTime, bitRates, octetRates, rawBitRates, rawOctetRates);
                     speedTestInterface.storeResult(convertSpeedTestMode(mode), startTime, BigDecimal.ZERO, BigDecimal.ZERO);
+                    if (mode.equals(SpeedTestMode.DOWNLOAD)) speedTestInterface.storeResult(EnumTypes.SpeedTestMode.UPLOAD, startTime, BigDecimal.ZERO, BigDecimal.ZERO);
                     resetRates();
                 }
             }
@@ -265,6 +266,7 @@ public class SpeedTest {
             fillRates();
             speedTestInterface.reportFinalResult(startTime, bitRates, octetRates, rawBitRates, rawOctetRates);
             speedTestInterface.storeResult(convertSpeedTestMode(mode), startTime, BigDecimal.ZERO, BigDecimal.ZERO);
+            if (mode.equals(SpeedTestMode.DOWNLOAD)) speedTestInterface.storeResult(EnumTypes.SpeedTestMode.UPLOAD, startTime, BigDecimal.ZERO, BigDecimal.ZERO);
             resetRates();
         }
     }
