@@ -24,6 +24,10 @@ public class GlobalMonitoring {
         private Alarm pingLostAlarm;
         private Alarm connectionLostAlarm;
 
+        // Reports
+        private long lostPingsSinceLastReport = 0;
+        private long lostConnectionsSinceLastReport = 0;
+
         // CONSTRUCTORS
 
         public JobDetails(EnumTypes.HostState aInState, long aInStartMonitoringDate) {
@@ -47,6 +51,7 @@ public class GlobalMonitoring {
 
         public void incrementPingsLostCount() {
             pingsLostCount++;
+            lostPingsSinceLastReport++;
         }
 
         public void setPingLostAlarm(Alarm aInAlarm) {
@@ -59,6 +64,7 @@ public class GlobalMonitoring {
 
         public void setConnectionLostAlarm(Alarm aInAlarm) {
             connectionLostAlarm = aInAlarm;
+            lostConnectionsSinceLastReport++;
         }
 
         public void resetConnectionLostAlarm() {
@@ -91,6 +97,14 @@ public class GlobalMonitoring {
             return connectionLostAlarm;
         }
 
+        public long getLostPingsSinceLastReport() {
+            return lostPingsSinceLastReport;
+        }
+
+        public long getLostConnectionsSinceLastReport() {
+            return lostConnectionsSinceLastReport;
+        }
+
         // METHODS
 
         public void resetConnectionLost() {
@@ -98,6 +112,10 @@ public class GlobalMonitoring {
             pingsLostCount = 0;
         }
 
+        public void resetStatistics() {
+            lostPingsSinceLastReport = 0;
+            lostConnectionsSinceLastReport = 0;
+        }
 
     }
 
@@ -957,6 +975,15 @@ public class GlobalMonitoring {
 
         }
 
+    }
+
+    /**
+     * Resets report, i.e. resets statistics for all jobs
+     */
+    public void resetReport() {
+        for (MonitoringJob lMonitoringJob: monitoringJobStates.keySet()) {
+            monitoringJobStates.get(lMonitoringJob).resetStatistics();
+        }
     }
 
 }

@@ -568,6 +568,63 @@ public class MonitoringJob implements Runnable {
         }
     }
 
+    // GETTERS FOR STATISTICS
+
+    // Primary or backup
+    public EnumTypes.ServerType getServerType() {
+        return serverType;
+    }
+
+    // Total pings count
+    public long getPingsCount() {
+        return pingsCount;
+    }
+
+    // Lost pings count
+    public long getLostPingsCount() {
+        return lostPingsCount;
+    }
+
+    // Lost connections count
+    public long getLostConnectionsCount() {
+        return lostConnectionsCount;
+    }
+
+    // Network interface
+    public NetworkInterface getNetworkInterface() {
+        return networkInterface;
+    }
+
+    // Last connection lost date
+    public Date getLastLostConnectionDate() {
+        return lastLostConnectionDate;
+    }
+
+    // Last connection recovery date
+    public Date getLastRecoveryConnectionDate() {
+        return lastRecoveryConnectionDate;
+    }
+
+    // Minimum round trip
+    public long getMinRoundTrip() {
+        return minRoundTrip;
+    }
+
+    // Maximum round trip
+    public long getMaxRoundTrip() {
+        return maxRoundTrip;
+    }
+
+    // Average round trip
+    public double getAverageRoundTrip() {
+        return (reachableCount == 0) ? 0d : (double) totalRoundTrip / reachableCount;
+    }
+
+    // Current host state
+    public EnumTypes.HostState getHostState() {
+        return hostState;
+    }
+
     // GETTERS
 
     /**

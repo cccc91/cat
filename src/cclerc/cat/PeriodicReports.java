@@ -137,6 +137,7 @@ public class PeriodicReports implements Runnable {
                                                                    EnumTypes.MessageLevel.INFO));
 
         // Reset all data
+        GlobalMonitoring.getInstance().resetReport();
         PeriodicSpeedTest.getInstance().resetReport();
         resetEmail();
 
