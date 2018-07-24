@@ -127,7 +127,7 @@ public class PeriodicReports implements Runnable {
 
         // TODO: add all information
         String lEmailBody = "<meta http-equiv=\"Content-Type\" charset=\"UTF-16\">\n" +
-                            PeriodicSpeedTest.getInstance().buildReport();
+                            GlobalMonitoring.getInstance().buildReport() + PeriodicSpeedTest.getInstance().buildReport();
         email.sendMail(String.format(Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.subject"), lLocalHostName), lEmailBody);
 
         Display.getLogger().info(Display.getMessagesResourceBundle().getString("log.globalMonitoring.reports.new"));

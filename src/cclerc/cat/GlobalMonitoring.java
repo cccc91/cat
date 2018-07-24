@@ -986,4 +986,20 @@ public class GlobalMonitoring {
         }
     }
 
+    /**
+     * Builds the periodic global report
+     * @return Periodic global report
+     */
+    public String buildReport() {
+
+        String lReport = "";
+
+        // Build summary report
+
+        // Build by job report
+
+        return lReport;
+
+    }
+
 }

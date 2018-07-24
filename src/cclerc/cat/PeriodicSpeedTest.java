@@ -311,6 +311,10 @@ public class PeriodicSpeedTest implements Runnable {
 
     }
 
+    /**
+     * Builds the periodic speed test report
+     * @return Periodic speed test report
+     */
     public String buildReport() {
 
         // TODO: configuration
