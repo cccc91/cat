@@ -7,8 +7,12 @@ import cclerc.services.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Singleton class implementing global monitoring
@@ -260,6 +264,49 @@ public class GlobalMonitoring {
                 Utilities.sleep(1000);
             }
 
+            // Load report body template
+            InputStream lReportBodyInputStream = getClass().getResourceAsStream("/resources/templates/globalReportBody.html");
+            BufferedReader lReportBodyBuffer = new BufferedReader(new InputStreamReader(lReportBodyInputStream));
+            reportBodyTemplate = lReportBodyBuffer.lines().collect(Collectors.joining("\n"));
+
+            reportBodyTemplate =
+                    reportBodyTemplate.replaceAll("#GLOBAL_TITLE#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.title"))
+                                      .replaceAll("#SUMMARY_RESULTS_TITLE#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general"))
+                                      .replaceAll("#JOB_RESULTS_TITLE#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.jobs"))
+                                      .replaceAll("#GLOBAL_STATE_LABEL#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.globalState"))
+                                      .replaceAll("#WAN_STATE_LABEL#",
+                                                  (wanMonitored) ? Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.wanState") : "")
+                                      .replaceAll("#LAN_STATE_LABEL#",
+                                                  (lanMonitored) ? Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.lanState") : "")
+                                      .replaceAll("#ETH_STATE_LABEL#",
+                                                  (ethernetMonitored) ? Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.ethState") : "")
+                                      .replaceAll("#WIFI_STATE_LABEL#",
+                                                  (wifiMonitored) ? Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.wifiState") : "")
+                                      .replaceAll("#LOST_PINGS_COUNT_LABEL#",
+                                                  Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.lostPingsCount"))
+                                      .replaceAll("#LOST_CONNECTIONS_LABEL#",
+                                                  Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.lostConnectionsCount"))
+                                      .replaceAll("#ACTIVE_ALARMS_COUNT_LABEL#",
+                                                  Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.activeAlarmsCount"))
+                                      .replaceAll("#CLEARED_ALARMS_COUNT_LABEL#",
+                                                  Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.clearedAlarmsCount"))
+                                      .replaceAll("#JOB_SERVER_NAME_HEADER#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.jobs.serverName"))
+                                      .replaceAll("#JOB_SERVER_IP_HEADER#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.jobs.serverIp"))
+                                      .replaceAll("#JOB_SERVER_TYPE_HEADER#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.jobs.serverType"))
+                                      .replaceAll("#JOB_INTERFACE_HEADER#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.jobs.interface"))
+                                      .replaceAll("#JOB_ADDRESS_TYPE_HEADER#",
+                                                  Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.jobs.addressType"))
+                                      .replaceAll("#JOB_LOST_PINGS_HEADER#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.jobs.lostPings"))
+                                      .replaceAll("#JOB_LOST_CONNECTIONS_HEADER#",
+                                                  Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.jobs.lostConnections"))
+                                      .replaceAll("#JOB_ROUND_TRIP_HEADER#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.jobs.roundTrip"))
+                                      .replaceAll("#COUNT_TYPE#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.countType"));
+
+            // Load report job result template
+            InputStream lReportJobResultInputStream = getClass().getResourceAsStream("/resources/templates/globalReportJobResult.html");
+            BufferedReader lReportJobResultBuffer = new BufferedReader(new InputStreamReader(lReportJobResultInputStream));
+            reportJobResultTemplate = lReportJobResultBuffer.lines().collect(Collectors.joining("\n"));
+
             // Run the thread
             while (running) {
 
@@ -412,6 +459,10 @@ public class GlobalMonitoring {
     private volatile ObservableList<Alarm> activeAlarmsList = FXCollections.observableArrayList();
     private volatile ObservableList<Alarm> historicalAlarmsList = FXCollections.observableArrayList();
 
+    private String rawResultTemplate;
+
+    private String reportBodyTemplate;
+    private String reportJobResultTemplate;
     private PeriodicCheck periodicCheck = new PeriodicCheck();
 
     // SINGLETON
@@ -992,13 +1043,15 @@ public class GlobalMonitoring {
      */
     public String buildReport() {
 
-        String lReport = "";
+        String lReport = reportBodyTemplate;
 
         // Build summary report
+        lReport.replaceAll("", "")
+               ;
 
         // Build by job report
-
-        return lReport;
+        return "";
+        //return lReport;
 
     }
 
