@@ -273,7 +273,7 @@ public class GlobalMonitoring {
                     reportBodyTemplate.replaceAll("#GLOBAL_TITLE#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.title"))
                                       .replaceAll("#SUMMARY_RESULTS_TITLE#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general"))
                                       .replaceAll("#JOB_RESULTS_TITLE#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.jobs"))
-                                      .replaceAll("#GLOBAL_STATE_LABEL#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.globalState"))
+                                      .replaceAll("#NETWORK_STATE_LABEL#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.networkState"))
                                       .replaceAll("#WAN_STATE_LABEL#",
                                                   (wanMonitored) ? Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.wanState") : "")
                                       .replaceAll("#LAN_STATE_LABEL#",
@@ -1045,8 +1045,15 @@ public class GlobalMonitoring {
 
         String lReport = reportBodyTemplate;
 
+        // Determine global state
+        String lNetworkState;
+        if (networkDownAlarm == null){
+
+        } else {
+
+        }
         // Build summary report
-        lReport.replaceAll("", "")
+        lReport.replaceAll("GLOBAL_STATE", "")
                ;
 
         // Build by job report
