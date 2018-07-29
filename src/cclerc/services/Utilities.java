@@ -265,7 +265,7 @@ public class Utilities {
                 return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, hour, minute))
                        + (aInPeriod - (minute % aInPeriod) + aInOffset) * 60_000;
             } else if (aInPeriod == 60 * 12) {
-                if (hour < 8) return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, 8, aInOffset));
+                if (hour < 8 || hour >= 20) return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, 8, aInOffset));
                 else return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, 0, aInOffset)) + 60_000 * 60 * 20;
             } else if (aInPeriod < 60 * 24) {
                 return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, hour, aInOffset)) + 60_000 * 60;
