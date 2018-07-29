@@ -125,10 +125,12 @@ public class PeriodicReports implements Runnable {
             Display.logUnexpectedError(e);
         }
 
-        // TODO: add all information
         String lEmailBody = "<meta http-equiv=\"Content-Type\" charset=\"UTF-16\">\n" +
                             GlobalMonitoring.getInstance().buildReport() + PeriodicSpeedTest.getInstance().buildReport();
-        email.sendMail(String.format(Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.subject"), lLocalHostName), lEmailBody);
+        // Check if email is enabled must be done here, oif done when initializing email variable, enabling/disabling would be taken into account a next period only
+        if (!Cat.getInstance().displayGraphicalInterface() || Cat.getInstance().getController().isButtonGeneralEmailEnabled()) {
+            email.sendMail(String.format(Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.subject"), lLocalHostName), lEmailBody);
+        }
 
         Display.getLogger().info(Display.getMessagesResourceBundle().getString("log.globalMonitoring.reports.new"));
         Cat.getInstance().getController().printConsole(new Message(String.format(Display.getViewResourceBundle().getString("globalMonitoring.reports.new"),

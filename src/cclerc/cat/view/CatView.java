@@ -1789,6 +1789,7 @@ public class CatView {
             });
         }
 
+        PeriodicSpeedTest.getInstance().setPause(isButtonPauseDisplayed);
         isButtonPauseDisplayed = !isButtonPauseDisplayed;
 
         // Compute image url and load it
@@ -2050,6 +2051,24 @@ public class CatView {
             }
             refreshPingAxisBounds();
 
+            for (int lKey : speedTestBars.keySet()) {
+
+                // Clear points on chart
+                speedTestBars.get(lKey).getSeries().getData().clear();
+                speedTestBars.get(lKey).setMinY(Long.MAX_VALUE);
+                speedTestBars.get(lKey).setMaxY(Long.MIN_VALUE);
+
+                // Clear stored points
+                speedTestPoints.get(lKey).clear();
+
+            }
+            refreshAllSpeedTestSeries();
+
+            // Reset reports
+            GlobalMonitoring.getInstance().resetReport();
+            PeriodicSpeedTest.getInstance().resetReport();
+
+
             // Reset statistics for all jobs
             for (MonitoringJob lMonitoringJob : MonitoringJob.getMonitoringJobs()) {
                 lMonitoringJob.resetStatistics();
@@ -2173,17 +2192,19 @@ public class CatView {
 
     /**
      * Sets global state image view
-     * @param aInStateOk true if state is ok, false if state is nok
+     * @param aInState 0: ok, 1: degraded, 2: down
      */
-    public void setGlobalStateImageView(boolean aInStateOk) {
+    public void setGlobalStateImageView(int aInState) {
 
         // Compute image url and load it
-        Image lNewImage = (aInStateOk) ?
+        Image lNewImage = (aInState == Constants.STATE_OK) ?
                     new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_OK).toString()) :
-                    new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_NOK).toString());
-        Tooltip lTooltip = (aInStateOk) ?
+                          (aInState == Constants.STATE_DEGRADED) ? new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_DEGRADED).toString()) :
+                          new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_NOK).toString());
+        Tooltip lTooltip = (aInState == Constants.STATE_OK) ?
                    new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.globalStatusOk")) :
-                   new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.globalStatusNok"));
+                           (aInState == Constants.STATE_DEGRADED) ? new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.globalStatusDegraded")) :
+                           new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.globalStatusNok"));
         if (Preferences.getInstance().getBooleanValue("enableDetailTooltip", Constants.DEFAULT_ENABLE_DETAIL_TOOLTIP_PREFERENCE)) Tooltip.install(globalStateImageView, lTooltip);
         globalStateImageView.setImage(lNewImage);
 
@@ -2369,9 +2390,15 @@ public class CatView {
 
         SpeedTestBar lSpeedTestBar = speedTestBars.get(aInKey);
 
+        if (speedTestPoints.size() == 0) return;
         if (!speedTestPoints.containsKey(aInKey)) return;
         List<SpeedTestPoint> lSpeedTestPoints = speedTestPoints.get(aInKey);
-        if (speedTestPoints.size() == 0) return;
+
+        // Case of reset statistics
+        if (lSpeedTestPoints.size() == 0) {
+            speedTestBarChartXAxis.setCategories(FXCollections.observableArrayList(new LinkedHashSet<>()));
+            return;
+        }
 
         SpeedTestPoint lFirstPoint = lSpeedTestPoints.get(0);
         SpeedTestPoint lLastPoint = lSpeedTestPoints.get(lSpeedTestPoints.size() - 1);
@@ -2716,12 +2743,14 @@ public class CatView {
                 XYChart.Data lPoint = lPingPoint.getPoint();
                 if (aInX - Utilities.convertXY(lPoint.getXValue()) > MAX_STORED_PING_DURATION) {
                     pingPoints.get(lKey).remove(lPingPoint);
+                    lPingPoint.getPoint().setNode(null);
                 } else break;
             }
             for (int lIndex = 0; lIndex < pingMarkers.get(lKey).size(); lIndex++) {
                 XYChart.Data lPingMarker = pingMarkers.get(lKey).get(lIndex);
                 if (aInX - Utilities.convertXY(lPingMarker.getXValue()) > MAX_STORED_PING_DURATION) {
-                    pingPoints.get(lKey).remove(lPingMarker);
+                    pingMarkers.get(lKey).remove(lPingMarker);
+                    lPingMarker.setNode(null);
                 } else break;
             }
 
@@ -2761,9 +2790,10 @@ public class CatView {
 
             // Remove oldest points from the set of points and the series
             for (int lIndex = 0; lIndex < speedTestPoints.get(lKey).size(); lIndex++) {
-                SpeedTestPoint lPingSpeedTestPoint = speedTestPoints.get(lKey).get(lIndex);
-                if (aInX - lPingSpeedTestPoint.getX() > MAX_STORED_SPEED_TEST_DURATION) {
-                    speedTestPoints.get(lKey).remove(lPingSpeedTestPoint);
+                SpeedTestPoint lSpeedTestPoint = speedTestPoints.get(lKey).get(lIndex);
+                if (aInX - lSpeedTestPoint.getX() > MAX_STORED_SPEED_TEST_DURATION) {
+                    speedTestPoints.get(lKey).remove(lSpeedTestPoint);
+                    lSpeedTestPoint.getPoint().setNode(null);
                 } else break;
             }
 

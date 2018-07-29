@@ -489,6 +489,8 @@ public class Cat extends Application {
             }
         }
 
+        PeriodicSpeedTest.getInstance().setPause(lAllPaused);
+
         if (displayGraphicalInterface) {
             if (MonitoringJob.getMonitoringJobs().size() == 0) {
                 // If there's no more monitoring job, remove the Play / Pause button
@@ -514,7 +516,7 @@ public class Cat extends Application {
 
         if (displayGraphicalInterface) {
 
-            // Check if all summary jobs are paused or not paused
+            // Check if all summary jobs have emails enabled or not
             boolean lAllEnabled = true;
             boolean lAllDisabled = true;
             for (MonitoringJob lMonitoringJob : MonitoringJob.getMonitoringJobs()) {

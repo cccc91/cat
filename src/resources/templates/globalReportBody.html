@@ -2,36 +2,81 @@
 
 <h2>#SUMMARY_RESULTS_TITLE#</h2>
 
-<p>
-    <span style="font-weight: bold">#NETWORK_STATE_LABEL#</span><span style="color: #STATE_COLOR#">&nbsp;#NETWORK_STATE#</span><br/>
-    <span style="font-weight: bold">#WAN_STATE_LABEL#</span><span style="color: #STATE_COLOR#">&nbsp;#WAN_STATE#</span><br/>
-    <span style="font-weight: bold">#LAN_STATE_LABEL#</span><span style="color: #STATE_COLOR#">&nbsp;#LAN_STATE#</span><br/>
-    <span style="font-weight: bold">#ETH_STATE_LABEL#</span><span style="color: #STATE_COLOR#">&nbsp;#ETH_STATE#</span><br/>
-    <span style="font-weight: bold">#WIFI_STATE_LABEL#</span><span style="color: #STATE_COLOR#">&nbsp;#WIFI_STATE#</span><br/>
-</p>
-<p>
-    <span style="font-weight: bold">#LOST_PINGS_COUNT_LABEL#</span><span style="font-weight: bold; font-style: italic">&nbsp;#COUNT_TYPE#</span><span>&nbsp;#LOST_PINGS_COUNT#</span><br/>
-    <span style="font-weight: bold">#LOST_CONNECTIONS_LABEL#</span><span style="font-weight: bold; font-style: italic">&nbsp;#LOST_CONNECTIONS_TYPE#</span><span>&nbsp;#LOST_CONNECTIONS_COUNT#</span>
-</p>
-<p>
-    <span style="font-weight: bold">#ACTIVE_ALARMS_COUNT_LABEL#</span><span style="font-weight: bold; font-style: italic">&nbsp;#COUNT_TYPE#</span><span>&nbsp;#ACTIVE_ALARMS_COUNT#</span><br/>
-    <span style="font-weight: bold">#CLEARED_ALARMS_COUNT_LABEL#</span><span style="font-weight: bold; font-style: italic">&nbsp;#COUNT_TYPE#</span><span>&nbsp;#CLEARED_ALARMS_COUNT#</span>
-</p>
-
+<table cellspacing="0" border="0">
+    <tr>
+        <td align="left" style="font-weight: bold; padding-left: 0px; padding-right: 5px">#NETWORK_STATE_LABEL#</td>
+        <td align="left" style="color: #NETWORK_STATE_COLOR#">#NETWORK_STATE#</td>
+    </tr>
+    <tr>
+        <td align="left" style="font-weight: bold; padding-left: 0px; padding-right: 5px">#WAN_STATE_LABEL#</td>
+        <td align="left" style="color: #WAN_STATE_COLOR#">#WAN_STATE#</td>
+    </tr>
+    <tr>
+        <td align="left" style="font-weight: bold; padding-left: 0px; padding-right: 5px">#LAN_STATE_LABEL#</td>
+        <td align="left" style="color: #LAN_STATE_COLOR#">#LAN_STATE#</td>
+    </tr>
+    <tr>
+        <td align="left" style="font-weight: bold; padding-left: 0px; padding-right: 5px">#ETH_STATE_LABEL#</td>
+        <td align="left" style="color: #ETH_STATE_COLOR#">#ETH_STATE#</td>
+    </tr>
+    <tr>
+        <td align="left" style="font-weight: bold; padding-left: 0px; padding-right: 5px">#WIFI_STATE_LABEL#</td>
+        <td align="left" style="color: #WIFI_STATE_COLOR#">#WIFI_STATE#</td>
+    </tr>
+</table>
 <br/>
+<table cellspacing="0" border="0">
+    <tr>
+        <td align="left" style="font-weight: bold; padding-left: 0px; padding-right: 5px">#LOST_PINGS_COUNT_LABEL#</td>
+        <td align="left" style="font-weight: bold; font-style: italic; padding-left: 5px; padding-right: 5px">(#COUNT_TYPE#)</td>
+        <td align="left" style="color: #LOST_PINGS_COUNT_COLOR#">#LOST_PINGS_COUNT#</td>
+    </tr>
+    <tr>
+        <td align="left" style="font-weight: bold; padding-left: 0px; padding-right: 5px">#LOST_CONNECTIONS_LABEL#</td>
+        <td align="left" style="font-weight: bold; font-style: italic; padding-left: 5px; padding-right: 5px">(#COUNT_TYPE#)</td>
+        <td align="left" style="color: #LOST_CONNECTIONS_COUNT_COLOR#">#LOST_CONNECTIONS_COUNT#</td>
+    </tr>
+</table>
+<br/>
+<table cellspacing="0" border="0">
+    <tr>
+        <td align="left" style="font-weight: bold; padding-left: 0px; padding-right: 5px">#ACTIVE_ALARMS_COUNT_LABEL#</td>
+        <td align="left" style="color: #ACTIVE_ALARMS_COLOR#">#ACTIVE_ALARMS_COUNT#</td>
+    </tr>
+    <tr>
+        <td align="left" style="font-weight: bold; padding-left: 0px; padding-right: 5px">#ACTIVE_INFO_ALARMS_COUNT_LABEL#</td>
+        <td align="left" style="color: #ACTIVE_INFO_ALARMS_COLOR#">#ACTIVE_INFO_ALARMS_COUNT#</td>
+    </tr>
+    <tr>
+        <td align="left" style="font-weight: bold; padding-left: 0px; padding-right: 5px">#ACTIVE_WARNING_ALARMS_COUNT_LABEL#</td>
+        <td align="left" style="color: #ACTIVE_WARNING_ALARMS_COLOR#">#ACTIVE_WARNING_ALARMS_COUNT#</td>
+    </tr>
+    <tr>
+        <td align="left" style="font-weight: bold; padding-left: 0px; padding-right: 5px">#ACTIVE_MINOR_ALARMS_COUNT_LABEL#</td>
+        <td align="left" style="color: #ACTIVE_MINOR_ALARMS_COLOR#">#ACTIVE_MINOR_ALARMS_COUNT#</td>
+    </tr>
+    <tr>
+        <td align="left" style="font-weight: bold; padding-left: 0px; padding-right: 5px">#ACTIVE_MAJOR_ALARMS_COUNT_LABEL#</td>
+        <td align="left" style="color: #ACTIVE_MAJOR_ALARMS_COLOR#">#ACTIVE_MAJOR_ALARMS_COUNT#</td>
+    </tr>
+    <tr>
+        <td align="left" style="font-weight: bold; padding-left: 0px; padding-right: 5px">#ACTIVE_CRITICAL_ALARMS_COUNT_LABEL#</td>
+        <td align="left" style="color: #ACTIVE_CRITICAL_ALARMS_COLOR#">#ACTIVE_CRITICAL_ALARMS_COUNT#</td>
+    </tr>
+</table>
 
 <h2>#JOB_RESULTS_TITLE#</h2>
 
 <table width="100%" cellspacing="0" border="1">
     <tr>
-        <th align="center" style="font: bold; padding-left: 5px; padding-right: 5px">#JOB_SERVER_NAME_HEADER#</th>
-        <th align="center" style="font: bold padding-left: 5px; padding-right: 5px">#JOB_SERVER_IP_HEADER#</th>
-        <th align="center" style="font: bold padding-left: 5px; padding-right: 5px">#JOB_SERVER_TYPE_HEADER#</th>
-        <th align="center" style="font: bold padding-left: 5px; padding-right: 5px">#JOB_INTERFACE_HEADER#</th>
-        <th align="center" style="font: bold padding-left: 5px; padding-right: 5px">#JOB_ADDRESS_TYPE_HEADER#</th>
-        <th align="center" style="font: bold padding-left: 5px; padding-right: 5px">#JOB_LOST_PINGS_HEADER#<br><span style="font-style: italic">#COUNT_TYPE#</span></th>
-        <th align="center" style="font: bold padding-left: 5px; padding-right: 5px">#JOB_LOST_CONNECTIONS_HEADER#<br><span style="font-style: italic">#COUNT_TYPE#</span></th>
-        <th align="center" style="font: bold padding-left: 5px; padding-right: 5px">#JOB_ROUND_TRIP_HEADER#</th>
+        <th align="center" style="font-weight: bold; padding-left: 5px; padding-right: 5px">#JOB_SERVER_NAME_HEADER#</th>
+        <th align="center" style="font-weight: bold padding-left: 5px; padding-right: 5px">#JOB_SERVER_IP_HEADER#</th>
+        <th align="center" style="font-weight: bold padding-left: 5px; padding-right: 5px">#JOB_SERVER_TYPE_HEADER#</th>
+        <th align="center" style="font-weight: bold padding-left: 5px; padding-right: 5px">#JOB_INTERFACE_HEADER#</th>
+        <th align="center" style="font-weight: bold padding-left: 5px; padding-right: 5px">#JOB_ADDRESS_TYPE_HEADER#</th>
+        <th align="center" style="font-weight: bold padding-left: 5px; padding-right: 5px">#JOB_LOST_PINGS_HEADER#<br><span style="font-style: italic">#COUNT_TYPE#</span></th>
+        <th align="center" style="font-weight: bold padding-left: 5px; padding-right: 5px">#JOB_LOST_CONNECTIONS_HEADER#<br><span style="font-style: italic">#COUNT_TYPE#</span></th>
+        <th align="center" style="font-weight: bold padding-left: 5px; padding-right: 5px">#JOB_ROUND_TRIP_HEADER#</th>
     </tr>
     #JOB_RESULT#
 </table>

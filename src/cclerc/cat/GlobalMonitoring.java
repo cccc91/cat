@@ -23,8 +23,8 @@ public class GlobalMonitoring {
 
         private EnumTypes.HostState state;
         private long startMonitoringDate;
-        private long lastPingLostDate;
-        private long pingsLostCount = 0;
+        private long lastLostPingDate;
+        private long lostPingsCount = 0;
         private Alarm pingLostAlarm;
         private Alarm connectionLostAlarm;
 
@@ -49,12 +49,12 @@ public class GlobalMonitoring {
             state = aInState;
         }
 
-        public void setLastPingLostDate(long aInLastPingLostDate) {
-            lastPingLostDate = aInLastPingLostDate;
+        public void setLastLostPingDate(long aInLastPingLostDate) {
+            lastLostPingDate = aInLastPingLostDate;
         }
 
         public void incrementPingsLostCount() {
-            pingsLostCount++;
+            lostPingsCount++;
             lostPingsSinceLastReport++;
         }
 
@@ -85,12 +85,12 @@ public class GlobalMonitoring {
             return startMonitoringDate;
         }
 
-        public long getLastPingLostDate() {
-            return lastPingLostDate;
+        public long getLastLostPingDate() {
+            return lastLostPingDate;
         }
 
-        public long getPingsLostCount() {
-            return pingsLostCount;
+        public long getLostPingsCount() {
+            return lostPingsCount;
         }
 
         public Alarm getPingLostAlarm() {
@@ -112,11 +112,11 @@ public class GlobalMonitoring {
         // METHODS
 
         public void resetConnectionLost() {
-            lastPingLostDate = 0;
-            pingsLostCount = 0;
+            lastLostPingDate = 0;
+            lostPingsCount = 0;
         }
 
-        public void resetStatistics() {
+        public void resetReport() {
             lostPingsSinceLastReport = 0;
             lostConnectionsSinceLastReport = 0;
         }
@@ -264,6 +264,19 @@ public class GlobalMonitoring {
                 Utilities.sleep(1000);
             }
 
+            // Retrieve information from CSS
+            InputStream lCssInputStream = getClass().getResourceAsStream("/resources/css/view.css");
+            BufferedReader lCssBuffer = new BufferedReader(new InputStreamReader(lCssInputStream));
+            String lCss = lCssBuffer.lines().collect(Collectors.joining());
+            colorStateOk = lCss.replaceAll(".*#state-ok", "").replaceAll("}.*", "").replaceAll(".*-fx-text-fill[^:]*:[ ]*([^;]*);.*", "$1");
+            colorStateDegraded = lCss.replaceAll(".*#state-degraded", "").replaceAll("}.*", "").replaceAll(".*-fx-text-fill[^:]*:[ ]*([^;]*);.*", "$1");
+            colorStateNok = lCss.replaceAll(".*#state-nok", "").replaceAll("}.*", "").replaceAll(".*-fx-text-fill[^:]*:[ ]*([^;]*);.*", "$1");
+            colorAlarmInfo = lCss.replaceAll(".*#state-alarm-info", "").replaceAll("}.*", "").replaceAll(".*-fx-text-fill[^:]*:[ ]*([^;]*);.*", "$1");
+            colorAlarmWarning = lCss.replaceAll(".*#state-alarm-warning", "").replaceAll("}.*", "").replaceAll(".*-fx-text-fill[^:]*:[ ]*([^;]*);.*", "$1");
+            colorAlarmMinor = lCss.replaceAll(".*#state-alarm-minor", "").replaceAll("}.*", "").replaceAll(".*-fx-text-fill[^:]*:[ ]*([^;]*);.*", "$1");
+            colorAlarmMajor = lCss.replaceAll(".*#state-alarm-major", "").replaceAll("}.*", "").replaceAll(".*-fx-text-fill[^:]*:[ ]*([^;]*);.*", "$1");
+            colorAlarmCritical = lCss.replaceAll(".*#state-alarm-critical", "").replaceAll("}.*", "").replaceAll(".*-fx-text-fill[^:]*:[ ]*([^;]*);.*", "$1");
+
             // Load report body template
             InputStream lReportBodyInputStream = getClass().getResourceAsStream("/resources/templates/globalReportBody.html");
             BufferedReader lReportBodyBuffer = new BufferedReader(new InputStreamReader(lReportBodyInputStream));
@@ -288,8 +301,16 @@ public class GlobalMonitoring {
                                                   Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.lostConnectionsCount"))
                                       .replaceAll("#ACTIVE_ALARMS_COUNT_LABEL#",
                                                   Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.activeAlarmsCount"))
-                                      .replaceAll("#CLEARED_ALARMS_COUNT_LABEL#",
-                                                  Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.clearedAlarmsCount"))
+                                      .replaceAll("#ACTIVE_INFO_ALARMS_COUNT_LABEL#",
+                                                  Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.activeInfoAlarmsCount"))
+                                      .replaceAll("#ACTIVE_WARNING_ALARMS_COUNT_LABEL#",
+                                                  Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.activeWarningAlarmsCount"))
+                                      .replaceAll("#ACTIVE_MINOR_ALARMS_COUNT_LABEL#",
+                                                  Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.activeMinorAlarmsCount"))
+                                      .replaceAll("#ACTIVE_MAJOR_ALARMS_COUNT_LABEL#",
+                                                  Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.activeMajorAlarmsCount"))
+                                      .replaceAll("#ACTIVE_CRITICAL_ALARMS_COUNT_LABEL#",
+                                                  Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.activeCriticalAlarmsCount"))
                                       .replaceAll("#JOB_SERVER_NAME_HEADER#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.jobs.serverName"))
                                       .replaceAll("#JOB_SERVER_IP_HEADER#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.jobs.serverIp"))
                                       .replaceAll("#JOB_SERVER_TYPE_HEADER#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.jobs.serverType"))
@@ -324,15 +345,15 @@ public class GlobalMonitoring {
                     JobDetails lJobDetails = monitoringJobStates.get(lMonitoringJob);
 
                     // If no connection is lost during configurable period, reset the counters
-                    if (lJobDetails.getLastPingLostDate() != 0 &&
-                        (lNow - lJobDetails.getLastPingLostDate() >=  lConfiguration.getConnectionsLostForgetTime())) {
+                    if (lJobDetails.getLastLostPingDate() != 0 &&
+                        (lNow - lJobDetails.getLastLostPingDate() >= lConfiguration.getConnectionsLostForgetTime())) {
                         lJobDetails.resetConnectionLost();
                     }
 
                     // Compute mean time between 2 connections lost. First lost connection, or unreachable host don't trigger alarms
                     double lMeanTimeBetweenTwoConnectionsLost =
-                            (lJobDetails.pingsLostCount > 1)
-                            ? (lNow - lJobDetails.startMonitoringDate) / lJobDetails.pingsLostCount
+                            (lJobDetails.lostPingsCount > 1)
+                            ? (lNow - lJobDetails.startMonitoringDate) / lJobDetails.lostPingsCount
                             : Double.MAX_VALUE;
 
                     // For each connection type, store the max mean time (the most favorable case among the same connection type jobs is considered)
@@ -450,6 +471,8 @@ public class GlobalMonitoring {
     private boolean wanMonitored = false;
     private boolean lanMonitored = false;
 
+    private Integer networkState = Constants.STATE_OK;
+
     private Alarm ethernetDownAlarm;
     private Alarm wifiDownAlarm;
     private Alarm wanDownAlarm;
@@ -461,6 +484,14 @@ public class GlobalMonitoring {
 
     private String rawResultTemplate;
 
+    private String colorStateOk;
+    private String colorStateDegraded;
+    private String colorStateNok;
+    private String colorAlarmInfo;
+    private String colorAlarmWarning;
+    private String colorAlarmMinor;
+    private String colorAlarmMajor;
+    private String colorAlarmCritical;
     private String reportBodyTemplate;
     private String reportJobResultTemplate;
     private PeriodicCheck periodicCheck = new PeriodicCheck();
@@ -536,7 +567,7 @@ public class GlobalMonitoring {
         if (Cat.getInstance().displayGraphicalInterface()) {
             Cat.getInstance().getController().setInterfaceTypeImageView(aInMonitoringJob.getInterfaceType(), true);
             Cat.getInstance().getController().setAddressTypeStateImageView(aInMonitoringJob.getAddressType(), true);
-            Cat.getInstance().getController().setGlobalStateImageView(true);
+            Cat.getInstance().getController().setGlobalStateImageView(networkState);
         }
 
     }
@@ -590,9 +621,9 @@ public class GlobalMonitoring {
         switch (aInState) {
 
             case PING_LOST:
-                lJobDetails.setLastPingLostDate(System.currentTimeMillis());
+                lJobDetails.setLastLostPingDate(System.currentTimeMillis());
                 lJobDetails.incrementPingsLostCount();
-                if (lJobDetails.getPingsLostCount() == 1) lJobDetails.resetStartMonitoringDate();
+                if (lJobDetails.getLostPingsCount() == 1) lJobDetails.resetStartMonitoringDate();
                 lJobDetails.setPingLostAlarm(raiseAlarm(EnumTypes.AlarmId.PING_LOST, aInMonitoringJob.getRemoteHostname(), String.valueOf(aInMonitoringJob.getInterfaceType())));
                 break;
             case UNREACHABLE:
@@ -669,18 +700,27 @@ public class GlobalMonitoring {
         }
 
         // Raise alarm on network when everything is down
-        boolean lAllDown = true;
-        for (MonitoringJob lMonitoringJob: monitoringJobStates.keySet()) {
+        networkState = Constants.STATE_NOK;
+        for (MonitoringJob lMonitoringJob : monitoringJobStates.keySet()) {
             if (!monitoringJobStates.get(lMonitoringJob).getState().equals(EnumTypes.HostState.UNREACHABLE)) {
-                lAllDown = false;
+                networkState = Constants.STATE_DEGRADED;
                 break;
             }
         }
+        boolean lAllReachable = true;
+        for (MonitoringJob lMonitoringJob : monitoringJobStates.keySet()) {
+            if (monitoringJobStates.get(lMonitoringJob).getState().equals(EnumTypes.HostState.UNREACHABLE)) {
+                lAllReachable = false;
+                break;
+            }
+        }
+        if (lAllReachable) networkState = Constants.STATE_OK;
 
-        if (lAllDown) {
+        if (Cat.getInstance().displayGraphicalInterface()) Cat.getInstance().getController().setGlobalStateImageView(networkState);
+
+        if (networkState == Constants.STATE_NOK) {
 
             // Raise network down alarm
-            if (Cat.getInstance().displayGraphicalInterface()) Cat.getInstance().getController().setGlobalStateImageView(false);
             networkDownAlarm = raiseAlarm(EnumTypes.AlarmId.NETWORK_DOWN);
 
             // Clear connection lost alarm on jobs of the same interface type
@@ -707,7 +747,6 @@ public class GlobalMonitoring {
         // If the site becomes reachable, clear any alarm raised on the interface/address type of this site
         if (aInState == EnumTypes.HostState.REACHABLE) {
 
-            if (Cat.getInstance().displayGraphicalInterface()) Cat.getInstance().getController().setGlobalStateImageView(true);
             if (networkDownAlarm != null) {
                 sendMail("network", networkDownAlarm);
                 clearAlarm(networkDownAlarm, Display.getViewResourceBundle().getString("globalMonitoring.alarms.autoClear.siteRecovered.networkDown"));
@@ -1033,7 +1072,7 @@ public class GlobalMonitoring {
      */
     public void resetReport() {
         for (MonitoringJob lMonitoringJob: monitoringJobStates.keySet()) {
-            monitoringJobStates.get(lMonitoringJob).resetStatistics();
+            monitoringJobStates.get(lMonitoringJob).resetReport();
         }
     }
 
@@ -1045,20 +1084,111 @@ public class GlobalMonitoring {
 
         String lReport = reportBodyTemplate;
 
-        // Determine global state
-        String lNetworkState;
-        if (networkDownAlarm == null){
+        long lLostPingsCount = 0; long lLostPingsSinceLastReport = 0;
+        long lLostConnectionsCount = 0; long lLostConnectionsSinceLastReport = 0;
+        for (MonitoringJob lMonitoringJob: monitoringJobStates.keySet()) {
+            lLostPingsCount += lMonitoringJob.getLostPingsCount();
+            lLostPingsSinceLastReport += monitoringJobStates.get(lMonitoringJob).getLostPingsSinceLastReport();
+            lLostConnectionsCount += lMonitoringJob.getLostConnectionsCount();
+            lLostConnectionsSinceLastReport += monitoringJobStates.get(lMonitoringJob).getLostConnectionsSinceLastReport();
+        }
 
-        } else {
+        int lInfo = 0; int lWarning = 0; int lMinor = 0; int lMajor = 0; int lCritical = 0;
+        int lHighestSeverity = 0;
+        for (Alarm lAlarm: activeAlarmsList) {
+            if (lAlarm.getSeverity() == EnumTypes.AlarmSeverity.INFO) {
+                lInfo++;
+                if (lHighestSeverity < 1) lHighestSeverity = 1;
+            } else if (lAlarm.getSeverity() == EnumTypes.AlarmSeverity.WARNING) {
+                lWarning++;
+                if (lHighestSeverity < 2) lHighestSeverity = 2;
+            } else if (lAlarm.getSeverity() == EnumTypes.AlarmSeverity.MINOR) {
+                lMinor++;
+                if (lHighestSeverity < 3) lHighestSeverity = 3;
+            } else if (lAlarm.getSeverity() == EnumTypes.AlarmSeverity.MAJOR) {
+                lMajor++;
+                if (lHighestSeverity < 4) lHighestSeverity = 5;
+            } else if (lAlarm.getSeverity() == EnumTypes.AlarmSeverity.CRITICAL) {
+                lCritical++;
+                if (lHighestSeverity < 5) lHighestSeverity = 5;
+            }
+        }
+        String lActiveAlarmColor = (lHighestSeverity == 0) ? colorStateOk :
+                                   (lHighestSeverity == 1) ? colorAlarmInfo :
+                                   (lHighestSeverity == 2) ? colorAlarmWarning :
+                                   (lHighestSeverity == 3) ? colorAlarmMinor :
+                                   (lHighestSeverity == 4) ? colorAlarmMajor :
+                                   colorAlarmCritical;
+
+
+        // Build summary report TODO read colors from CSS
+        lReport = lReport
+                .replaceAll("#NETWORK_STATE#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.state." + networkState))
+                .replaceAll("#NETWORK_STATE_COLOR#", (networkState == Constants.STATE_OK) ?
+                                                     colorStateOk : ((networkState == Constants.STATE_DEGRADED) ? colorStateDegraded : colorStateNok))
+                .replaceAll("#WAN_STATE#", (wanMonitored) ?
+                                           ((wanDownAlarm == null) ? Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.state.0")
+                                                                   : Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.state.2"))
+                                                                 : "")
+                .replaceAll("#WAN_STATE_COLOR#", (wanMonitored) ? ((wanDownAlarm == null) ? colorStateOk : colorStateNok) : "")
+                .replaceAll("#LAN_STATE#", (lanMonitored) ?
+                                           ((lanDownAlarm == null) ? Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.state.0")
+                                                                   : Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.state.2"))
+                                                          : "")
+                .replaceAll("#LAN_STATE_COLOR#", (lanMonitored) ? ((lanDownAlarm == null) ? colorStateOk : colorStateNok) : "")
+                .replaceAll("#ETH_STATE#", (ethernetMonitored) ?
+                                           ((ethernetDownAlarm == null) ? Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.state.0")
+                                                                        : Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.state.2"))
+                                                               : "")
+                .replaceAll("#ETH_STATE_COLOR#", (ethernetMonitored) ? ((ethernetDownAlarm == null) ? colorStateOk : colorStateNok) : "")
+                .replaceAll("#WIFI_STATE#", (wifiMonitored) ?
+                                            ((wifiDownAlarm == null) ? Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.state.0")
+                                                                     : Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.state.2"))
+                                                            : "")
+                .replaceAll("#WIFI_STATE_COLOR#", (wifiMonitored) ? ((wifiDownAlarm == null) ? colorStateOk : colorStateNok) : "")
+                .replaceAll("#LOST_PINGS_COUNT#", lLostPingsSinceLastReport + " / " + lLostPingsCount)
+                .replaceAll("#LOST_PINGS_COUNT_COLOR#", (lLostPingsSinceLastReport == 0) ? colorStateOk : colorStateNok)
+                .replaceAll("#LOST_CONNECTIONS_COUNT#", lLostConnectionsSinceLastReport + " / " + lLostConnectionsCount)
+                .replaceAll("#LOST_CONNECTIONS_COUNT_COLOR#", (lLostConnectionsSinceLastReport == 0) ? colorStateOk : colorStateNok)
+                .replaceAll("#ACTIVE_ALARMS_COUNT#", String.valueOf(activeAlarmsList.size()))
+                .replaceAll("#ACTIVE_ALARMS_COLOR#", lActiveAlarmColor)
+                .replaceAll("#ACTIVE_INFO_ALARMS_COUNT#", String.valueOf(lInfo))
+                .replaceAll("#ACTIVE_INFO_ALARMS_COLOR#", (lInfo == 0) ? colorStateOk : colorAlarmInfo)
+                .replaceAll("#ACTIVE_WARNING_ALARMS_COUNT#", String.valueOf(lWarning))
+                .replaceAll("#ACTIVE_WARNING_ALARMS_COLOR#", (lWarning == 0) ? colorStateOk : colorAlarmWarning)
+                .replaceAll("#ACTIVE_MINOR_ALARMS_COUNT#", String.valueOf(lMinor))
+                .replaceAll("#ACTIVE_MINOR_ALARMS_COLOR#", (lMinor == 0) ? colorStateOk : colorAlarmMinor)
+                .replaceAll("#ACTIVE_MAJOR_ALARMS_COUNT#", String.valueOf(lMajor))
+                .replaceAll("#ACTIVE_MAJOR_ALARMS_COLOR#", (lMajor == 0) ? colorStateOk : colorAlarmMajor)
+                .replaceAll("#ACTIVE_CRITICAL_ALARMS_COUNT#", String.valueOf(lCritical))
+                .replaceAll("#ACTIVE_CRITICAL_ALARMS_COLOR#", (lCritical == 0) ? colorStateOk : colorAlarmCritical)
+        ;
+
+        for (MonitoringJob lMonitoringJob: monitoringJobStates.keySet()) {
+
+            String lReportJobResult =
+                    reportJobResultTemplate
+                            .replaceAll("#JOB_STATE_COLOR#", (lMonitoringJob.getHostState().equals(EnumTypes.HostState.UNREACHABLE) ? "red" : "green"))
+                            .replaceAll("#JOB_SERVER_NAME#", lMonitoringJob.getRemoteHostname())
+                            .replaceAll("#JOB_SERVER_IP#", lMonitoringJob.getRemoteIp())
+                            .replaceAll("#JOB_SERVER_TYPE#", Display.getMessagesResourceBundle()
+                                                                    .getString("generalEmail.periodicReports.global.jobs.serverType." + lMonitoringJob.getServerType().toString()))
+                            .replaceAll("#JOB_INTERFACE#", lMonitoringJob.getInterfaceType().toString())
+                            .replaceAll("#JOB_ADDRESS_TYPE#", lMonitoringJob.getAddressType().toString())
+                            .replaceAll("#JOB_LOST_PINGS#", monitoringJobStates.get(lMonitoringJob).getLostPingsSinceLastReport() + "&nbsp;/&nbsp;" + lMonitoringJob.getLostPingsCount())
+                            .replaceAll("#JOB_LOST_CONNECTIONS#", monitoringJobStates.get(lMonitoringJob).getLostConnectionsSinceLastReport() + "&nbsp;/&nbsp;" +
+                                                                  lMonitoringJob.getLostConnectionsCount())
+                            .replaceAll("#JOB_ROUND_TRIP#", lMonitoringJob.getMinRoundTrip() + "&nbsp;/&nbsp;" + lMonitoringJob.getMaxRoundTrip() + "&nbsp;/&nbsp;" +
+                                                            String.format("%.1f", lMonitoringJob.getAverageRoundTrip()));
+
+            lReport = lReport.replaceAll("#JOB_RESULT#", lReportJobResult + "\n#JOB_RESULT#");
 
         }
-        // Build summary report
-        lReport.replaceAll("GLOBAL_STATE", "")
-               ;
+
+        lReport = lReport.replaceAll("#JOB_RESULT#", "");
 
         // Build by job report
-        return "";
-        //return lReport;
+        return lReport;
 
     }
 

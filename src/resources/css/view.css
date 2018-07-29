@@ -633,6 +633,40 @@
      -fx-border-color: lightgrey;
 }
 
+// Reports
+
+#state-ok {
+    -fx-text-fill: green;
+}
+
+#state-degraded {
+    -fx-text-fill: orange;
+}
+
+#state-nok {
+    -fx-text-fill: red;
+}
+
+#state-alarm-info {
+    -fx-text-fill: black;
+}
+
+#state-alarm-warning {
+    -fx-text-fill: blue;
+}
+
+#state-alarm-minor {
+    -fx-text-fill: gold;
+}
+
+#state-alarm-major {
+    -fx-text-fill: orange;
+}
+
+#state-alarm-critical {
+    -fx-text-fill: red;
+}
+
 // BUTTONS
 
 .buttonWarning {
@@ -659,3 +693,4 @@
 :blinkText {
     -fx-text-fill: none;
 }
+

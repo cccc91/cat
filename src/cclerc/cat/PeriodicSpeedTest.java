@@ -121,6 +121,7 @@ public class PeriodicSpeedTest implements Runnable {
     private boolean speedTestEnabled;
     private int period;
     private int offset;
+    private boolean pause = false;
     private Long nextExecutionTime;
     private String uploadUrl;
     private String downloadUrl;
@@ -206,15 +207,17 @@ public class PeriodicSpeedTest implements Runnable {
                         Cat.getInstance().getController().setSpeedTestNextPeriodLabel(LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(nextExecutionTime));
                     });
                 }
-                if ((Cat.getInstance().getController().getSpeedTest() != null && Cat.getInstance().getController().getSpeedTest().isTestRunning()) ||
-                    (speedTest != null && speedTest.isTestRunning())) {
-                    Cat.getInstance().getController().printConsole(
-                            new Message(String.format(
-                                    Display.getViewResourceBundle().getString("speedTest.running"),
-                                    LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(new Date(nextExecutionTime))), EnumTypes.MessageLevel.WARNING));
-                } else {
-                    if (speedTest == null || speedTest.isInterrupted()) speedTest = SpeedTestFactory.getInstance(EnumTypes.SpeedTestType.PERIODIC);
-                    speedTest.start(downloadUrl, uploadUrl);
+                if (!pause) {
+                    if ((Cat.getInstance().getController().getSpeedTest() != null && Cat.getInstance().getController().getSpeedTest().isTestRunning()) ||
+                        (speedTest != null && speedTest.isTestRunning())) {
+                        Cat.getInstance().getController().printConsole(
+                                new Message(String.format(
+                                        Display.getViewResourceBundle().getString("speedTest.running"),
+                                        LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(new Date(nextExecutionTime))), EnumTypes.MessageLevel.WARNING));
+                    } else {
+                        if (speedTest == null || speedTest.isInterrupted()) speedTest = SpeedTestFactory.getInstance(EnumTypes.SpeedTestType.PERIODIC);
+                        speedTest.start(downloadUrl, uploadUrl);
+                    }
                 }
             }
 
@@ -235,6 +238,13 @@ public class PeriodicSpeedTest implements Runnable {
     public SpeedTest getSpeedTest() {
         return speedTest;
     }
+
+    // SETTERS
+
+    public void setPause(boolean aInPause) {
+        pause = aInPause;
+    }
+
 
     // METHODS
 

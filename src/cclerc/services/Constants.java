@@ -96,6 +96,7 @@ public class Constants {
     public static final int TOOLTIP_VISIBLE_DURATION= 10000;
 
     public static final String IMAGE_OK = "green.png";
+    public static final String IMAGE_DEGRADED = "orange.png";
     public static final String IMAGE_NOK = "red.png";
     public static final String IMAGE_PLAY = "play.png";
     public static final String IMAGE_PAUSE = "pause.png";
@@ -121,6 +122,10 @@ public class Constants {
     public static final String IMAGE_SPEED_TEST = "speedTest.png";
 
     public static final Image APPLICATION_IMAGE = new Image("resources/images/cat.png");
+
+    public static final int STATE_OK = 0;
+    public static final int STATE_DEGRADED = 1;
+    public static final int STATE_NOK = 2;
 
     // General preferences
     public static final boolean DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE = true;
