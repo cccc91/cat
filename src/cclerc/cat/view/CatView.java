@@ -72,6 +72,7 @@ public class CatView {
     @FXML private ImageView emailButtonImageView;
 
     @FXML private ImageView clearConsoleButtonImageView;
+    @FXML private ImageView generalPauseButtonImageView;
     @FXML private ImageView generalEmailButtonImageView;
     @FXML private RadioButton activeAlarmsButton;
     @FXML private RadioButton historicalAlarmsButton;
@@ -189,6 +190,7 @@ public class CatView {
     private String lostDetails = "-";
 
     // Pause management
+    private boolean isButtonGeneralPlayPauseDisplayed;
     private boolean isButtonPauseDisplayed;
     private boolean isButtonPauseActive = true;
 
@@ -1501,6 +1503,10 @@ public class CatView {
         return interfaceTypeSummaries;
     }
 
+    public boolean isButtonGeneralPlayPausedDisplayed() {
+        return isButtonGeneralPlayPauseDisplayed;
+    }
+
     /**
      * Indicates if general email is audibleEnabled
      * @return true if general email is audibleEnabled, false otherwise
@@ -1816,6 +1822,9 @@ public class CatView {
             }
         }
 
+        // Switch general play pause
+        if (isButtonPauseDisplayed != isButtonGeneralPlayPauseDisplayed) switchGeneralPlayPause();
+
     }
 
     /**
@@ -1948,6 +1957,56 @@ public class CatView {
     }
 
     /**
+     * Switches general play/pause
+     */
+    public void switchGeneralPlayPause() {
+
+        isButtonGeneralPlayPauseDisplayed = !isButtonGeneralPlayPauseDisplayed;
+
+        // Compute image url and load it
+        Image lNewImage;
+        Tooltip lTooltip;
+        if (isButtonGeneralPlayPauseDisplayed) {
+            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_PAUSE).toString());
+            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.generalPause"));
+        } else {
+            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_PLAY).toString());
+            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.generalPlay"));
+        }
+        if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) Tooltip.install(generalPauseButtonImageView, lTooltip);
+        generalPauseButtonImageView.setImage(lNewImage);
+
+        States.getInstance().saveValue(BuildStatePropertyName(Constants.PAUSE_STATE), isButtonGeneralPlayPauseDisplayed);
+
+        PeriodicSpeedTest.getInstance().setPause(!isButtonGeneralPlayPauseDisplayed);
+
+        Cat.getInstance().checkPauseState();
+    }
+
+    /**
+     * Sets general email button to audibleEnabled or disabled
+     * @param aInPauseDisplayed true if pause button, false if button play must be displayed
+     */
+    public void setGeneralPlayPauseButtonImageView(boolean aInPauseDisplayed) {
+
+        isButtonGeneralPlayPauseDisplayed = aInPauseDisplayed;
+
+        // Compute image url and load it
+        Image lNewImage;
+        Tooltip lTooltip;
+        if (aInPauseDisplayed) {
+            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_PAUSE).toString());
+            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.generalPause"));
+        } else {
+            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_PLAY).toString());
+            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.generalPlay"));
+        }
+        if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) Tooltip.install(generalPauseButtonImageView, lTooltip);
+        generalPauseButtonImageView.setImage(lNewImage);
+
+    }
+
+    /**
      * Switches general email
      */
     public void switchGeneralEmail() {
@@ -1969,12 +2028,15 @@ public class CatView {
 
         States.getInstance().saveValue(BuildStatePropertyName(Constants.SEND_MAIL_STATE), isButtonGeneralEmailEnabled);
 
+        if (isButtonGeneralEmailEnabled) PeriodicReports.getInstance().enableEmail();
+        else PeriodicReports.getInstance().disableEmail();
+
         Cat.getInstance().checkEmailState();
     }
 
     /**
      * Sets general email button to audibleEnabled or disabled
-     * @param aInEmail true if email must be audibleEnabled, false if email must be disabled
+     * @param aInEmail true if email must be displayed, false if no email must be disabled
      */
     public void setGeneralEmailButtonImageView(boolean aInEmail) {
 
@@ -2714,6 +2776,8 @@ public class CatView {
      */
     public void addPingSeriesData(EnumTypes.ServerType aInServerType, EnumTypes.AddressType aInAddressType, NetworkInterface aInInterface,
                                   long aInEpoch, long aInX, long aInY, boolean aInReachable) {
+
+        if (!isButtonGeneralPlayPauseDisplayed) return;
 
         // Initialize time reference
         if (timeReference == 0) timeReference = aInEpoch;

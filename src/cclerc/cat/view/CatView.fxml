@@ -321,7 +321,8 @@
                               <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="100.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="30.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="30.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="30.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -369,6 +370,11 @@
                                     <Insets right="10.0" />
                                  </GridPane.margin></TextField>
                               <TextField fx:id="historicalAlarmsFilterTextField" visible="false" GridPane.columnIndex="5" />
+                              <ImageView fx:id="clearConsoleButtonImageView" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#clearConsoles" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="6">
+                                 <image>
+                                    <Image url="@../../../resources/images/clear_console.PNG" />
+                                 </image>
+                              </ImageView>
                               <ImageView fx:id="generalEmailButtonImageView" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#switchGeneralEmail" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="7" GridPane.halignment="LEFT">
                                  <GridPane.margin>
                                     <Insets />
@@ -377,9 +383,9 @@
                                     <Image url="@../../../resources/images/email.png" />
                                  </image>
                               </ImageView>
-                              <ImageView fx:id="clearConsoleButtonImageView" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#clearConsoles" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="6">
+                              <ImageView fx:id="generalPauseButtonImageView" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#switchGeneralPlayPause" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="8" GridPane.halignment="LEFT">
                                  <image>
-                                    <Image url="@../../../resources/images/clear_console.PNG" />
+                                    <Image url="@../../../resources/images/pause.png" />
                                  </image>
                               </ImageView>
                            </children>

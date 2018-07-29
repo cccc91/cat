@@ -40,8 +40,8 @@ public class PeriodicReports implements Runnable {
         }
 
         // Initialize periodic reports data
-        loadConfiguration();
         resetEmail();
+        loadConfiguration();
 
         while (running) {
 
@@ -75,7 +75,7 @@ public class PeriodicReports implements Runnable {
 
         nextExecutionTime = Utilities.nextExecutionTime((nextExecutionTime == null || nextExecutionTime > System.currentTimeMillis()) ? null : nextExecutionTime, period, offset);
         if (!initialization) {
-            if (periodicReportsEnabled)
+            if (periodicReportsEnabled && email.isEnabled())
                 Cat.getInstance().getController().printConsole(
                         new Message(String.format(Display.getViewResourceBundle().getString("globalMonitoring.reports.next"),
                                                   LocaleUtilities.getInstance().getDateFormat().format(new Date(nextExecutionTime)),
@@ -86,7 +86,7 @@ public class PeriodicReports implements Runnable {
                         new Message(Display.getViewResourceBundle().getString("globalMonitoring.reports.disable"), EnumTypes.MessageLevel.INFO));
 
         } else {
-            if (periodicReportsEnabled)
+            if (periodicReportsEnabled && email.isEnabled())
                 Cat.getInstance().getController().printConsole(
                         new Message(String.format(Display.getViewResourceBundle().getString("globalMonitoring.reports.start.enable"),
                                                   LocaleUtilities.getInstance().getDateFormat().format(new Date(nextExecutionTime)),
@@ -114,6 +114,28 @@ public class PeriodicReports implements Runnable {
     }
 
     /**
+     * Disables email
+     */
+    public void disableEmail() {
+        Cat.getInstance().getController().printConsole(
+                new Message(Display.getViewResourceBundle().getString("globalMonitoring.reports.disable"), EnumTypes.MessageLevel.INFO));
+        email.disable();
+
+    }
+
+    /**
+     * Enables email
+     */
+    public void enableEmail() {
+        Cat.getInstance().getController().printConsole(
+                new Message(String.format(Display.getViewResourceBundle().getString("globalMonitoring.reports.next"),
+                                          LocaleUtilities.getInstance().getDateFormat().format(new Date(nextExecutionTime)),
+                                          LocaleUtilities.getInstance().getTimeFormat().format(new Date(nextExecutionTime).getTime())),
+                            EnumTypes.MessageLevel.INFO));
+        resetEmail();
+    }
+
+    /**
      * Sends report for current period and resets data
      */
     public void sendReport() {
@@ -127,16 +149,20 @@ public class PeriodicReports implements Runnable {
 
         String lEmailBody = "<meta http-equiv=\"Content-Type\" charset=\"UTF-16\">\n" +
                             GlobalMonitoring.getInstance().buildReport() + PeriodicSpeedTest.getInstance().buildReport();
-        // Check if email is enabled must be done here, oif done when initializing email variable, enabling/disabling would be taken into account a next period only
-        if (!Cat.getInstance().displayGraphicalInterface() || Cat.getInstance().getController().isButtonGeneralEmailEnabled()) {
-            email.sendMail(String.format(Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.subject"), lLocalHostName), lEmailBody);
+
+        email.sendMail(String.format(Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.subject"), lLocalHostName), lEmailBody);
+        if (email.isEnabled()) {
+            Display.getLogger().info(Display.getMessagesResourceBundle().getString("log.globalMonitoring.reports.new"));
+            Cat.getInstance().getController().printConsole(new Message(String.format(Display.getViewResourceBundle().getString("globalMonitoring.reports.new"),
+                                                                                     LocaleUtilities.getInstance().getDateFormat().format(new Date(nextExecutionTime)),
+                                                                                     LocaleUtilities.getInstance().getTimeFormat().format(new Date(nextExecutionTime).getTime())),
+                                                                       EnumTypes.MessageLevel.INFO));
+        } else {
+            Display.getLogger().info(Display.getMessagesResourceBundle().getString("log.globalMonitoring.reports.notSent"));
+            Cat.getInstance().getController().printConsole(new Message(Display.getViewResourceBundle().getString("globalMonitoring.reports.notSent"),
+                                                                       EnumTypes.MessageLevel.INFO));
         }
 
-        Display.getLogger().info(Display.getMessagesResourceBundle().getString("log.globalMonitoring.reports.new"));
-        Cat.getInstance().getController().printConsole(new Message(String.format(Display.getViewResourceBundle().getString("globalMonitoring.reports.new"),
-                                                                                 LocaleUtilities.getInstance().getDateFormat().format(new Date(nextExecutionTime)),
-                                                                                 LocaleUtilities.getInstance().getTimeFormat().format(new Date(nextExecutionTime).getTime())),
-                                                                   EnumTypes.MessageLevel.INFO));
 
         // Reset all data
         GlobalMonitoring.getInstance().resetReport();

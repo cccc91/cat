@@ -123,6 +123,8 @@ public class Constants {
 
     public static final Image APPLICATION_IMAGE = new Image("resources/images/cat.png");
 
+    public static final Double REPORT_BAR_CHARTS_SCALE = 400d;
+
     public static final int STATE_OK = 0;
     public static final int STATE_DEGRADED = 1;
     public static final int STATE_NOK = 2;

@@ -1121,7 +1121,7 @@ public class GlobalMonitoring {
                                    colorAlarmCritical;
 
 
-        // Build summary report TODO read colors from CSS
+        // Build summary report
         lReport = lReport
                 .replaceAll("#NETWORK_STATE#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.state." + networkState))
                 .replaceAll("#NETWORK_STATE_COLOR#", (networkState == Constants.STATE_OK) ?

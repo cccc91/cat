@@ -148,6 +148,9 @@ public class Cat extends Application {
             catController.refreshPingsCount();
             catController.refreshConnectionsLostCount();
 
+            // Display general pause image
+            catController.setGeneralPlayPauseButtonImageView(States.getInstance().getBooleanValue(catController.BuildStatePropertyName(Constants.PAUSE_STATE), true));
+
             // Display general email image
             catController.setGeneralEmailButtonImageView(States.getInstance().getBooleanValue(catController.BuildStatePropertyName(Constants.SEND_MAIL_STATE), true));
             if (Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getSmtpServerConfigurations().size() == 0 ||
@@ -488,8 +491,8 @@ public class Cat extends Application {
                 lAllNotPaused = false;
             }
         }
-
-        PeriodicSpeedTest.getInstance().setPause(lAllPaused);
+        if (catController.isButtonGeneralPlayPausedDisplayed()) lAllPaused = false;
+        if (!catController.isButtonGeneralPlayPausedDisplayed()) lAllNotPaused = false;
 
         if (displayGraphicalInterface) {
             if (MonitoringJob.getMonitoringJobs().size() == 0) {

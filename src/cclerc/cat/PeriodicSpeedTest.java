@@ -327,8 +327,7 @@ public class PeriodicSpeedTest implements Runnable {
      */
     public String buildReport() {
 
-        // TODO: configuration
-        Double lScale = 400d / maxSpeed;
+        Double lScale = Constants.REPORT_BAR_CHARTS_SCALE / maxSpeed;
 
         // Build final HTML
         int i = rawMeasurements.size() - 1;
