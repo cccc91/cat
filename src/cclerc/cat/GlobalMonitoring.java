@@ -6,6 +6,7 @@ import cclerc.cat.model.Alarm;
 import cclerc.services.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -1147,7 +1148,7 @@ public class GlobalMonitoring {
                                                             : "")
                 .replaceAll("#WIFI_STATE_COLOR#", (wifiMonitored) ? ((wifiDownAlarm == null) ? colorStateOk : colorStateNok) : "")
                 .replaceAll("#LOST_PINGS_COUNT#", lLostPingsSinceLastReport + " / " + lLostPingsCount)
-                .replaceAll("#LOST_PINGS_COUNT_COLOR#", (lLostPingsSinceLastReport == 0) ? colorStateOk : colorStateNok)
+                .replaceAll("#LOST_PINGS_COUNT_COLOR#", (lLostPingsSinceLastReport == 0) ? colorStateOk : colorStateDegraded)
                 .replaceAll("#LOST_CONNECTIONS_COUNT#", lLostConnectionsSinceLastReport + " / " + lLostConnectionsCount)
                 .replaceAll("#LOST_CONNECTIONS_COUNT_COLOR#", (lLostConnectionsSinceLastReport == 0) ? colorStateOk : colorStateNok)
                 .replaceAll("#ACTIVE_ALARMS_COUNT#", String.valueOf(activeAlarmsList.size()))
@@ -1164,7 +1165,11 @@ public class GlobalMonitoring {
                 .replaceAll("#ACTIVE_CRITICAL_ALARMS_COLOR#", (lCritical == 0) ? colorStateOk : colorAlarmCritical)
         ;
 
-        for (MonitoringJob lMonitoringJob: monitoringJobStates.keySet()) {
+        List<MonitoringJob> lSortedMonitoringJobs = new ArrayList<>(monitoringJobStates.keySet());
+        lSortedMonitoringJobs.sort(Comparator.comparing(MonitoringJob::getNetworkInterfaceIndex));
+
+// TODO        for (MonitoringJob lMonitoringJob: monitoringJobStates.keySet()) {
+        for (MonitoringJob lMonitoringJob: lSortedMonitoringJobs) {
 
             String lReportJobResult =
                     reportJobResultTemplate

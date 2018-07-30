@@ -625,6 +625,11 @@ public class MonitoringJob implements Runnable {
         return hostState;
     }
 
+    // Network interface index for job sorting
+    public int getNetworkInterfaceIndex() {
+        return networkInterfaceIndex;
+    }
+
     // GETTERS
 
     /**

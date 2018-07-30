@@ -158,8 +158,9 @@ public class CatView {
     @FXML private Slider speedTestBarChartHorizontalMoveSlider;
     @FXML private Slider speedTestBarChartHorizontalZoomSlider;
 
-    @FXML CheckBox periodicReportEnabledCheckBox;
-    @FXML TextField periodicReportPeriodTextField;
+    @FXML Tab periodicReportsTab;
+    @FXML CheckBox periodicReportsEnabledCheckBox;
+    @FXML TextField periodicReportsPeriodTextField;
     @FXML RadioButton minutesRadioButton;
     @FXML RadioButton hoursRadioButton;
     @FXML RadioButton daysRadioButton;
@@ -531,8 +532,6 @@ public class CatView {
                     }
                 });
 
-//        printConsole(new Message(Display.getViewResourceBundle().getString("catView.console.startApplication"), EnumTypes.MessageLevel.INFO));
-
         firstDisplay.put(speedTestTextFlow, true);
         tabs.put(speedTestTextFlow, speedTestTab);
 
@@ -698,11 +697,11 @@ public class CatView {
 
             lTooltipText = Display.getViewResourceBundle().getString("catView.reports.tooltip.enabled");
             lTooltip = new Tooltip(lTooltipText);
-            Tooltip.install(periodicReportEnabledCheckBox, lTooltip);
+            Tooltip.install(periodicReportsEnabledCheckBox, lTooltip);
 
             lTooltipText = Display.getViewResourceBundle().getString("catView.reports.tooltip.period");
             lTooltip = new Tooltip(lTooltipText);
-            Tooltip.install(periodicReportPeriodTextField, lTooltip);
+            Tooltip.install(periodicReportsPeriodTextField, lTooltip);
 
             lTooltipText = Display.getViewResourceBundle().getString("catView.reports.tooltip.offset");
             lTooltip = new Tooltip(lTooltipText);
@@ -1449,15 +1448,15 @@ public class CatView {
             Styles.setCheckBoxStyle(aInCheckBox, Preferences.getInstance().getBooleanValue(aInPreference, aInDefaultValue), newValue, aInDefaultValue);
             checkPeriodicReportsConfigurationChanges();
 
-            if (aInCheckBox.equals(periodicReportEnabledCheckBox)) {
+            if (aInCheckBox.equals(periodicReportsEnabledCheckBox)) {
                 if (newValue) {
-                    periodicReportPeriodTextField.setDisable(false);
+                    periodicReportsPeriodTextField.setDisable(false);
                     periodicReportOffsetTextField.setDisable(false);
                     minutesRadioButton.setDisable(false);
                     hoursRadioButton.setDisable(false);
                     daysRadioButton.setDisable(false);
                 } else {
-                    periodicReportPeriodTextField.setDisable(true);
+                    periodicReportsPeriodTextField.setDisable(true);
                     periodicReportOffsetTextField.setDisable(true);
                     minutesRadioButton.setDisable(true);
                     hoursRadioButton.setDisable(true);
@@ -3097,8 +3096,8 @@ public class CatView {
      */
     @FXML private void applyPeriodicReportsConfiguration() {
 
-        Preferences.getInstance().saveValue(Constants.PERIODIC_REPORTS_ENABLED_PREFERENCE, periodicReportEnabledCheckBox.isSelected());
-        Preferences.getInstance().saveValue(Constants.PERIODIC_REPORTS_PERIOD_PREFERENCE, periodicReportPeriodTextField.getText());
+        Preferences.getInstance().saveValue(Constants.PERIODIC_REPORTS_ENABLED_PREFERENCE, periodicReportsEnabledCheckBox.isSelected());
+        Preferences.getInstance().saveValue(Constants.PERIODIC_REPORTS_PERIOD_PREFERENCE, periodicReportsPeriodTextField.getText());
         Integer lDisplayedUnitPeriod;
         if (minutesRadioButton.isSelected()) {
             lDisplayedUnitPeriod = Constants.MINUTES;
@@ -3131,15 +3130,21 @@ public class CatView {
      */
     private void preparePeriodicReportsConfigurationDisplay() {
 
-        periodicReportEnabledCheckBox.setSelected(
+        if (Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getSmtpServerConfigurations().size() != 0 &&
+                !Configuration.getCurrentConfiguration().getEmailConfiguration().getRecipientList().isEmpty()) {
+            periodicReportsTab.setDisable(false);
+        } else {
+            periodicReportsTab.setDisable(true);
+        }
+        periodicReportsEnabledCheckBox.setSelected(
                 Preferences.getInstance().getBooleanValue(Constants.PERIODIC_REPORTS_ENABLED_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_ENABLED));
-        periodicReportEnabledCheckBox.selectedProperty().addListener(booleanTextFieldChangeListener(
-                periodicReportEnabledCheckBox, Constants.PERIODIC_REPORTS_ENABLED_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_ENABLED));
+        periodicReportsEnabledCheckBox.selectedProperty().addListener(booleanTextFieldChangeListener(
+                periodicReportsEnabledCheckBox, Constants.PERIODIC_REPORTS_ENABLED_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_ENABLED));
 
-        periodicReportPeriodTextField.setText(
+        periodicReportsPeriodTextField.setText(
                 Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_PERIOD_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_PERIOD).toString());
-        periodicReportPeriodTextField.textProperty().addListener(integerTextFieldChangeListener(
-                periodicReportPeriodTextField, Constants.PERIODIC_REPORTS_PERIOD_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_PERIOD));
+        periodicReportsPeriodTextField.textProperty().addListener(integerTextFieldChangeListener(
+                periodicReportsPeriodTextField, Constants.PERIODIC_REPORTS_PERIOD_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_PERIOD));
 
         Integer lDisplayedPeriodUnit =
                 Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_PERIOD_DISPLAYED_UNIT_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_PERIOD_DISPLAYED_UNIT);
@@ -3159,9 +3164,9 @@ public class CatView {
      */
     private void checkPeriodicReportsConfigurationChanges() {
 
-        if (periodicReportEnabledCheckBox.isSelected() ==
+        if (periodicReportsEnabledCheckBox.isSelected() ==
             Preferences.getInstance().getBooleanValue(Constants.PERIODIC_REPORTS_ENABLED_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_ENABLED) &&
-            Integer.valueOf(periodicReportPeriodTextField.getText()).equals(
+            Integer.valueOf(periodicReportsPeriodTextField.getText()).equals(
                     Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_PERIOD_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_PERIOD)) &&
             Integer.valueOf(periodicReportOffsetTextField.getText()).equals(
                     Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_OFFSET_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_OFFSET))) {
@@ -3190,9 +3195,9 @@ public class CatView {
      * Sets display style to periodic reports configuration controls
      */
     private void setPeriodicTestsConfigurationStyles() {
-        Styles.setCheckBoxStyle(periodicReportEnabledCheckBox, periodicReportEnabledCheckBox.isSelected(), periodicReportEnabledCheckBox.isSelected(),
+        Styles.setCheckBoxStyle(periodicReportsEnabledCheckBox, periodicReportsEnabledCheckBox.isSelected(), periodicReportsEnabledCheckBox.isSelected(),
                                  Constants.DEFAULT_PERIODIC_REPORTS_ENABLED);
-        Styles.setTextFieldStyle(periodicReportPeriodTextField, Integer.valueOf(periodicReportPeriodTextField.getText()), Integer.valueOf(periodicReportPeriodTextField.getText()),
+        Styles.setTextFieldStyle(periodicReportsPeriodTextField, Integer.valueOf(periodicReportsPeriodTextField.getText()), Integer.valueOf(periodicReportsPeriodTextField.getText()),
                                  Constants.DEFAULT_PERIODIC_REPORTS_PERIOD);
         Styles.setTextFieldStyle(periodicReportOffsetTextField, Integer.valueOf(periodicReportOffsetTextField.getText()), Integer.valueOf(periodicReportOffsetTextField.getText()),
                                  Constants.DEFAULT_PERIODIC_REPORTS_OFFSET);

@@ -698,7 +698,7 @@
                               </TabPane>
                            </content>
                         </Tab>
-                        <Tab closable="false" text="%catView.reports">
+                        <Tab fx:id="periodicReportsTab" closable="false" text="%catView.reports">
                            <content>
                               <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                  <padding>
@@ -719,7 +719,7 @@
                                           <Label styleClass="attributeName" text="%catView.reports.period" GridPane.rowIndex="1" />
                                           <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                              <children>
-                                                <TextField fx:id="periodicReportPeriodTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="5" styleClass="attributeValue" />
+                                                <TextField fx:id="periodicReportsPeriodTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="5" styleClass="attributeValue" />
                                                 <RadioButton fx:id="minutesRadioButton" mnemonicParsing="false" onAction="#setUnitToMinutes" text="%period.minutes" />
                                                 <RadioButton fx:id="hoursRadioButton" mnemonicParsing="false" onAction="#setUnitToHours" text="%period.hour" />
                                                 <RadioButton fx:id="daysRadioButton" mnemonicParsing="false" onAction="#setUnitToDays" text="%period.days" />
@@ -728,7 +728,7 @@
                                           <Label styleClass="attributeName" text="%catView.reports.offset" GridPane.rowIndex="2" />
                                           <Label styleClass="attributeName" text="%catView.reports.enabled" />
                                           <TextField fx:id="periodicReportOffsetTextField" maxHeight="-Infinity" maxWidth="-Infinity" prefColumnCount="5" styleClass="attributeValue" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                          <CheckBox fx:id="periodicReportEnabledCheckBox" mnemonicParsing="false" GridPane.columnIndex="1" />
+                                          <CheckBox fx:id="periodicReportsEnabledCheckBox" mnemonicParsing="false" GridPane.columnIndex="1" />
                                        </children>
                                        <padding>
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
