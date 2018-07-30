@@ -47,7 +47,9 @@ public class PeriodicReports implements Runnable {
 
             // Run speed test if needed
             if (periodicReportsEnabled && System.currentTimeMillis() >= nextExecutionTime) {
-                nextExecutionTime = Utilities.nextExecutionTime(nextExecutionTime, period, offset);
+                nextExecutionTime = Utilities.nextExecutionTime(nextExecutionTime, period, offset,
+                                                                Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_HOUR_PREFERENCE,
+                                                                                                          Constants.DEFAULT_PERIODIC_REPORTS_HOUR));
                 sendReport();
             }
 
@@ -73,7 +75,9 @@ public class PeriodicReports implements Runnable {
                  Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_PERIOD_DISPLAYED_UNIT_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_PERIOD_DISPLAYED_UNIT);
         offset = Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_OFFSET_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_OFFSET);
 
-        nextExecutionTime = Utilities.nextExecutionTime((nextExecutionTime == null || nextExecutionTime > System.currentTimeMillis()) ? null : nextExecutionTime, period, offset);
+        nextExecutionTime = Utilities.nextExecutionTime((nextExecutionTime == null || nextExecutionTime > System.currentTimeMillis()) ? null : nextExecutionTime, period, offset,
+                                                        Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_HOUR_PREFERENCE,
+                                                                                                  Constants.DEFAULT_PERIODIC_REPORTS_HOUR));
         if (!initialization) {
             if (periodicReportsEnabled && email.isEnabled())
                 Cat.getInstance().getController().printConsole(

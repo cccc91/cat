@@ -1166,9 +1166,8 @@ public class GlobalMonitoring {
         ;
 
         List<MonitoringJob> lSortedMonitoringJobs = new ArrayList<>(monitoringJobStates.keySet());
-        lSortedMonitoringJobs.sort(Comparator.comparing(MonitoringJob::getNetworkInterfaceIndex));
+        lSortedMonitoringJobs.sort(Comparator.comparing(MonitoringJob::getNetworkInterfaceIndex).thenComparing(MonitoringJob::getAddressType));
 
-// TODO        for (MonitoringJob lMonitoringJob: monitoringJobStates.keySet()) {
         for (MonitoringJob lMonitoringJob: lSortedMonitoringJobs) {
 
             String lReportJobResult =

@@ -161,6 +161,8 @@ public class CatView {
     @FXML Tab periodicReportsTab;
     @FXML CheckBox periodicReportsEnabledCheckBox;
     @FXML TextField periodicReportsPeriodTextField;
+    @FXML Label periodicReportsHourLabel;
+    @FXML TextField periodicReportsHourTextField;
     @FXML RadioButton minutesRadioButton;
     @FXML RadioButton hoursRadioButton;
     @FXML RadioButton daysRadioButton;
@@ -702,6 +704,10 @@ public class CatView {
             lTooltipText = Display.getViewResourceBundle().getString("catView.reports.tooltip.period");
             lTooltip = new Tooltip(lTooltipText);
             Tooltip.install(periodicReportsPeriodTextField, lTooltip);
+
+            lTooltipText = Display.getViewResourceBundle().getString("catView.reports.tooltip.hour");
+            lTooltip = new Tooltip(lTooltipText);
+            Tooltip.install(periodicReportsHourTextField, lTooltip);
 
             lTooltipText = Display.getViewResourceBundle().getString("catView.reports.tooltip.offset");
             lTooltip = new Tooltip(lTooltipText);
@@ -1426,12 +1432,25 @@ public class CatView {
         return (obs, oldValue, newValue) -> {
             try {
                 Integer.valueOf(newValue);
+                if (aInTextField.equals(periodicReportsPeriodTextField)) {
+                    if ((minutesRadioButton.isSelected() && (Integer.valueOf(newValue) < 0 || Integer.valueOf(newValue) > 60)) ||
+                     (hoursRadioButton.isSelected() && (Integer.valueOf(newValue) < 0 || Integer.valueOf(newValue) > 24)) ||
+                     (daysRadioButton.isSelected() && (Integer.valueOf(newValue) < 0 || Integer.valueOf(newValue) > 30))) throw new NumberFormatException();
+                    else if (newValue.equals("12") && hoursRadioButton.isSelected()) {
+                        periodicReportsHourLabel.setVisible(true);
+                        periodicReportsHourTextField.setVisible(true);
+                    } else {
+                        periodicReportsHourLabel.setVisible(false);
+                        periodicReportsHourTextField.setVisible(false);
+                    }
+                }
+                if (aInTextField.equals(periodicReportsHourTextField) && (Integer.valueOf(newValue) < 0 || Integer.valueOf(newValue) > 11)) throw new NumberFormatException();
                 periodicReportsErroredFields.remove(aInTextField);
                 Styles.setTextFieldStyle(aInTextField, Preferences.getInstance().getIntegerValue(aInPreference, aInDefaultValue), Integer.valueOf(newValue), aInDefaultValue);
                 checkPeriodicReportsConfigurationChanges();
             } catch (NumberFormatException e) {
                 aInTextField.setId("bad-value");
-                periodicReportsErroredFields.add(aInTextField);
+                if (!periodicReportsErroredFields.contains(aInTextField)) periodicReportsErroredFields.add(aInTextField);
                 applyPeriodicReportsConfigurationButton.setDisable(true);
                 cancelPeriodicReportsConfigurationButton.setDisable(false);
             }
@@ -3069,7 +3088,6 @@ public class CatView {
     @FXML private void setUnitToMinutes() {
         hoursRadioButton.setSelected(false);
         daysRadioButton.setSelected(false);
-//        periodicReportOffsetTextField.setText("0");
         checkPeriodicReportsConfigurationChanges();
     }
 
@@ -3098,6 +3116,7 @@ public class CatView {
 
         Preferences.getInstance().saveValue(Constants.PERIODIC_REPORTS_ENABLED_PREFERENCE, periodicReportsEnabledCheckBox.isSelected());
         Preferences.getInstance().saveValue(Constants.PERIODIC_REPORTS_PERIOD_PREFERENCE, periodicReportsPeriodTextField.getText());
+        Preferences.getInstance().saveValue(Constants.PERIODIC_REPORTS_HOUR_PREFERENCE, periodicReportsHourTextField.getText());
         Integer lDisplayedUnitPeriod;
         if (minutesRadioButton.isSelected()) {
             lDisplayedUnitPeriod = Constants.MINUTES;
@@ -3122,6 +3141,27 @@ public class CatView {
      * Cancels the changes to the periodic reports configuration
      */
     @FXML private void cancelPeriodicReportsConfiguration() {
+        periodicReportsEnabledCheckBox.setSelected(
+                Preferences.getInstance().getBooleanValue(Constants.PERIODIC_REPORTS_ENABLED_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_ENABLED));
+        periodicReportsPeriodTextField.setText(
+                Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_PERIOD_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_PERIOD).toString());
+        periodicReportsHourTextField.setText(
+                Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_HOUR_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_HOUR).toString());
+
+        Integer lDisplayedPeriodUnit =
+                Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_PERIOD_DISPLAYED_UNIT_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_PERIOD_DISPLAYED_UNIT);
+        minutesRadioButton.setSelected(false);
+        hoursRadioButton.setSelected(false);
+        daysRadioButton.setSelected(false);
+        if (lDisplayedPeriodUnit.equals(Constants.MINUTES)) minutesRadioButton.setSelected(true);
+        else if (lDisplayedPeriodUnit.equals(Constants.HOURS)) hoursRadioButton.setSelected(true);
+        else daysRadioButton.setSelected(true);
+
+        periodicReportOffsetTextField.setText(
+                Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_OFFSET_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_OFFSET).toString());
+
+        applyPeriodicReportsConfigurationButton.setDisable(true);
+        cancelPeriodicReportsConfigurationButton.setDisable(true);
 
     }
 
@@ -3136,6 +3176,7 @@ public class CatView {
         } else {
             periodicReportsTab.setDisable(true);
         }
+
         periodicReportsEnabledCheckBox.setSelected(
                 Preferences.getInstance().getBooleanValue(Constants.PERIODIC_REPORTS_ENABLED_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_ENABLED));
         periodicReportsEnabledCheckBox.selectedProperty().addListener(booleanTextFieldChangeListener(
@@ -3146,11 +3187,92 @@ public class CatView {
         periodicReportsPeriodTextField.textProperty().addListener(integerTextFieldChangeListener(
                 periodicReportsPeriodTextField, Constants.PERIODIC_REPORTS_PERIOD_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_PERIOD));
 
+        periodicReportsHourTextField.setText(
+                Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_HOUR_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_HOUR).toString());
+        periodicReportsHourTextField.textProperty().addListener(integerTextFieldChangeListener(
+                periodicReportsHourTextField, Constants.PERIODIC_REPORTS_HOUR_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_HOUR));
+
         Integer lDisplayedPeriodUnit =
                 Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_PERIOD_DISPLAYED_UNIT_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_PERIOD_DISPLAYED_UNIT);
         if (lDisplayedPeriodUnit.equals(Constants.MINUTES)) minutesRadioButton.setSelected(true);
         else if (lDisplayedPeriodUnit.equals(Constants.HOURS)) hoursRadioButton.setSelected(true);
         else daysRadioButton.setSelected(true);
+
+        minutesRadioButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                periodicReportsHourLabel.setVisible(false);
+                periodicReportsHourTextField.setVisible(false);
+                try {
+                    if (Integer.valueOf(periodicReportsPeriodTextField.getText()) < 0 || Integer.valueOf(periodicReportsPeriodTextField.getText()) > 60)
+                        throw new NumberFormatException();
+                    periodicReportsErroredFields.remove(periodicReportsPeriodTextField);
+                    Styles.setTextFieldStyle(periodicReportsPeriodTextField,
+                                             Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_PERIOD_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_PERIOD),
+                                             Integer.valueOf(periodicReportsPeriodTextField.getText()), Constants.DEFAULT_PERIODIC_REPORTS_PERIOD);
+                    checkPeriodicReportsConfigurationChanges();
+                } catch (NumberFormatException e) {
+                    periodicReportsPeriodTextField.setId("bad-value");
+                    if (!periodicReportsErroredFields.contains(periodicReportsPeriodTextField)) periodicReportsErroredFields.add(periodicReportsPeriodTextField);
+                    applyPeriodicReportsConfigurationButton.setDisable(true);
+                    cancelPeriodicReportsConfigurationButton.setDisable(false);
+                }
+            };
+        });
+
+        hoursRadioButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                try {
+                    if (Integer.valueOf(periodicReportsPeriodTextField.getText()) < 0 || Integer.valueOf(periodicReportsPeriodTextField.getText()) > 24)
+                        throw new NumberFormatException();
+                    if (periodicReportsPeriodTextField.getText().equals("12")) {
+                        periodicReportsHourLabel.setVisible(true);
+                        periodicReportsHourTextField.setVisible(true);
+                    } else {
+                        periodicReportsHourLabel.setVisible(false);
+                        periodicReportsHourTextField.setVisible(false);
+                    }
+                    periodicReportsErroredFields.remove(periodicReportsPeriodTextField);
+                    Styles.setTextFieldStyle(periodicReportsPeriodTextField,
+                                             Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_PERIOD_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_PERIOD),
+                                             Integer.valueOf(periodicReportsPeriodTextField.getText()), Constants.DEFAULT_PERIODIC_REPORTS_PERIOD);
+                    checkPeriodicReportsConfigurationChanges();
+                } catch (NumberFormatException e) {
+                    periodicReportsPeriodTextField.setId("bad-value");
+                    if (!periodicReportsErroredFields.contains(periodicReportsPeriodTextField)) periodicReportsErroredFields.add(periodicReportsPeriodTextField);
+                    applyPeriodicReportsConfigurationButton.setDisable(true);
+                    cancelPeriodicReportsConfigurationButton.setDisable(false);
+                }
+            };
+        });
+
+        daysRadioButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                periodicReportsHourLabel.setVisible(false);
+                periodicReportsHourTextField.setVisible(false);
+                try {
+                    if (Integer.valueOf(periodicReportsPeriodTextField.getText()) < 0 || Integer.valueOf(periodicReportsPeriodTextField.getText()) > 30)
+                        throw new NumberFormatException();
+                    periodicReportsErroredFields.remove(periodicReportsPeriodTextField);
+                    Styles.setTextFieldStyle(periodicReportsPeriodTextField,
+                                             Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_PERIOD_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_PERIOD),
+                                             Integer.valueOf(periodicReportsPeriodTextField.getText()), Constants.DEFAULT_PERIODIC_REPORTS_PERIOD);
+                    checkPeriodicReportsConfigurationChanges();
+                } catch (NumberFormatException e) {
+                    periodicReportsPeriodTextField.setId("bad-value");
+                    if (!periodicReportsErroredFields.contains(periodicReportsPeriodTextField)) periodicReportsErroredFields.add(periodicReportsPeriodTextField);
+                    applyPeriodicReportsConfigurationButton.setDisable(true);
+                    cancelPeriodicReportsConfigurationButton.setDisable(false);
+                }
+            };
+        });
+
+        if (periodicReportsPeriodTextField.getText().equals("12") && hoursRadioButton.isSelected()) {
+            periodicReportsHourLabel.setVisible(true);
+            periodicReportsHourTextField.setVisible(true);
+        } else {
+            periodicReportsHourLabel.setVisible(false);
+            periodicReportsHourTextField.setVisible(false);
+        }
 
         periodicReportOffsetTextField.setText(
                 Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_OFFSET_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_OFFSET).toString());
@@ -3164,10 +3286,16 @@ public class CatView {
      */
     private void checkPeriodicReportsConfigurationChanges() {
 
+        Integer lDisplayedPeriodUnit = (minutesRadioButton.isSelected()) ? Constants.MINUTES : (hoursRadioButton.isSelected()) ? Constants.HOURS : Constants.DAYS;
+
         if (periodicReportsEnabledCheckBox.isSelected() ==
             Preferences.getInstance().getBooleanValue(Constants.PERIODIC_REPORTS_ENABLED_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_ENABLED) &&
             Integer.valueOf(periodicReportsPeriodTextField.getText()).equals(
                     Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_PERIOD_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_PERIOD)) &&
+            Integer.valueOf(periodicReportsHourTextField.getText()).equals(
+                    Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_HOUR_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_HOUR)) &&
+            lDisplayedPeriodUnit.equals(
+                    Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_PERIOD_DISPLAYED_UNIT_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_PERIOD_DISPLAYED_UNIT)) &&
             Integer.valueOf(periodicReportOffsetTextField.getText()).equals(
                     Preferences.getInstance().getIntegerValue(Constants.PERIODIC_REPORTS_OFFSET_PREFERENCE, Constants.DEFAULT_PERIODIC_REPORTS_OFFSET))) {
             hasPeriodicReportsConfigurationChanged = false;

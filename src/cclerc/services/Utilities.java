@@ -251,7 +251,9 @@ public class Utilities {
      * @param aInOffset            Offset in min to be added to the first execution time
      * @return                     Next execution time in epoch ms
      */
-    public static Long nextExecutionTime(Long aInLastExecutionTime, int aInPeriod, int aInOffset) {
+    public static Long nextExecutionTime(Long aInLastExecutionTime, int aInPeriod, int aInOffset, int aInHour) {
+
+        if (aInHour > 12) aInHour -= 12;
 
         LocalDateTime now = LocalDateTime.now();
         int year = now.getYear();
@@ -265,8 +267,12 @@ public class Utilities {
                 return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, hour, minute))
                        + (aInPeriod - (minute % aInPeriod) + aInOffset) * 60_000;
             } else if (aInPeriod == 60 * 12) {
-                if (hour < 8 || hour >= 20) return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, 8, aInOffset));
-                else return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, 0, aInOffset)) + 60_000 * 60 * 20;
+                if (hour < aInHour || hour > aInHour + 12 || (hour == aInHour && minute < aInOffset) || (hour == aInHour + 12 && minute > aInOffset)) {
+                    int lDayOffset = (hour > aInHour + 12 || (hour == aInHour + 12 && minute > aInOffset)) ? 1 : 0;
+                    return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, aInHour, aInOffset)) + 60_000 * 60 * 24 * lDayOffset;
+                } else {
+                    return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, aInHour + 12, aInOffset));
+                }
             } else if (aInPeriod < 60 * 24) {
                 return LocaleUtilities.getInstance().getLocalDate(LocalDateTime.of(year, month, day, hour, aInOffset)) + 60_000 * 60;
             } else {
@@ -277,6 +283,9 @@ public class Utilities {
         }
 
 
+    }
+    public static Long nextExecutionTime(Long aInLastExecutionTime, int aInPeriod, int aInOffset) {
+        return nextExecutionTime(aInLastExecutionTime, aInPeriod, aInOffset, 8);
     }
 
     /**
