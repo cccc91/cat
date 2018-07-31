@@ -25,6 +25,7 @@ public class GlobalMonitoring {
         private EnumTypes.HostState state;
         private long startMonitoringDate;
         private long lastLostPingDate;
+        private long lastLostConnectionDate;
         private long lostPingsCount = 0;
         private Alarm pingLostAlarm;
         private Alarm connectionLostAlarm;
@@ -50,8 +51,12 @@ public class GlobalMonitoring {
             state = aInState;
         }
 
-        public void setLastLostPingDate(long aInLastPingLostDate) {
-            lastLostPingDate = aInLastPingLostDate;
+        public void setLastLostPingDate(long aInLastLostPingDate) {
+            lastLostPingDate = aInLastLostPingDate;
+        }
+
+        public void setLastLostConnectionDate(long aInLastLostConnectionDate) {
+            lastLostConnectionDate = aInLastLostConnectionDate;
         }
 
         public void incrementPingsLostCount() {
@@ -88,6 +93,10 @@ public class GlobalMonitoring {
 
         public long getLastLostPingDate() {
             return lastLostPingDate;
+        }
+
+        public long getLastLostConnectionDate() {
+            return lastLostConnectionDate;
         }
 
         public long getLostPingsCount() {
@@ -480,10 +489,11 @@ public class GlobalMonitoring {
     private Alarm lanDownAlarm;
     private Alarm networkDownAlarm;
 
+    private long lastLostPingDate = 0;
+    private long lastLostConnectionDate = 0;
+
     private volatile ObservableList<Alarm> activeAlarmsList = FXCollections.observableArrayList();
     private volatile ObservableList<Alarm> historicalAlarmsList = FXCollections.observableArrayList();
-
-    private String rawResultTemplate;
 
     private String colorStateOk;
     private String colorStateDegraded;
@@ -622,12 +632,15 @@ public class GlobalMonitoring {
         switch (aInState) {
 
             case PING_LOST:
-                lJobDetails.setLastLostPingDate(System.currentTimeMillis());
+                lastLostPingDate = System.currentTimeMillis();
+                lJobDetails.setLastLostPingDate(lastLostPingDate);
                 lJobDetails.incrementPingsLostCount();
                 if (lJobDetails.getLostPingsCount() == 1) lJobDetails.resetStartMonitoringDate();
                 lJobDetails.setPingLostAlarm(raiseAlarm(EnumTypes.AlarmId.PING_LOST, aInMonitoringJob.getRemoteHostname(), String.valueOf(aInMonitoringJob.getInterfaceType())));
                 break;
             case UNREACHABLE:
+                lastLostConnectionDate = System.currentTimeMillis();
+                lJobDetails.setLastLostConnectionDate(lastLostConnectionDate);
                 lJobDetails.setConnectionLostAlarm(raiseAlarm(EnumTypes.AlarmId.CONNECTION_LOST, aInMonitoringJob.getRemoteHostname(), String.valueOf(aInMonitoringJob.getInterfaceType())));
                 clearAlarm(lJobDetails.getPingLostAlarm(), String.format(
                         Display.getViewResourceBundle().getString("globalMonitoring.alarms.autoClear.siteLost"),
