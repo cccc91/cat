@@ -1135,6 +1135,15 @@ public class GlobalMonitoring {
                                    colorAlarmCritical;
 
 
+        String lLostPingsDateMessage = (lLostPingsSinceLastReport != 0) ?
+                                   LocaleUtilities.getInstance().getDateFormat().format(lastLostPingDate) + " " +
+                                   Display.getViewResourceBundle().getString("lastLostConnectionDetailTime") + " " +
+                                   LocaleUtilities.getInstance().getTimeFormat().format(lastLostPingDate) : "";
+        String lLostConnectionsDateMessage = (lLostConnectionsSinceLastReport != 0) ?
+                                   LocaleUtilities.getInstance().getDateFormat().format(lastLostConnectionDate) + " " +
+                                   Display.getViewResourceBundle().getString("lastLostConnectionDetailTime") + " " +
+                                   LocaleUtilities.getInstance().getTimeFormat().format(lastLostConnectionDate) : "";
+
         // Build summary report
         lReport = lReport
                 .replaceAll("#NETWORK_STATE#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.general.state." + networkState))
@@ -1161,8 +1170,10 @@ public class GlobalMonitoring {
                                                             : "")
                 .replaceAll("#WIFI_STATE_COLOR#", (wifiMonitored) ? ((wifiDownAlarm == null) ? colorStateOk : colorStateNok) : "")
                 .replaceAll("#LOST_PINGS_COUNT#", lLostPingsSinceLastReport + " / " + lLostPingsCount)
+                .replaceAll("#LOST_PINGS_DATE#", lLostPingsDateMessage)
                 .replaceAll("#LOST_PINGS_COUNT_COLOR#", (lLostPingsSinceLastReport == 0) ? colorStateOk : colorStateDegraded)
                 .replaceAll("#LOST_CONNECTIONS_COUNT#", lLostConnectionsSinceLastReport + " / " + lLostConnectionsCount)
+                .replaceAll("#LOST_CONNECTIONS_DATE#", lLostConnectionsDateMessage)
                 .replaceAll("#LOST_CONNECTIONS_COUNT_COLOR#", (lLostConnectionsSinceLastReport == 0) ? colorStateOk : colorStateNok)
                 .replaceAll("#ACTIVE_ALARMS_COUNT#", String.valueOf(activeAlarmsList.size()))
                 .replaceAll("#ACTIVE_ALARMS_COLOR#", lActiveAlarmColor)
@@ -1183,6 +1194,17 @@ public class GlobalMonitoring {
 
         for (MonitoringJob lMonitoringJob: lSortedMonitoringJobs) {
 
+            String lJobLostPingsDateMessage =
+                    (monitoringJobStates.get(lMonitoringJob).getLostPingsSinceLastReport() != 0) ?
+                    "<br/><i>" + LocaleUtilities.getInstance().getDateFormat().format(monitoringJobStates.get(lMonitoringJob).getLastLostPingDate()) + " " +
+                    Display.getViewResourceBundle().getString("lastLostConnectionDetailTime") + " " +
+                    LocaleUtilities.getInstance().getTimeFormat().format(monitoringJobStates.get(lMonitoringJob).getLastLostPingDate()) + "</i>" : "";
+            String lJobLostConnectionsDateMessage =
+                    (monitoringJobStates.get(lMonitoringJob).getLostConnectionsSinceLastReport() != 0) ?
+                    "<br/><i>" + LocaleUtilities.getInstance().getDateFormat().format(monitoringJobStates.get(lMonitoringJob).getLastLostConnectionDate()) + " " +
+                    Display.getViewResourceBundle().getString("lastLostConnectionDetailTime") + " " +
+                    LocaleUtilities.getInstance().getTimeFormat().format(monitoringJobStates.get(lMonitoringJob).getLastLostConnectionDate()) + "</i>" : "";
+
             String lReportJobResult =
                     reportJobResultTemplate
                             .replaceAll("#JOB_STATE_COLOR#", (lMonitoringJob.getHostState().equals(EnumTypes.HostState.UNREACHABLE) ? "red" : "green"))
@@ -1192,9 +1214,10 @@ public class GlobalMonitoring {
                                                                     .getString("generalEmail.periodicReports.global.jobs.serverType." + lMonitoringJob.getServerType().toString()))
                             .replaceAll("#JOB_INTERFACE#", lMonitoringJob.getInterfaceType().toString())
                             .replaceAll("#JOB_ADDRESS_TYPE#", lMonitoringJob.getAddressType().toString())
-                            .replaceAll("#JOB_LOST_PINGS#", monitoringJobStates.get(lMonitoringJob).getLostPingsSinceLastReport() + "&nbsp;/&nbsp;" + lMonitoringJob.getLostPingsCount())
+                            .replaceAll("#JOB_LOST_PINGS#", monitoringJobStates.get(lMonitoringJob).getLostPingsSinceLastReport() + "&nbsp;/&nbsp;" +
+                                                            lMonitoringJob.getLostPingsCount() + lJobLostPingsDateMessage)
                             .replaceAll("#JOB_LOST_CONNECTIONS#", monitoringJobStates.get(lMonitoringJob).getLostConnectionsSinceLastReport() + "&nbsp;/&nbsp;" +
-                                                                  lMonitoringJob.getLostConnectionsCount())
+                                                                  lMonitoringJob.getLostConnectionsCount() + lJobLostConnectionsDateMessage)
                             .replaceAll("#JOB_ROUND_TRIP#", lMonitoringJob.getMinRoundTrip() + "&nbsp;/&nbsp;" + lMonitoringJob.getMaxRoundTrip() + "&nbsp;/&nbsp;" +
                                                             String.format("%.1f", lMonitoringJob.getAverageRoundTrip()));
 
