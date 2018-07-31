@@ -578,8 +578,8 @@ public class CatView {
         pingLineLanFilterCheckBox.setSelected(States.getInstance().getBooleanValue(Constants.PING_CHART_DISPLAY_LAN_LINE_STATE, true));
         pingLineInterface1FilterCheckBox.setSelected(States.getInstance().getBooleanValue(Constants.PING_CHART_DISPLAY_INTERFACE1_LINE_STATE, true));
         pingLineInterface2FilterCheckBox.setSelected(States.getInstance().getBooleanValue(Constants.PING_CHART_DISPLAY_INTERFACE2_LINE_STATE, true));
-        pingLineChartHorizontalZoomSlider.setValue(States.getInstance().getDoubleValue(Constants.PING_CHART_HORIZONTAL_ZOOM_SLIDER_STATE, 100d));
-        pingLineChartVerticalZoomSlider.setValue(States.getInstance().getDoubleValue(Constants.PING_CHART_VERTICAL_ZOOM_SLIDER_STATE, 100d));
+        pingLineChartHorizontalZoomSlider.setValue(States.getInstance().getDoubleValue(Constants.PING_CHART_HORIZONTAL_ZOOM_SLIDER_STATE, 0d));
+        pingLineChartVerticalZoomSlider.setValue(States.getInstance().getDoubleValue(Constants.PING_CHART_VERTICAL_ZOOM_SLIDER_STATE, 0d));
 
         pingLineChartXAxis.setTickLabelFormatter(new StringConverter<Number>() {
 
@@ -614,8 +614,8 @@ public class CatView {
         speedTestManageCheckBox.setSelected(States.getInstance().getBooleanValue(Constants.SPEED_TEST_CHART_ENABLE_STATE, true));
         speedTestDownloadFilterCheckBox.setSelected(States.getInstance().getBooleanValue(Constants.SPEED_TEST_CHART_DISPLAY_DOWNLOAD_STATE, true));
         speedTestUploadFilterCheckBox.setSelected(States.getInstance().getBooleanValue(Constants.SPEED_TEST_CHART_DISPLAY_UPLOAD_STATE, true));
-        speedTestBarChartHorizontalZoomSlider.setValue(States.getInstance().getDoubleValue(Constants.SPEED_TEST_CHART_HORIZONTAL_ZOOM_SLIDER_STATE, 100d));
-        speedTestBarChartVerticalZoomSlider.setValue(States.getInstance().getDoubleValue(Constants.SPEED_TEST_CHART_VERTICAL_ZOOM_SLIDER_STATE, 100d));
+        speedTestBarChartHorizontalZoomSlider.setValue(States.getInstance().getDoubleValue(Constants.SPEED_TEST_CHART_HORIZONTAL_ZOOM_SLIDER_STATE, 0d));
+        speedTestBarChartVerticalZoomSlider.setValue(States.getInstance().getDoubleValue(Constants.SPEED_TEST_CHART_VERTICAL_ZOOM_SLIDER_STATE, 0d));
         speedTestBarChart.setLegendVisible(false);
 
         addSpeedTestSeries(EnumTypes.SpeedTestMode.DOWNLOAD);
@@ -2561,7 +2561,7 @@ public class CatView {
      */
     private void zoomPingYAxis() {
         if (pingLineManageCheckBox.isSelected()) {
-            pingLineYZoomRatio = pingLineChartVerticalZoomSlider.getValue() / 100;
+            pingLineYZoomRatio = (100 - pingLineChartVerticalZoomSlider.getValue()) / 100;
             refreshPingAxisBounds();
         }
     }
@@ -2571,7 +2571,7 @@ public class CatView {
      */
     private void zoomSpeedTestYAxis() {
         if (speedTestManageCheckBox.isSelected()) {
-            speedTestBarsYZoomRatio = speedTestBarChartVerticalZoomSlider.getValue() / 100;
+            speedTestBarsYZoomRatio = (100 - speedTestBarChartVerticalZoomSlider.getValue()) / 100;
             refreshSpeedTestAxisBounds();
         }
     }
@@ -2649,7 +2649,7 @@ public class CatView {
 
         // Recompute ratios depending on sliders position
         pingLineXMoveRatio = (100 - pingLineChartHorizontalMoveSlider.getValue()) / 100;
-        pingLineXZoomRatio = pingLineChartHorizontalZoomSlider.getValue() / 100;
+        pingLineXZoomRatio = (100 - pingLineChartHorizontalZoomSlider.getValue()) / 100;
 
         // Recompute duration to be displayed
         pingLineDuration = Math.max(MIN_DISPLAYED_PING_DURATION, Math.round(MAX_DISPLAYED_PING_DURATION * pingLineXZoomRatio));
@@ -2691,7 +2691,7 @@ public class CatView {
 
         // Recompute ratios depending on sliders position
         speedTestBarsXMoveRatio = (100 - speedTestBarChartHorizontalMoveSlider.getValue()) / 100;
-        speedTestBarsXZoomRatio = speedTestBarChartHorizontalZoomSlider.getValue() / 100;
+        speedTestBarsXZoomRatio = (100 - speedTestBarChartHorizontalZoomSlider.getValue()) / 100;
 
         // Recompute min and max time to be displayed
         long lMinX = Long.MAX_VALUE;
@@ -2724,7 +2724,7 @@ public class CatView {
     private void refreshPingAxisBounds() {
 
         // Retrieve duration to be displayed
-        long lDuration = Math.max(MIN_DISPLAYED_PING_DURATION, Math.round(MAX_DISPLAYED_PING_DURATION * (pingLineChartHorizontalZoomSlider.getValue() / 100)));
+        long lDuration = Math.max(MIN_DISPLAYED_PING_DURATION, Math.round(MAX_DISPLAYED_PING_DURATION * ((100 - pingLineChartHorizontalZoomSlider.getValue()) / 100)));
 
         // Recompute global bounds
         long lMaxMinX = Long.MIN_VALUE;
