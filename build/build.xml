@@ -1,4 +1,4 @@
-<project name="Cat" default="distribute.and.package.all.cat" basedir=".">
+<project name="Cat" default="distribute.cat" basedir=".">
 
     <!-- MAIN CLASS -->
     <property name="cat.main.class" value="cclerc.cat.Cat"/>
