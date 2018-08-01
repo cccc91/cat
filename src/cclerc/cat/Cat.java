@@ -651,6 +651,9 @@ public class Cat extends Application {
             exit(Constants.EXIT_INVALID_JAVA_VERSION);
         }
 
+        //TODO : remove
+        Security lSecurity = Security.getInstance();
+
         // Name thread
         Thread.currentThread().setName(String.format("Main %s Thread", Thread.currentThread().getId()));
 
