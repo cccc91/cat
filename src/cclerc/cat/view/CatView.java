@@ -2517,13 +2517,12 @@ public class CatView {
                     lSpeedTestPoint.getPoint().setNode(null);
                 }
 
-                // Order categories
-                final ObservableList<String> c = FXCollections.observableArrayList(lCategories);
-                Collections.sort(c);
-                speedTestBarChartXAxis.setCategories(FXCollections.observableArrayList(new LinkedHashSet<>()));
-                speedTestBarChartXAxis.setCategories(c);
-
             }
+
+            // Order categories
+            final ObservableList<String> c = FXCollections.observableArrayList(lCategories);
+            speedTestBarChartXAxis.setCategories(FXCollections.observableArrayList(new LinkedHashSet<>()));
+            speedTestBarChartXAxis.setCategories(c);
 
             if (lSpeedTestBar.getSeries().getData().size() - 1 > 0) {
 

@@ -6,7 +6,6 @@ import cclerc.cat.model.Alarm;
 import cclerc.services.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -24,6 +23,7 @@ public class GlobalMonitoring {
 
         private EnumTypes.HostState state;
         private long startMonitoringDate;
+        private long lastLostPingDateForgettable;
         private long lastLostPingDate;
         private long lastLostConnectionDate;
         private long lostPingsCount = 0;
@@ -53,6 +53,7 @@ public class GlobalMonitoring {
 
         public void setLastLostPingDate(long aInLastLostPingDate) {
             lastLostPingDate = aInLastLostPingDate;
+            lastLostPingDateForgettable = aInLastLostPingDate;
         }
 
         public void setLastLostConnectionDate(long aInLastLostConnectionDate) {
@@ -91,6 +92,10 @@ public class GlobalMonitoring {
             return startMonitoringDate;
         }
 
+        public long getLastLostPingDateForgettable() {
+            return lastLostPingDateForgettable;
+        }
+
         public long getLastLostPingDate() {
             return lastLostPingDate;
         }
@@ -122,7 +127,7 @@ public class GlobalMonitoring {
         // METHODS
 
         public void resetConnectionLost() {
-            lastLostPingDate = 0;
+            lastLostPingDateForgettable = 0;
             lostPingsCount = 0;
         }
 
@@ -355,8 +360,8 @@ public class GlobalMonitoring {
                     JobDetails lJobDetails = monitoringJobStates.get(lMonitoringJob);
 
                     // If no connection is lost during configurable period, reset the counters
-                    if (lJobDetails.getLastLostPingDate() != 0 &&
-                        (lNow - lJobDetails.getLastLostPingDate() >= lConfiguration.getConnectionsLostForgetTime())) {
+                    if (lJobDetails.getLastLostPingDateForgettable() != 0 &&
+                        (lNow - lJobDetails.getLastLostPingDateForgettable() >= lConfiguration.getConnectionsLostForgetTime())) {
                         lJobDetails.resetConnectionLost();
                     }
 
