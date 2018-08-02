@@ -435,6 +435,34 @@ public abstract class AbstractConfiguration {
 
     }
 
+    /**
+     * Checks if two configurations are the same except for some excluded attributes,
+     * i.e. if all non excluded attributes have the same values
+     *
+     * @param aInConfiguration       Configuration to compare current configuration with
+     * @param aInExcludedAttributes  List of excluded attributes
+     * @return Status of the comparison
+     */
+    public boolean isSameAs(AbstractConfiguration aInConfiguration, List<String> aInExcludedAttributes) {
+
+        if (aInConfiguration == null) return false;
+
+        // Compare attributes
+        for (String lAttributeName : attributeNames) {
+            if (!aInExcludedAttributes.contains(lAttributeName)) {
+                try {
+                    if (!get(lAttributeName).equals(aInConfiguration.get(lAttributeName))) {
+                        return false;
+                    }
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+        }
+        return true;
+
+    }
+
     public void copy(AbstractConfiguration aInConfiguration) throws Exception {
         for (String lAttributeName : attributeNames) {
             set(lAttributeName, aInConfiguration.get(lAttributeName));

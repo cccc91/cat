@@ -458,7 +458,7 @@ public class Cat extends Application {
                 Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getSmtpServerConfigurations()) {
             Email.addSmtpServer(
                     lSmtpServerConfiguration.getName(), lSmtpServerConfiguration.getTlsMode(), String.valueOf(lSmtpServerConfiguration.getPort()),
-                    lSmtpServerConfiguration.getUser(), lSmtpServerConfiguration.getLogin(), lSmtpServerConfiguration.getPassword(),
+                    lSmtpServerConfiguration.getUser(), lSmtpServerConfiguration.getLogin(), Security.getInstance().decrypt(lSmtpServerConfiguration.getPassword()),
                     String.valueOf(lSmtpServerConfiguration.getConnectionTimeout()), String.valueOf(lSmtpServerConfiguration.getTimeout()));
         }
 
@@ -650,9 +650,6 @@ public class Cat extends Application {
                     "log.cat.error.incorrectJavaVersion"), System.getProperty("java.version"), Display.getAboutResourceBundle().getString("product.java.version")));
             exit(Constants.EXIT_INVALID_JAVA_VERSION);
         }
-
-        //TODO : remove
-        Security lSecurity = Security.getInstance();
 
         // Name thread
         Thread.currentThread().setName(String.format("Main %s Thread", Thread.currentThread().getId()));

@@ -198,8 +198,12 @@ public class AddEditSmtpServersDialog {
                     try {
                         // Retrieve set method from configuration class and method name
                         Method lSetMethod = smtpServerConfiguration.getClass().getDeclaredMethod("set" + lMethodName, String.class);
+
+                        // Specific case of password
+                        String lNewValue = (lControl.equals(password)) ? Security.getInstance().encrypt(newValue) : newValue;
+
                         // Invoke set method
-                        lSetMethod.invoke(smtpServerConfiguration, (String) newValue);
+                        lSetMethod.invoke(smtpServerConfiguration, lNewValue);
                         // Set different style for attribute which is set to the default value
                         if (((newValue == null) && (lDefaultValue == null)) || ((newValue != null) && newValue.equals(lDefaultValue))) {
                             if (((newValue == null) && (lInitialValue == null)) || ((newValue != null) && newValue.equals(lInitialValue))) {
@@ -234,7 +238,7 @@ public class AddEditSmtpServersDialog {
                 if (aInField.getType().equals(TextField.class)) {
                     ((TextField) lControl).setText(lInitialValue);
                 } else if (aInField.getType().equals(PasswordField.class)) {
-                    ((PasswordField) lControl).setText(lInitialValue);
+                    ((PasswordField) lControl).setText(Security.getInstance().decrypt(lInitialValue));
                 } else if (aInField.getType().equals(ChoiceBox.class)) {
                     ((ChoiceBox) lControl).setValue(lInitialValue);
                 }
@@ -320,7 +324,7 @@ public class AddEditSmtpServersDialog {
 
         SmtpServer lSmtpServer = new SmtpServer(
                 smtpServerConfiguration.getName(), smtpServerConfiguration.getTlsMode(), String.valueOf(smtpServerConfiguration.getPort()),
-                smtpServerConfiguration.getUser(), smtpServerConfiguration.getLogin(), smtpServerConfiguration.getPassword(),
+                smtpServerConfiguration.getUser(), smtpServerConfiguration.getLogin(), Security.getInstance().decrypt(smtpServerConfiguration.getPassword()),
                 String.valueOf(smtpServerConfiguration.getConnectionTimeout() * 1000), String.valueOf(smtpServerConfiguration.getTimeout() * 1000));
 
         ArrayList<String> lRecipientList = new ArrayList<>(Arrays.asList(smtpServerConfiguration.getUser()));

@@ -2,6 +2,7 @@ package cclerc.cat.Configuration;
 
 import cclerc.services.Constants;
 import cclerc.services.EnumTypes;
+import cclerc.services.Security;
 import org.jdom2.Element;
 
 import java.util.ArrayList;
@@ -138,6 +139,11 @@ public class SmtpServerConfiguration extends AbstractConfiguration {
     @Override
     public Element save() {
         return super.save("name");
+    }
+
+    public boolean isSameAs(SmtpServerConfiguration aInSmtpServerConfiguration) {
+        return super.isSameAs(aInSmtpServerConfiguration, Arrays.asList("password")) &&
+               Security.getInstance().decrypt(password).equals(Security.getInstance().decrypt(aInSmtpServerConfiguration.getPassword()));
     }
 
 }
