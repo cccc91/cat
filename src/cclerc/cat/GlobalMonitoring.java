@@ -1141,13 +1141,13 @@ public class GlobalMonitoring {
 
 
         String lLostPingsDateMessage = (lLostPingsSinceLastReport != 0) ?
-                                   LocaleUtilities.getInstance().getDateFormat().format(lastLostPingDate) + " " +
+                                   "(" + LocaleUtilities.getInstance().getDateFormat().format(lastLostPingDate) + " " +
                                    Display.getViewResourceBundle().getString("lastLostConnectionDetailTime") + " " +
-                                   LocaleUtilities.getInstance().getTimeFormat().format(lastLostPingDate) : "";
+                                   LocaleUtilities.getInstance().getTimeFormat().format(lastLostPingDate) + ")" : "";
         String lLostConnectionsDateMessage = (lLostConnectionsSinceLastReport != 0) ?
-                                   LocaleUtilities.getInstance().getDateFormat().format(lastLostConnectionDate) + " " +
+                                   "(" + LocaleUtilities.getInstance().getDateFormat().format(lastLostConnectionDate) + " " +
                                    Display.getViewResourceBundle().getString("lastLostConnectionDetailTime") + " " +
-                                   LocaleUtilities.getInstance().getTimeFormat().format(lastLostConnectionDate) : "";
+                                   LocaleUtilities.getInstance().getTimeFormat().format(lastLostConnectionDate) + ")" : "";
 
         // Build summary report
         lReport = lReport
