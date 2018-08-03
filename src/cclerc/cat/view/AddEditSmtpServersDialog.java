@@ -358,6 +358,8 @@ public class AddEditSmtpServersDialog {
                 } finally {
                     Platform.runLater(() -> {
                         lWaitDialog.close();
+                    });
+                    Platform.runLater(() -> {
                         lResult.showAndWait();
                     });
                 }
