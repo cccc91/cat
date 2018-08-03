@@ -198,7 +198,7 @@ public class GlobalMonitoringConfiguration extends AbstractConfiguration {
     }
 
     public GlobalMonitoringConfiguration(Configuration aInConfiguration) {
-        super("globalMonitoringConfiguration", aInConfiguration, "globalMonitoring", ATTRIBUTE_NAMES);
+        super("globalMonitoring", aInConfiguration, "globalMonitoring", ATTRIBUTE_NAMES);
         pollingPeriod = DEFAULT_POLLING_PERIOD;
         periodicSpeedTestPollingPeriod = DEFAULT_PERIODIC_SPEED_TEST_POLLING_PERIOD;
         periodicReportsPollingPeriod = DEFAULT_PERIODIC_REPORTS_POLLING_PERIOD;

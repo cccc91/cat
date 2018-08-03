@@ -21,6 +21,7 @@ import javafx.stage.*;
 import org.apache.commons.cli.*;
 import org.jdom2.JDOMException;
 
+import javax.rmi.CORBA.Util;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -684,18 +685,21 @@ public class Cat extends Application {
     public static void restart() {
 
         StringBuilder lCommand = new StringBuilder();
-        lCommand.append(System.getProperty("java.home")).append(File.separator).append("java ");
-        for (String lJvmArgs : ManagementFactory.getRuntimeMXBean().getInputArguments()) lCommand.append(lJvmArgs).append(" ");
+        lCommand.append(System.getProperty("java.home"));
+        if (!lCommand.toString().contains(File.separator + "bin")) lCommand.append(File.separator).append("bin");
+        lCommand.append(File.separator).append("java");
+        StringBuilder lArgs = new StringBuilder();
+        for (String lJvmArgs : ManagementFactory.getRuntimeMXBean().getInputArguments()) lArgs.append(lJvmArgs).append(" ");
 
-        lCommand.append("-cp ").append(ManagementFactory.getRuntimeMXBean().getClassPath()).append(" ");
-        lCommand.append(Cat.class.getName()).append(" ");
-        for (String arg : applicationArguments)  lCommand.append(arg).append(" ");
+        lArgs.append("-cp ").append(ManagementFactory.getRuntimeMXBean().getClassPath()).append(" ");
+        lArgs.append(Cat.class.getName()).append(" ");
+        for (String arg : applicationArguments)  lArgs.append(arg).append(" ");
 
         try {
             // Restart only if program is launched from jar, otherwise display an alert
-            if (lCommand.toString().contains("cat.jar")) {
+            if (lArgs.toString().contains("cat.jar")) {
                 if (confirmExit("confirm.restart.question")) {
-                    Runtime.getRuntime().exec(lCommand.toString());
+                    Process lProcess = Runtime.getRuntime().exec(lCommand.toString() + " " + lArgs.toString());
                     System.exit(0);
                 }
             } else {

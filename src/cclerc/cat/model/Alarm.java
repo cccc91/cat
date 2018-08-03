@@ -282,8 +282,9 @@ public class Alarm {
     private void playSound() {
 
         try {
-            String lSound = getSoundFile(state, severity);
-            if (!isFiltered() && soundsAreAllowed()) Utilities.playSound(lSound);
+            if (!isFiltered() && soundsAreAllowed()) {
+                Utilities.playSound(getSoundFile(state, severity));
+            }
         } catch (Exception e) {
             Display.logUnexpectedError(e);
         }
@@ -298,17 +299,13 @@ public class Alarm {
      */
     private String getSoundFile(EnumTypes.AlarmState aInState, EnumTypes.AlarmSeverity aInSeverity) throws FileNotFoundException {
 
-        if (Configuration.getCurrentConfiguration().getAlarmsConfiguration().getAudibleAlarmsConfiguration().getAudibleEnabled()) {
-            try {
-                if (aInState.equals(EnumTypes.AlarmState.CLEARED)) {
-                    return Configuration.getCurrentConfiguration().getAlarmsConfiguration().getAudibleAlarmsConfiguration().getClear();
-                } else {
-                    return Configuration.getCurrentConfiguration().getAlarmsConfiguration().getAudibleAlarmsConfiguration().get(aInSeverity.toString().toLowerCase());
-                }
-            } catch (Exception e) {
-                throw new FileNotFoundException();
+        try {
+            if (aInState.equals(EnumTypes.AlarmState.CLEARED)) {
+                return Configuration.getCurrentConfiguration().getAlarmsConfiguration().getAudibleAlarmsConfiguration().getClear();
+            } else {
+                return Configuration.getCurrentConfiguration().getAlarmsConfiguration().getAudibleAlarmsConfiguration().get(aInSeverity.toString().toLowerCase());
             }
-        } else {
+        } catch (Exception e) {
             throw new FileNotFoundException();
         }
 
@@ -319,6 +316,8 @@ public class Alarm {
      * @return true if sound can be played
      */
     private boolean soundsAreAllowed() {
+
+        if (Configuration.getCurrentConfiguration().getAlarmsConfiguration().getAudibleAlarmsConfiguration().getAudibleEnabled()) return false;
 
         if (Configuration.getCurrentConfiguration().getAlarmsConfiguration().getAudibleAlarmsConfiguration().getMuteStartTime() == null ||
             Configuration.getCurrentConfiguration().getAlarmsConfiguration().getAudibleAlarmsConfiguration().getMuteEndTime() == null) return true;

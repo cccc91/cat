@@ -1441,8 +1441,9 @@ public class ConfigurationDialog {
                     }
                 } else if (!((SmtpServersConfiguration) aInConfiguration).isSameAs(
                         Configuration.getInitialConfiguration().getEmailConfiguration().getSmtpServersConfiguration()) ||
-                           !((SmtpServersConfiguration) aInConfiguration).getPreferredSmtpServer().equals(
-                                   Configuration.getInitialConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getPreferredSmtpServer())) {
+                        (((SmtpServersConfiguration) aInConfiguration).getPreferredSmtpServer() != null &&
+                                !((SmtpServersConfiguration) aInConfiguration).getPreferredSmtpServer().equals(
+                                   Configuration.getInitialConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getPreferredSmtpServer()))) {
                     ((TableView) aInConfigurationObject).setId("new-list");
                 } else {
                     ((TableView) aInConfigurationObject).setId("");
@@ -1516,7 +1517,8 @@ public class ConfigurationDialog {
         editSmtpServerButton.setDisable(smtpServersTable.getSelectionModel().getSelectedIndices().size() != 1);
         preferredSmtpServerButton.setDisable((smtpServersTable.getSelectionModel().getSelectedIndices().size() != 1) ||
                                              (((smtpServersTable.getSelectionModel().getSelectedItem() != null) &&
-                                              Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getPreferredSmtpServer().equals(
+                                                     Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getPreferredSmtpServer() != null &&
+                                                     Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getPreferredSmtpServer().equals(
                                                      smtpServersTable.getSelectionModel().getSelectedItem().getUser() + "@" +
                                                      smtpServersTable.getSelectionModel().getSelectedItem().getName()))));
         upSmtpServerButton.setDisable((smtpServersTable.getSelectionModel().getSelectedIndices().size() == 0) ||
@@ -1774,7 +1776,7 @@ public class ConfigurationDialog {
                     Configuration.getCurrentConfiguration().getMonitoringConfiguration().getNetworkInterfacesConfiguration().getNetworkInterfaceConfigurations()) {
                 for (int lIndex = interfacesTable.getSelectionModel().getSelectedItems().size() - 1; lIndex >= 0; lIndex--) {
                     ConfiguredInterface lSelectedConfiguredInterface = interfacesTable.getSelectionModel().getSelectedItems().get(lIndex);
-                    // Decrement priority (move up) in the interfaces list of rows which are just before a selected line
+                    // Decrement priority (move up) in the interfaces list of rows 1927which are just before a selected line
                     if (!lNetworkInterfaceConfiguration.getName().equals(lSelectedConfiguredInterface.getName()) && lNetworkInterfaceConfiguration.getPriority() == lSelectedConfiguredInterface.getPriority())
                         lNetworkInterfaceConfiguration.decrementPriority();
                     // Increment priority (move down) in the interfaces list of rows which are selected
@@ -1922,7 +1924,8 @@ public class ConfigurationDialog {
         // Set preferred SMTP server to the selected one if it is not already the case
         String lSelectedPreferredSmtpServer =
                 smtpServersTable.getSelectionModel().getSelectedItem().getUser() + "@" + smtpServersTable.getSelectionModel().getSelectedItem().getName();
-        if (!Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getPreferredSmtpServer().equals(lSelectedPreferredSmtpServer)) {
+        if (Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getPreferredSmtpServer() == null ||
+                !Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getPreferredSmtpServer().equals(lSelectedPreferredSmtpServer)) {
 
             // Memorize lines to reselect at the end
             int lSelectedRow = smtpServersTable.getSelectionModel().getSelectedIndex();
