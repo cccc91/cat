@@ -1,6 +1,7 @@
 package cclerc.services;
 
 import java.net.InetAddress;
+import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
@@ -66,6 +67,16 @@ public class SmtpServer {
 
         // User
         lProperties.setProperty("mail.smtp.user", aInUser);
+
+        // Proxy
+        Proxy lProxy = Network.findSocksProxy(aInHost, Integer.valueOf(aInPort));
+        if (lProxy != Proxy.NO_PROXY) {
+            String lProxyIp = lProxy.address().toString().replaceAll(":.*", "");
+            String lProxyPort = lProxy.address().toString().replaceAll(".*:", "");
+            lProperties.setProperty("proxySet", "true");
+            lProperties.setProperty("socksProxyHost", lProxyIp);
+            lProperties.setProperty("socksProxyPort", lProxyPort);
+        }
 
         // Authentication
         if (!aInPassword.equals("")) {
