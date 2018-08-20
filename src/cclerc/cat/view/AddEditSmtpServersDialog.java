@@ -345,13 +345,11 @@ public class AddEditSmtpServersDialog {
                                          Display.getMessagesResourceBundle().getString("smtpServer.configuration.test.subject"),
                                          Display.getMessagesResourceBundle().getString("smtpServer.configuration.test.body"));
 
-                    Image image = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_EMAIL_OK).toString());
-                    ImageView imageView = new ImageView(image);
+                    ImageView imageView = new ImageView(Constants.IMAGE_EMAIL_OK);
                     lResult.setGraphic(imageView);
                     lResult.setContentText(Display.getViewResourceBundle().getString("configuration.monitoringJobs.email.smtpServers.test.ok"));
                 } catch (MessagingException e) {
-                    Image image = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_EMAIL_NOK).toString());
-                    ImageView imageView = new ImageView(image);
+                    ImageView imageView = new ImageView(Constants.IMAGE_EMAIL_NOK);
                     lResult.setGraphic(imageView);
                     lResult.setContentText(String.format(Display.getViewResourceBundle().getString("configuration.monitoringJobs.email.smtpServers.test.nok"), e.getCause()));
                     lResult.setAlertType(Alert.AlertType.ERROR);

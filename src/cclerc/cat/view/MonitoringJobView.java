@@ -42,9 +42,13 @@ public class MonitoringJobView {
 
     // Pause management
     private boolean isButtonPauseDisplayed;
+    private Tooltip pauseTooltip;
+    private Tooltip playTooltip;
 
     // Email management
     private boolean isButtonEmailEnabled;
+    private Tooltip emailTooltip;
+    private Tooltip noEmailTooltip;
 
     // Blinking text
     private Timeline blinker ;
@@ -94,6 +98,11 @@ public class MonitoringJobView {
         blinker.setCycleCount(Animation.INDEFINITE);
 
         // Tooltips
+        pauseTooltip = new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.pause"));
+        playTooltip = new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.play"));
+        emailTooltip = new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.email"));
+        noEmailTooltip = new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.noemail"));
+
         Tooltip lClearConsoleTooltip = new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.clearConsole"));
         if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE))
             Tooltip.install(clearConsoleButtonImageView, lClearConsoleTooltip);
@@ -502,21 +511,23 @@ public class MonitoringJobView {
 
         isButtonPauseDisplayed = aInPause;
 
+        Image lNewImage;
         Tooltip lTooltip;
         if (aInPause) {
             blinker.pause();
             hostNameLabel.pseudoClassStateChanged(PseudoClass.getPseudoClass("blinkText"), false);
             hostIpLabel.pseudoClassStateChanged(PseudoClass.getPseudoClass("blinkText"), false);
             changeState(state);
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.pause"));
+            lNewImage = Constants.IMAGE_PAUSE;
+            lTooltip = pauseTooltip;
         } else {
             blinker.play();
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.play"));
+            lNewImage = Constants.IMAGE_PLAY;
+            lTooltip = playTooltip;
         }
         if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) Tooltip.install(pauseButtonImageView, lTooltip);
 
         // Compute image url and load it
-        Image lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + ((aInPause) ? Constants.IMAGE_PAUSE : Constants.IMAGE_PLAY)).toString());
         pauseButtonImageView.setImage(lNewImage);
 
     }
@@ -544,12 +555,11 @@ public class MonitoringJobView {
      * Disables email button
      */
     public void disableEmailButton() {
-        Image lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_NOEMAIL).toString());
-        Tooltip lTooltip = new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.emailDisabled"));
-        emailButtonImageView.setImage(lNewImage);
+        emailButtonImageView.setImage(Constants.IMAGE_NOEMAIL);
         emailButtonImageView.setOpacity(Constants.DISABLED_IMAGE_TRANSPARENCY);
         emailButtonImageView.setOnMouseClicked(null);
-        if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) Tooltip.install(emailButtonImageView, lTooltip);
+        if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE))
+            Tooltip.install(emailButtonImageView, noEmailTooltip);
     }
 
     /**
@@ -564,11 +574,11 @@ public class MonitoringJobView {
         Image lNewImage;
         Tooltip lTooltip;
         if (aInEmail) {
-            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_EMAIL).toString());
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.email"));
+            lNewImage = Constants.IMAGE_EMAIL;
+            lTooltip = emailTooltip;
         } else {
-            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_NOEMAIL).toString());
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.noemail"));
+            lNewImage = Constants.IMAGE_NOEMAIL;
+            lTooltip = noEmailTooltip;
         }
         if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) Tooltip.install(emailButtonImageView, lTooltip);
 

@@ -178,6 +178,8 @@ public class ConfigurationDialog {
     private static AddNetworkInterfacesDialog addNetworkInterfacesDialogController;
     private static AddEditSmtpServersDialog addEditSmtpServerDialogController;
 
+    private boolean opening = true;
+
     /**
      * Creates instance of ConfigurationDialog controller
      * @param aInParentStage Parent stage of configuration dialog stage
@@ -1316,6 +1318,7 @@ public class ConfigurationDialog {
      * Checks if the configuration has been modified
      */
     private void checkConfigurationChanges() {
+        if (opening) return;
         boolean lConfigurationHasChanged =
                 !Configuration.getCurrentConfiguration().isSameAs(Configuration.getInitialConfiguration());
         saveButton.setDisable(!lConfigurationHasChanged || !saveButton.isVisible());
@@ -1566,6 +1569,7 @@ public class ConfigurationDialog {
     public void show(boolean aInSaveState) {
 
         saveState = aInSaveState;
+        opening = true;
 
         // Select last selected tabs
         configurationTabPane.getSelectionModel().select(States.getInstance().getIntegerValue("configuration.selectedTab", 0));
@@ -1610,6 +1614,8 @@ public class ConfigurationDialog {
         wanBackupIpv6CheckBox.setDisable(!lIpv6Supported);
         lanPreferredIpv6CheckBox.setDisable(!lIpv6Supported);
         lanBackupIpv6CheckBox.setDisable(!lIpv6Supported);
+
+        opening = false;
 
         // Display
         dialogStage.showAndWait();

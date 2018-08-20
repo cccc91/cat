@@ -15,13 +15,9 @@ public class Graphics {
         if (aInAddressType == null) return null;
 
         if (aInStateOk) {
-            return (aInAddressType == EnumTypes.AddressType.WAN) ?
-                        new Image(Thread.currentThread().getContextClassLoader().getResource("resources/images/" + Constants.IMAGE_WAN_OK).toString()) :
-                        new Image(Thread.currentThread().getContextClassLoader().getResource("resources/images/" + Constants.IMAGE_LAN_OK).toString());
+            return (aInAddressType == EnumTypes.AddressType.WAN) ? Constants.IMAGE_WAN_OK : Constants.IMAGE_LAN_OK;
         } else {
-            return (aInAddressType == EnumTypes.AddressType.WAN) ?
-                        new Image(Thread.currentThread().getContextClassLoader().getResource("resources/images/" + Constants.IMAGE_WAN_NOK).toString()) :
-                        new Image(Thread.currentThread().getContextClassLoader().getResource("resources/images/" + Constants.IMAGE_LAN_NOK).toString());
+            return (aInAddressType == EnumTypes.AddressType.WAN) ? Constants.IMAGE_WAN_NOK : Constants.IMAGE_LAN_NOK;
         }
 
     }
@@ -38,13 +34,9 @@ public class Graphics {
 
         switch (aInInterfaceType) {
             case ETH:
-                return (aInStateOk) ?
-                            new Image(Thread.currentThread().getContextClassLoader().getResource("resources/images/" + Constants.IMAGE_ETH_OK).toString()) :
-                            new Image(Thread.currentThread().getContextClassLoader().getResource("resources/images/" + Constants.IMAGE_ETH_NOK).toString());
+                return (aInStateOk) ? Constants.IMAGE_ETH_OK : Constants.IMAGE_ETH_NOK;
             case WIFI:
-                return (aInStateOk) ?
-                            new Image(Thread.currentThread().getContextClassLoader().getResource("resources/images/" + Constants.IMAGE_WIFI_OK).toString()) :
-                            new Image(Thread.currentThread().getContextClassLoader().getResource("resources/images/" + Constants.IMAGE_WIFI_NOK).toString());
+                return (aInStateOk) ? Constants.IMAGE_WIFI_OK : Constants.IMAGE_WIFI_NOK;
             default:
                 return null;
         }

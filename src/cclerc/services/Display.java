@@ -4,6 +4,7 @@ import cclerc.cat.Cat;
 import cclerc.cat.view.WaitDialog;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
@@ -46,7 +47,7 @@ public class Display {
         logger.error(String.format(messagesResourceBundle.getString("log.unexpected"), Utilities.getStackTrace(aInException)));
     }
 
-    public static WaitDialog waitDialog(Stage aInParentStage, String aInHeader, String aInLogo) {
+    public static WaitDialog waitDialog(Stage aInParentStage, String aInHeader, Image aInLogo) {
 
         try {
 

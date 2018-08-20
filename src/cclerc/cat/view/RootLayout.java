@@ -29,16 +29,16 @@ public class RootLayout {
     @FXML private void initialize() {
 
         // Menu images
-        ImageView lImageViewSave = new ImageView(new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_SAVE).toString()));
+        ImageView lImageViewSave = new ImageView(Constants.IMAGE_SAVE);
         lImageViewSave.setFitHeight(20d); lImageViewSave.setFitWidth(20d);
         save.setGraphic(lImageViewSave);
-        ImageView lImageViewSaveAs = new ImageView(new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_SAVE_AS).toString()));
+        ImageView lImageViewSaveAs = new ImageView(Constants.IMAGE_SAVE_AS);
         lImageViewSaveAs.setFitHeight(20d); lImageViewSaveAs.setFitWidth(20d);
         saveAs.setGraphic(lImageViewSaveAs);
-        ImageView lImageViewClose = new ImageView(new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_CLOSE_APP).toString()));
+        ImageView lImageViewClose = new ImageView(Constants.IMAGE_CLOSE_APP);
         lImageViewClose.setFitHeight(20d); lImageViewClose.setFitWidth(20d);
         close.setGraphic(lImageViewClose);
-        ImageView lImageViewConfigure = new ImageView(new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_CONFIGURE).toString()));
+        ImageView lImageViewConfigure = new ImageView(Constants.IMAGE_CONFIGURE);
         lImageViewConfigure.setFitHeight(20d); lImageViewConfigure.setFitWidth(20d);
         configure.setGraphic(lImageViewConfigure);
 

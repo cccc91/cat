@@ -88,11 +88,10 @@ public class WaitDialog {
      * Sets the stage of this dialog
      * @param aInDialogStage Stage
      */
-    public void initializeContext(Stage aInDialogStage, String aInHeader, String aInLogo) {
+    public void initializeContext(Stage aInDialogStage, String aInHeader, Image aInLogo) {
         dialogStage = aInDialogStage;
         header.setText(aInHeader);
-        Image lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + aInLogo).toString());
-        logoImageView.setImage(lNewImage);
+        logoImageView.setImage(aInLogo);
     }
 
     // METHODS

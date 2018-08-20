@@ -202,6 +202,23 @@ public class CatView {
     private boolean isButtonEmailEnabled;
     private boolean isButtonEmailActive = true;
 
+    // Tooltips
+    private Tooltip pauseTooltip;
+    private Tooltip playTooltip;
+    private Tooltip generalPauseTooltip;
+    private Tooltip generalPlayTooltip;
+    private Tooltip emailTooltip;
+    private Tooltip noEmailTooltip;
+    private Tooltip generalEmailTooltip;
+    private Tooltip generalNoEmailTooltip;
+    private Tooltip stateOkTooltip;
+    private Tooltip stateDegradedTooltip;
+    private Tooltip stateNokTooltip;
+    private Map<EnumTypes.AddressType, Tooltip> addressTypeStateOkTooltips = new HashMap<>();
+    private Map<EnumTypes.AddressType, Tooltip> addressTypeStateNokTooltips = new HashMap<>();
+    private Map<EnumTypes.InterfaceType, Tooltip> interfaceTypeStateOkTooltips = new HashMap<>();
+    private Map<EnumTypes.InterfaceType, Tooltip> interfaceTypeStateNokTooltips = new HashMap<>();
+
     // Controllers
     private AlarmDetailsDialog alarmDetailsDialogController;
 
@@ -652,14 +669,39 @@ public class CatView {
 
         reloadSpeedTestConfiguration(true);
         switchStopStartSpeedTestButton();
-        ImageView lImageViewConfigure = new ImageView(new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_CONFIGURE).toString()));
+        ImageView lImageViewConfigure = new ImageView(Constants.IMAGE_CONFIGURE);
         lImageViewConfigure.setFitHeight(20d); lImageViewConfigure.setFitWidth(20d);
         speedTestConfigureButton.setGraphic(lImageViewConfigure);
-        ImageView lImageViewSpeedTest = new ImageView(new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_SPEED_TEST).toString()));
+        ImageView lImageViewSpeedTest = new ImageView(Constants.IMAGE_SPEED_TEST);
         lImageViewSpeedTest.setFitHeight(20d); lImageViewSpeedTest.setFitWidth(20d);
         speedTestStartStopButton.setGraphic(lImageViewSpeedTest);
 
         // Tooltips
+        //TODO
+        pauseTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.pause"));
+        playTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.play"));
+        generalPauseTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.generalPause"));
+        generalPlayTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.generalPlay"));
+        emailTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.email"));
+        noEmailTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.noemail"));
+        generalEmailTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.generalEmail"));
+        generalNoEmailTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.nogeneralEmail"));
+        stateOkTooltip = new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.globalStatusOk"));
+        stateDegradedTooltip = new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.globalStatusDegraded"));
+        stateNokTooltip = new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.globalStatusNok"));
+        for (EnumTypes.AddressType lAddressType: EnumTypes.AddressType.values()) {
+            addressTypeStateOkTooltips.put(
+                    lAddressType, new Tooltip(String.format(Display.getViewResourceBundle().getString("monitoringJob.tooltip.addressTypeStateOk"), lAddressType)));
+            addressTypeStateNokTooltips.put(
+                    lAddressType, new Tooltip(String.format(Display.getViewResourceBundle().getString("monitoringJob.tooltip.addressTypeStateNok"), lAddressType)));
+        }
+        for (EnumTypes.InterfaceType lInterfaceType: EnumTypes.InterfaceType.values()) {
+            interfaceTypeStateOkTooltips.put(
+                    lInterfaceType, new Tooltip(String.format(Display.getViewResourceBundle().getString("monitoringJob.tooltip.interfaceTypeStateOk"), lInterfaceType)));
+            interfaceTypeStateNokTooltips.put(
+                    lInterfaceType, new Tooltip(String.format(Display.getViewResourceBundle().getString("monitoringJob.tooltip.interfaceTypeStateNok"), lInterfaceType)));
+        }
+
         if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) {
 
             Tooltip lClearConsoleTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.clearConsole"));
@@ -1821,12 +1863,12 @@ public class CatView {
         Tooltip lTooltip;
         if (isButtonPauseDisplayed) {
             printConsole(new Message(Display.getViewResourceBundle().getString("catView.console.resume"), EnumTypes.MessageLevel.INFO));
-            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_PAUSE).toString());
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.pause"));
+            lNewImage = Constants.IMAGE_PAUSE;
+            lTooltip = pauseTooltip;
         } else {
             printConsole(new Message(Display.getViewResourceBundle().getString("catView.console.pause"), EnumTypes.MessageLevel.INFO));
-            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_PLAY).toString());
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.play"));
+            lNewImage = Constants.IMAGE_PLAY;
+            lTooltip = playTooltip;
         }
         if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) Tooltip.install(pauseButtonImageView, lTooltip);
         pauseButtonImageView.setImage(lNewImage);
@@ -1866,11 +1908,11 @@ public class CatView {
         Image lNewImage;
         Tooltip lTooltip;
         if (aInPause) {
-            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_PAUSE).toString());
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.pause"));
+            lNewImage = Constants.IMAGE_PAUSE;
+            lTooltip = pauseTooltip;
         } else {
-            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_PLAY).toString());
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.play"));
+            lNewImage = Constants.IMAGE_PLAY;
+            lTooltip = playTooltip;
         }
         if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) Tooltip.install(pauseButtonImageView, lTooltip);
         pauseButtonImageView.setImage(lNewImage);
@@ -1881,7 +1923,7 @@ public class CatView {
      * Disables email button
      */
     public void disableEmailButtons() {
-        Image lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_NOEMAIL).toString());
+        Image lNewImage = Constants.IMAGE_NOEMAIL;
         Tooltip lTooltip = new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.emailDisabled"));
         emailButtonImageView.setImage(lNewImage);
         emailButtonImageView.setOpacity(Constants.DISABLED_IMAGE_TRANSPARENCY);
@@ -1915,11 +1957,11 @@ public class CatView {
         Image lNewImage;
         Tooltip lTooltip;
         if (isButtonEmailEnabled) {
-            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_EMAIL).toString());
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.email"));
+            lNewImage = Constants.IMAGE_EMAIL;
+            lTooltip = emailTooltip;
         } else {
-            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_NOEMAIL).toString());
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.noemail"));
+            lNewImage = Constants.IMAGE_NOEMAIL;
+            lTooltip = noEmailTooltip;
         }
         if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) Tooltip.install(emailButtonImageView, lTooltip);
         emailButtonImageView.setImage(lNewImage);
@@ -1959,11 +2001,11 @@ public class CatView {
         Image lNewImage;
         Tooltip lTooltip;
         if (aInEmail) {
-            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_EMAIL).toString());
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.email"));
+            lNewImage = Constants.IMAGE_EMAIL;
+            lTooltip = emailTooltip;
         } else {
-            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_NOEMAIL).toString());
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.noemail"));
+            lNewImage = Constants.IMAGE_NOEMAIL;
+            lTooltip = noEmailTooltip;
         }
         if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) Tooltip.install(emailButtonImageView, lTooltip);
         emailButtonImageView.setImage(lNewImage);
@@ -1985,11 +2027,11 @@ public class CatView {
         Image lNewImage;
         Tooltip lTooltip;
         if (isButtonGeneralPlayPauseDisplayed) {
-            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_PAUSE).toString());
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.generalPause"));
+            lNewImage = Constants.IMAGE_PAUSE;
+            lTooltip = generalPauseTooltip;
         } else {
-            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_PLAY).toString());
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.generalPlay"));
+            lNewImage = Constants.IMAGE_PLAY;
+            lTooltip = generalPlayTooltip;
         }
         if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) Tooltip.install(generalPauseButtonImageView, lTooltip);
         generalPauseButtonImageView.setImage(lNewImage);
@@ -2013,11 +2055,11 @@ public class CatView {
         Image lNewImage;
         Tooltip lTooltip;
         if (aInPauseDisplayed) {
-            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_PAUSE).toString());
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.generalPause"));
+            lNewImage = Constants.IMAGE_PAUSE;
+            lTooltip = generalPauseTooltip;
         } else {
-            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_PLAY).toString());
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.generalPlay"));
+            lNewImage = Constants.IMAGE_PLAY;
+            lTooltip = generalPlayTooltip;
         }
         if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) Tooltip.install(generalPauseButtonImageView, lTooltip);
         generalPauseButtonImageView.setImage(lNewImage);
@@ -2035,11 +2077,11 @@ public class CatView {
         Image lNewImage;
         Tooltip lTooltip;
         if (isButtonGeneralEmailEnabled) {
-            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_EMAIL).toString());
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.generalEmail"));
+            lNewImage = Constants.IMAGE_EMAIL;
+            lTooltip = generalEmailTooltip;
         } else {
-            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_NOEMAIL).toString());
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.nogeneralEmail"));
+            lNewImage = Constants.IMAGE_NOEMAIL;
+            lTooltip = generalNoEmailTooltip;
         }
         if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) Tooltip.install(generalEmailButtonImageView, lTooltip);
         generalEmailButtonImageView.setImage(lNewImage);
@@ -2064,11 +2106,11 @@ public class CatView {
         Image lNewImage;
         Tooltip lTooltip;
         if (aInEmail) {
-            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_EMAIL).toString());
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.generalEmail"));
+            lNewImage = Constants.IMAGE_EMAIL;
+            lTooltip = generalEmailTooltip;
         } else {
-            lNewImage = new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_NOEMAIL).toString());
-            lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.tooltip.nogeneralEmail"));
+            lNewImage = Constants.IMAGE_NOEMAIL;
+            lTooltip = generalNoEmailTooltip;
         }
         if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE)) Tooltip.install(generalEmailButtonImageView, lTooltip);
         generalEmailButtonImageView.setImage(lNewImage);
@@ -2205,22 +2247,16 @@ public class CatView {
 
         if (aInAddressType != null) {
 
-            lTooltip = (aInStateOk) ?
-                       new Tooltip(String.format(Display.getViewResourceBundle().getString("monitoringJob.tooltip.addressTypeStateOk"), aInAddressType)) :
-                       new Tooltip(String.format(Display.getViewResourceBundle().getString("monitoringJob.tooltip.addressTypeStateNok"), aInAddressType));
+            lTooltip = (aInStateOk) ? addressTypeStateOkTooltips.get(aInAddressType) : addressTypeStateNokTooltips.get(aInAddressType);
 
             switch (aInAddressType) {
                 case WAN:
-                    lNewImage = (aInStateOk) ?
-                                new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_WAN_OK).toString()) :
-                                new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_WAN_NOK).toString());
+                    lNewImage = (aInStateOk) ? Constants.IMAGE_WAN_OK : Constants.IMAGE_WAN_NOK;
                     if (Preferences.getInstance().getBooleanValue("enableDetailTooltip", Constants.DEFAULT_ENABLE_DETAIL_TOOLTIP_PREFERENCE)) Tooltip.install(wanStateImageView, lTooltip);
                     wanStateImageView.setImage(lNewImage);
                     break;
                 case LAN:
-                    lNewImage = (aInStateOk) ?
-                                new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_LAN_OK).toString()) :
-                                new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_LAN_NOK).toString());
+                    lNewImage = (aInStateOk) ? Constants.IMAGE_LAN_OK : Constants.IMAGE_LAN_NOK;
                     if (Preferences.getInstance().getBooleanValue("enableDetailTooltip", Constants.DEFAULT_ENABLE_DETAIL_TOOLTIP_PREFERENCE)) Tooltip.install(lanStateImageView, lTooltip);
                     lanStateImageView.setImage(lNewImage);
                     break;
@@ -2244,22 +2280,16 @@ public class CatView {
 
         if (aInInterfaceType != null) {
 
-            lTooltip = (aInStateOk) ?
-                       new Tooltip(String.format(Display.getViewResourceBundle().getString("monitoringJob.tooltip.interfaceTypeStateOk"), aInInterfaceType)) :
-                       new Tooltip(String.format(Display.getViewResourceBundle().getString("monitoringJob.tooltip.interfaceTypeStateNok"), aInInterfaceType));
+            lTooltip = (aInStateOk) ? interfaceTypeStateOkTooltips.get(aInInterfaceType) : interfaceTypeStateNokTooltips.get(aInInterfaceType);
 
             switch (aInInterfaceType) {
                 case ETH:
-                    lNewImage = (aInStateOk) ?
-                                new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_ETH_OK).toString()) :
-                                new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_ETH_NOK).toString());
+                    lNewImage = (aInStateOk) ? Constants.IMAGE_ETH_OK : Constants.IMAGE_ETH_NOK;
                     if (Preferences.getInstance().getBooleanValue("enableDetailTooltip", Constants.DEFAULT_ENABLE_DETAIL_TOOLTIP_PREFERENCE)) Tooltip.install(networkInterface1ImageView, lTooltip);
                     networkInterface1ImageView.setImage(lNewImage);
                     break;
                 case WIFI:
-                    lNewImage = (aInStateOk) ?
-                                new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_WIFI_OK).toString()) :
-                                new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_WIFI_NOK).toString());
+                    lNewImage = (aInStateOk) ? Constants.IMAGE_WIFI_OK : Constants.IMAGE_WIFI_NOK;
                     if (Preferences.getInstance().getBooleanValue("enableDetailTooltip", Constants.DEFAULT_ENABLE_DETAIL_TOOLTIP_PREFERENCE)) Tooltip.install(networkInterface2ImageView, lTooltip);
                     networkInterface2ImageView.setImage(lNewImage);
                     break;
@@ -2277,14 +2307,8 @@ public class CatView {
     public void setGlobalStateImageView(int aInState) {
 
         // Compute image url and load it
-        Image lNewImage = (aInState == Constants.STATE_OK) ?
-                    new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_OK).toString()) :
-                          (aInState == Constants.STATE_DEGRADED) ? new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_DEGRADED).toString()) :
-                          new Image(getClass().getClassLoader().getResource("resources/images/" + Constants.IMAGE_NOK).toString());
-        Tooltip lTooltip = (aInState == Constants.STATE_OK) ?
-                   new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.globalStatusOk")) :
-                           (aInState == Constants.STATE_DEGRADED) ? new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.globalStatusDegraded")) :
-                           new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.globalStatusNok"));
+        Image lNewImage = (aInState == Constants.STATE_OK) ? Constants.IMAGE_OK : (aInState == Constants.STATE_DEGRADED) ? Constants.IMAGE_DEGRADED : Constants.IMAGE_NOK;
+        Tooltip lTooltip = (aInState == Constants.STATE_OK) ? stateOkTooltip : (aInState == Constants.STATE_DEGRADED) ? stateDegradedTooltip : stateNokTooltip;
         if (Preferences.getInstance().getBooleanValue("enableDetailTooltip", Constants.DEFAULT_ENABLE_DETAIL_TOOLTIP_PREFERENCE)) Tooltip.install(globalStateImageView, lTooltip);
         globalStateImageView.setImage(lNewImage);
 
@@ -2293,8 +2317,8 @@ public class CatView {
     /**
      * Configures check boxes allowing to filter ping lines on interface (filter on address type is constant)
      * Check boxes are ordered by interface priority and must contain the type and the name of the interface
-     * @param aInInterfaceName N
-     * @param aInPriority
+     * @param aInInterfaceName Name of the interface
+     * @param aInPriority      Priority of the interface
      */
     public void configurePingLineFilterCheckBox(String aInInterfaceName, int aInPriority) {
         pingLineFilterCheckBoxes.get(aInPriority - 1).setVisible(true);
