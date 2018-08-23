@@ -20,8 +20,9 @@ public class SpeedTest {
 
     private boolean testRunning = false;
 
-    private SpeedTestSocket speedTestSocket = new SpeedTestSocket();
+    private SpeedTestSocket speedTestSocket;
     private SpeedTestInterface speedTestInterface;
+    private boolean useProxy;
     private boolean interrupted;
     private BigDecimal bitRate = new BigDecimal(0);
     private BigDecimal octetRate = new BigDecimal(0);
@@ -41,11 +42,25 @@ public class SpeedTest {
     public SpeedTest(SpeedTestInterface aInSpeedTestInterface, boolean aInUseProxy) {
 
         speedTestInterface = aInSpeedTestInterface;
-        interrupted = false; // Must be set to false at each re-instantiation (re-instantiation is done after interruption)
+        useProxy = aInUseProxy;
+        interrupted = false;
+        createSocket();
+
+    }
+
+    public boolean isInterrupted() {
+        return interrupted;
+    }
+
+    // PRIVATE METHODS
+
+    private void createSocket() {
+
+        speedTestSocket = new SpeedTestSocket();
 
         // Set proxy if needed
         Proxy lProxy = Proxy.NO_PROXY;
-        if (aInUseProxy) {
+        if (useProxy) {
             lProxy = Network.findHttpProxy(Constants.SPEED_TEST_GET_SERVERS_URL);
             speedTestSocket.setProxyServer(lProxy.toString().replace(" @ ", "://"));
         }
@@ -72,7 +87,7 @@ public class SpeedTest {
                     testRunning = false;
                     speedTestSocket.forceStopTask();
                     speedTestSocket.closeSocket();
-                    aInSpeedTestInterface.reportError(startTime, convertSpeedTestMode(speedTestSocket.getSpeedTestMode()), aInSpeedTestError, aInErrorMessage);
+                    speedTestInterface.reportError(startTime, convertSpeedTestMode(speedTestSocket.getSpeedTestMode()), aInSpeedTestError, aInErrorMessage);
                     speedTestInterface.reportStopTest();
                     fillRates();
                     speedTestInterface.reportFinalResult(startTime, bitRates, octetRates, rawBitRates, rawOctetRates);
@@ -90,11 +105,11 @@ public class SpeedTest {
 
     }
 
-    public boolean isInterrupted() {
-        return interrupted;
+    private void resetSocket() {
+        speedTestSocket.closeSocket();
+        speedTestSocket.clearListeners();
+        createSocket();
     }
-
-    // PRIVATE METHODS
 
     private void fillRates() {
         for (int i = bitRates.size(); i <= 1; i++) bitRates.add(convertToBestUnit(BigDecimal.ZERO));
@@ -152,6 +167,7 @@ public class SpeedTest {
     private void processCompletionReport(SpeedTestReport aInReport) {
 
         if (testRunning) {
+
             // Don't take into account completion report, just use average of progress reports
             if (count != 0) {
                 bitRate = bitRate.divide(new BigDecimal(count), 2);
@@ -163,7 +179,9 @@ public class SpeedTest {
             rawBitRates.add(bitRate); rawOctetRates.add(octetRate);
             speedTestInterface.reportResult(convertSpeedTestMode(aInReport.getSpeedTestMode()), lBitRate, bitRate, lOctetRate, octetRate);
             speedTestInterface.storeResult(convertSpeedTestMode(aInReport.getSpeedTestMode()), startTime, bitRate, octetRate);
+            resetSocket();
             testRunning = false;
+
         }
 
     }
@@ -260,7 +278,7 @@ public class SpeedTest {
         if (testRunning) {
             interrupted = true; // Must not be moved as onError callback is called after socked is closed and this flag is tested in this callback
             speedTestSocket.forceStopTask();
-            speedTestSocket.closeSocket(); // Socket needs to be closed otherwise transfer goes on forever although no callback is no more called
+            resetSocket(); // Socket needs to be closed otherwise transfer goes on forever although no callback is no more called
             speedTestInterface.reportInterruption(startTime, convertSpeedTestMode(mode));
             testRunning = false;
             fillRates();

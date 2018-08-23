@@ -215,9 +215,8 @@ public class PeriodicSpeedTest implements Runnable {
                                         Display.getViewResourceBundle().getString("speedTest.running"),
                                         LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(new Date(nextExecutionTime))), EnumTypes.MessageLevel.WARNING));
                     } else {
-//                        if (speedTest != null) speedTest.end();
-//                        speedTest = SpeedTestFactory.getInstance(EnumTypes.SpeedTestType.PERIODIC);
-                        if (speedTest == null || speedTest.isInterrupted()) speedTest = SpeedTestFactory.getInstance(EnumTypes.SpeedTestType.PERIODIC);
+//                        if (speedTest == null || speedTest.isInterrupted()) speedTest = SpeedTestFactory.getInstance(EnumTypes.SpeedTestType.PERIODIC);
+                        if (speedTest == null) speedTest = SpeedTestFactory.getInstance(EnumTypes.SpeedTestType.PERIODIC);
                         speedTest.start(downloadUrl, uploadUrl);
                     }
                 }

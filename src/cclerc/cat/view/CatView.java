@@ -806,9 +806,8 @@ public class CatView {
 
         if (speedTestStartState) {
             if (speedTestDownloadUrl != null && speedTestUploadUrl != null) {
-//                if (speedTest != null) speedTest.end();
-//                speedTest = SpeedTestFactory.getInstance(EnumTypes.SpeedTestType.ON_REQUEST);
-                if (speedTest == null || speedTest.isInterrupted()) speedTest = SpeedTestFactory.getInstance(EnumTypes.SpeedTestType.ON_REQUEST);
+//                if (speedTest == null || speedTest.isInterrupted()) speedTest = SpeedTestFactory.getInstance(EnumTypes.SpeedTestType.ON_REQUEST);
+                if (speedTest == null) speedTest = SpeedTestFactory.getInstance(EnumTypes.SpeedTestType.ON_REQUEST);
                 speedTest.start(speedTestDownloadUrl, speedTestUploadUrl);
             }
 
