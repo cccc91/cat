@@ -218,6 +218,8 @@ public class CatView {
     private Map<EnumTypes.AddressType, Tooltip> addressTypeStateNokTooltips = new HashMap<>();
     private Map<EnumTypes.InterfaceType, Tooltip> interfaceTypeStateOkTooltips = new HashMap<>();
     private Map<EnumTypes.InterfaceType, Tooltip> interfaceTypeStateNokTooltips = new HashMap<>();
+    private Tooltip startSpeedTestTooltip;
+    private Tooltip stopSpeedTestTooltip;
 
     // Controllers
     private AlarmDetailsDialog alarmDetailsDialogController;
@@ -689,6 +691,9 @@ public class CatView {
         stateOkTooltip = new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.globalStatusOk"));
         stateDegradedTooltip = new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.globalStatusDegraded"));
         stateNokTooltip = new Tooltip(Display.getViewResourceBundle().getString("monitoringJob.tooltip.globalStatusNok"));
+        startSpeedTestTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.speedTest.tooltip.start"));
+        stopSpeedTestTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.speedTest.tooltip.stop"));
+
         for (EnumTypes.AddressType lAddressType: EnumTypes.AddressType.values()) {
             addressTypeStateOkTooltips.put(
                     lAddressType, new Tooltip(String.format(Display.getViewResourceBundle().getString("monitoringJob.tooltip.addressTypeStateOk"), lAddressType)));
@@ -801,6 +806,8 @@ public class CatView {
 
         if (speedTestStartState) {
             if (speedTestDownloadUrl != null && speedTestUploadUrl != null) {
+//                if (speedTest != null) speedTest.end();
+//                speedTest = SpeedTestFactory.getInstance(EnumTypes.SpeedTestType.ON_REQUEST);
                 if (speedTest == null || speedTest.isInterrupted()) speedTest = SpeedTestFactory.getInstance(EnumTypes.SpeedTestType.ON_REQUEST);
                 speedTest.start(speedTestDownloadUrl, speedTestUploadUrl);
             }
@@ -2545,7 +2552,7 @@ public class CatView {
 
             // Order categories
             final ObservableList<String> c = FXCollections.observableArrayList(lCategories);
-            speedTestBarChartXAxis.setCategories(FXCollections.observableArrayList(new LinkedHashSet<>()));
+            //speedTestBarChartXAxis.setCategories(FXCollections.observableArrayList(new LinkedHashSet<>()));  // TODO: remove ???
             speedTestBarChartXAxis.setCategories(c);
 
             if (lSpeedTestBar.getSeries().getData().size() - 1 > 0) {
@@ -3053,9 +3060,8 @@ public class CatView {
                 speedTestConfigureButton.setDisable(true);
                 speedTestStartStopButton.getStyleClass().add("buttonWarning");
                 speedTestStartStopButton.setDisable(false);
-                Tooltip lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.speedTest.tooltip.stop"));
                 if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE))
-                    Tooltip.install(speedTestStartStopButton, lTooltip);
+                    Tooltip.install(speedTestStartStopButton, stopSpeedTestTooltip);
             } else {
                 speedTestStartStopButton.setText(Display.getViewResourceBundle().getString("catView.speedTest.start"));
                 speedTestConfigureButton.setDisable(false);
@@ -3063,9 +3069,8 @@ public class CatView {
                     speedTestStartStopButton.getStyleClass().removeAll("buttonWarning");
                 }
                 speedTestStartStopButton.setDisable(speedTestDownloadUrl == null || speedTestUploadUrl == null);
-                Tooltip lTooltip = new Tooltip(Display.getViewResourceBundle().getString("catView.speedTest.tooltip.start"));
                 if (Preferences.getInstance().getBooleanValue("enableGeneralTooltip", Constants.DEFAULT_ENABLE_GENERAL_TOOLTIP_PREFERENCE))
-                    Tooltip.install(speedTestStartStopButton, lTooltip);
+                    Tooltip.install(speedTestStartStopButton, startSpeedTestTooltip);
             }
             speedTestStartState = !speedTestStartState;
         });

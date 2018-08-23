@@ -53,6 +53,8 @@ public class MonitoringJob implements Runnable {
         }
 
     }
+    private final ServerReachability serverReachability = new ServerReachability();
+
 
     // Semaphore
     private final Object lock = new Object();
@@ -778,17 +780,15 @@ public class MonitoringJob implements Runnable {
      */
     private ServerReachability checkServerReachability(ServerParameters aInServerParameters) {
 
-        ServerReachability lServerReachability = new ServerReachability();
-
         // Use tcp sockets to test reachability if a port has been found, otherwise use standard isReachable method
-        lServerReachability.retries = (aInServerParameters.port != 0)
+        serverReachability.retries = (aInServerParameters.port != 0)
                                       ? Network.isReachable(aInServerParameters.remoteIp, aInServerParameters.port, networkInterface, aInServerParameters.timeout,
                                                             aInServerParameters.maxRetries, useProxy)
                                       : Network.isReachable(aInServerParameters.remoteIp, networkInterface, aInServerParameters.timeout, aInServerParameters.maxRetries,
                                                             aInServerParameters.pollingPeriod);
-        lServerReachability.isReachable = (lServerReachability.retries <= aInServerParameters.maxRetries);
+        serverReachability.isReachable = (serverReachability.retries <= aInServerParameters.maxRetries);
 
-        return lServerReachability;
+        return serverReachability;
     }
 
     /**

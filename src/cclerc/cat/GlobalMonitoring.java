@@ -138,74 +138,6 @@ public class GlobalMonitoring {
 
     }
 
-    /**
-     * Class allowing to simulate lost pings to test unstability alarms
-     * Press 1 to lose ping on all wan jobs
-     * Press 2 to lose ping on all lan jobs
-     * Press 3 to lose ping on all eth jobs
-     * Press 4 to lose ping on all wifi jobs
-     */
-    class Test implements Runnable {
-
-        private boolean running = true;
-
-        @Override
-        public void run() {
-
-            // Name thread
-            Thread.currentThread().setName("Test Thread");
-
-            // Run the thread
-            while (running) {
-
-                Scanner lScanner = new Scanner(System.in);
-                int lChoice = lScanner.nextInt();
-
-                switch (lChoice) {
-
-                    case 1:
-                        for (MonitoringJob lMonitoringJob: monitoringJobStates.keySet()) {
-                            if (lMonitoringJob.getAddressType().equals(EnumTypes.AddressType.WAN)) {
-                                changeJobState(lMonitoringJob, EnumTypes.HostState.PING_LOST);
-                            }
-                        }
-                        break;
-                    case 2:
-                        for (MonitoringJob lMonitoringJob: monitoringJobStates.keySet()) {
-                            if (lMonitoringJob.getAddressType().equals(EnumTypes.AddressType.LAN)) {
-                                changeJobState(lMonitoringJob, EnumTypes.HostState.PING_LOST);
-                            }
-                        }
-                        break;
-                    case 3:
-                        for (MonitoringJob lMonitoringJob: monitoringJobStates.keySet()) {
-                            if (lMonitoringJob.getInterfaceType().equals(EnumTypes.InterfaceType.ETH)) {
-                                changeJobState(lMonitoringJob, EnumTypes.HostState.PING_LOST);
-                            }
-                        }
-                        break;
-                    case 4:
-                        for (MonitoringJob lMonitoringJob: monitoringJobStates.keySet()) {
-                            if (lMonitoringJob.getInterfaceType().equals(EnumTypes.InterfaceType.WIFI)) {
-                                changeJobState(lMonitoringJob, EnumTypes.HostState.PING_LOST);
-                            }
-                        }
-                        break;
-                    default:
-                        break;
-
-                }
-                Utilities.sleep(1000);
-
-            }
-
-        }
-
-        public synchronized void terminate() {
-            running = false;
-        }
-    }
-
     class PeriodicCheck implements Runnable {
 
         private boolean running = true;
@@ -227,8 +159,11 @@ public class GlobalMonitoring {
          */
         private void sendMail(EnumTypes.ConnectionType aInConnectionType, Alarm aInAlarm, boolean aInStart) {
 
-            Email email = new Email((!Cat.getInstance().displayGraphicalInterface() || Cat.getInstance().getController().isButtonGeneralEmailEnabled()),
-                                    Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getPreferredSmtpServer());
+
+            if ((!Cat.getInstance().displayGraphicalInterface() || Cat.getInstance().getController().isButtonGeneralEmailEnabled()) &&
+                Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getSmtpServerConfigurations().size() != 0 &&
+                !Configuration.getCurrentConfiguration().getEmailConfiguration().getRecipientList().isEmpty()) email.enable();
+            else email.disable();
 
             String lLocalHostName = "";
             try {
@@ -343,13 +278,14 @@ public class GlobalMonitoring {
             BufferedReader lReportJobResultBuffer = new BufferedReader(new InputStreamReader(lReportJobResultInputStream));
             reportJobResultTemplate = lReportJobResultBuffer.lines().collect(Collectors.joining("\n"));
 
+            HashMap<EnumTypes.ConnectionType, Double> lStatsPerConnectionType = new HashMap<>();
+
             // Run the thread
             while (running) {
 
                 // Initializations
                 long lNow = System.currentTimeMillis();
                 GlobalMonitoringConfiguration lConfiguration = Configuration.getCurrentConfiguration().getGlobalMonitoringConfiguration();
-                HashMap<EnumTypes.ConnectionType, Double> lStatsPerConnectionType = new HashMap<>();
                 Double lNetworkStats = 0.0;
 
                 // Parse all monitoring jobs
@@ -473,10 +409,10 @@ public class GlobalMonitoring {
         }
     }
 
-    // Class variables
-
     // Global monitoring instance
     private static GlobalMonitoring globalMonitoringInstance = new GlobalMonitoring();
+
+    private Email email;
 
     // Monitoring jobs information
     private HashMap<MonitoringJob, JobDetails> monitoringJobStates = new HashMap<>();
@@ -526,8 +462,9 @@ public class GlobalMonitoring {
 
     private GlobalMonitoring() {
 
-        // Constants
-        final boolean TEST_ENABLE = false;
+        // Create email
+        email = new Email((!Cat.getInstance().displayGraphicalInterface() || Cat.getInstance().getController().isButtonGeneralEmailEnabled()),
+                          Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getPreferredSmtpServer());
 
         // Launch periodic check
         Thread lThread = new Thread(periodicCheck);
@@ -536,12 +473,6 @@ public class GlobalMonitoring {
         // Launch periodic speed test and periodic reports
         PeriodicSpeedTest.getInstance().start();
         PeriodicReports.getInstance().start();
-
-        // For test only - to be disabled when not useful
-        if (TEST_ENABLE) {
-            Thread lThreadTest = new Thread(new Test());
-            lThreadTest.start();
-        }
 
     }
 
@@ -818,10 +749,10 @@ public class GlobalMonitoring {
      */
     private void sendMail(String aInType, Alarm aInAlarm) {
 
-        Email email = new Email((!Cat.getInstance().displayGraphicalInterface() || Cat.getInstance().getController().isButtonGeneralEmailEnabled()) &&
-                                Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getSmtpServerConfigurations().size() != 0 &&
-                                !Configuration.getCurrentConfiguration().getEmailConfiguration().getRecipientList().isEmpty(),
-                                Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getPreferredSmtpServer());
+        if ((!Cat.getInstance().displayGraphicalInterface() || Cat.getInstance().getController().isButtonGeneralEmailEnabled()) &&
+        Configuration.getCurrentConfiguration().getEmailConfiguration().getSmtpServersConfiguration().getSmtpServerConfigurations().size() != 0 &&
+        !Configuration.getCurrentConfiguration().getEmailConfiguration().getRecipientList().isEmpty()) email.enable();
+        else email.disable();
 
         String lLocalHostName = "";
         try {

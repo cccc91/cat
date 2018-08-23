@@ -130,8 +130,8 @@ public class PeriodicSpeedTest implements Runnable {
     private String rawResultTemplate;
     private String barChartMeasurementTemplate;
     private Double maxSpeed;
-    private List<BarChartMeasurement> barChartMeasurements;
-    private List<RawMeasurement> rawMeasurements;
+    private List<BarChartMeasurement> barChartMeasurements = new ArrayList<>();
+    private List<RawMeasurement> rawMeasurements = new ArrayList<>();
 
     // Periodic speed test instance
     private static PeriodicSpeedTest periodicSpeedTest = new PeriodicSpeedTest();
@@ -215,6 +215,8 @@ public class PeriodicSpeedTest implements Runnable {
                                         Display.getViewResourceBundle().getString("speedTest.running"),
                                         LocaleUtilities.getInstance().getMediumDateAndTimeFormat().format(new Date(nextExecutionTime))), EnumTypes.MessageLevel.WARNING));
                     } else {
+//                        if (speedTest != null) speedTest.end();
+//                        speedTest = SpeedTestFactory.getInstance(EnumTypes.SpeedTestType.PERIODIC);
                         if (speedTest == null || speedTest.isInterrupted()) speedTest = SpeedTestFactory.getInstance(EnumTypes.SpeedTestType.PERIODIC);
                         speedTest.start(downloadUrl, uploadUrl);
                     }
@@ -279,8 +281,8 @@ public class PeriodicSpeedTest implements Runnable {
      */
     public void resetReport() {
         maxSpeed = 0d;
-        barChartMeasurements = new ArrayList<>();
-        rawMeasurements = new ArrayList<>();
+        barChartMeasurements.clear();
+        rawMeasurements.clear();
         report = reportBodyTemplate;
     }
 

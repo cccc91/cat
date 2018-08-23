@@ -279,4 +279,14 @@ public class SpeedTest {
         return testRunning;
     }
 
+    /**
+     * Ends current speed test
+     */
+    public void end() {
+        if (speedTestSocket != null) {
+            speedTestSocket.forceStopTask();
+            speedTestSocket.closeSocket();
+        }
+    }
+
 }
