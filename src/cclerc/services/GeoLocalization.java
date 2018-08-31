@@ -24,6 +24,7 @@ public class GeoLocalization {
             // Read the database
             InputStream lInputStream = getClass().getResourceAsStream("/resources/geoLocalization/" + Constants.GEO_LOC_DATABASE);
             geoLocalizationDatabase = new DatabaseReader.Builder(lInputStream).build();
+            lInputStream.close();
 
             // Get localization of local ip
             InetAddress lLocalIp = InetAddress.getByName(Network.getExternalIp());

@@ -6,6 +6,7 @@ import fr.bmartel.speedtest.model.SpeedTestError;
 import javafx.application.Platform;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
@@ -145,6 +146,10 @@ public class PeriodicSpeedTest implements Runnable {
             String lCss = lCssBuffer.lines().collect(Collectors.joining());
             String lDownloadColor = lCss.replaceAll(".*chart-download-periodic", "").replaceAll("}.*", "").replaceAll(".*-fx-stroke[^:]*:[ ]*([^;]*);.*", "$1");
             String lUploadColor = lCss.replaceAll(".*chart-upload-periodic", "").replaceAll("}.*", "").replaceAll(".*-fx-stroke[^:]*:[ ]*([^;]*);.*", "$1");
+            try {
+                lCssInputStream.close();
+                lCssBuffer.close();
+            } catch (IOException e) {}
 
             // Load report body template
             InputStream lReportBodyInputStream = getClass().getResourceAsStream("/resources/templates/speedTestReportBody.html");
@@ -159,18 +164,29 @@ public class PeriodicSpeedTest implements Runnable {
                            .replaceAll("#SPEEDTEST_SERVER_HEADER#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.speedTest.rawResults.server"))
                            .replaceAll("#SPEEDTEST_DOWNLOAD_HEADER#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.speedTest.rawResults.download"))
                            .replaceAll("#SPEEDTEST_UPLOAD_HEADER#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.speedTest.rawResults.upload"));
+            try {
+                lReportBodyInputStream.close();
+                lReportBodyBuffer.close();
+            } catch (IOException e) {}
 
             // Load raw result template
             InputStream lRawResultInputStream = getClass().getResourceAsStream("/resources/templates/speedTestReportRawResult.html");
             BufferedReader lRawResultBuffer = new BufferedReader(new InputStreamReader(lRawResultInputStream));
             rawResultTemplate = lRawResultBuffer.lines().collect(Collectors.joining("\n"));
+            try {
+                lRawResultInputStream.close();
+                lRawResultBuffer.close();
+            } catch (IOException e) {}
 
             // Load bar chart measurement template
             InputStream lBarChartMeasurementInputStream = getClass().getResourceAsStream("/resources/templates/speedTestReportBarChartMeasurement.html");
             BufferedReader lBarChartMeasurementBuffer = new BufferedReader(new InputStreamReader(lBarChartMeasurementInputStream));
             barChartMeasurementTemplate = lBarChartMeasurementBuffer.lines().collect(Collectors.joining("\n"));
-
             barChartMeasurementTemplate = barChartMeasurementTemplate.replaceAll("#DOWNLOAD_COLOR#", lDownloadColor).replaceAll("#UPLOAD_COLOR#", lUploadColor);
+            try {
+                lBarChartMeasurementInputStream.close();
+                lBarChartMeasurementBuffer.close();
+            } catch (IOException e) {}
 
         } catch (Exception e) {
             Display.logUnexpectedError(e);

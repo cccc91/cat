@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
@@ -226,6 +227,10 @@ public class GlobalMonitoring {
             colorAlarmMinor = lCss.replaceAll(".*#state-alarm-minor", "").replaceAll("}.*", "").replaceAll(".*-fx-text-fill[^:]*:[ ]*([^;]*);.*", "$1");
             colorAlarmMajor = lCss.replaceAll(".*#state-alarm-major", "").replaceAll("}.*", "").replaceAll(".*-fx-text-fill[^:]*:[ ]*([^;]*);.*", "$1");
             colorAlarmCritical = lCss.replaceAll(".*#state-alarm-critical", "").replaceAll("}.*", "").replaceAll(".*-fx-text-fill[^:]*:[ ]*([^;]*);.*", "$1");
+            try {
+                lCssInputStream.close();
+                lCssBuffer.close();
+            } catch (IOException e) {}
 
             // Load report body template
             InputStream lReportBodyInputStream = getClass().getResourceAsStream("/resources/templates/globalReportBody.html");
@@ -272,11 +277,19 @@ public class GlobalMonitoring {
                                                   Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.jobs.lostConnections"))
                                       .replaceAll("#JOB_ROUND_TRIP_HEADER#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.jobs.roundTrip"))
                                       .replaceAll("#COUNT_TYPE#", Display.getMessagesResourceBundle().getString("generalEmail.periodicReports.global.countType"));
+            try {
+                lReportBodyInputStream.close();
+                lReportBodyBuffer.close();
+            } catch (IOException e) {}
 
             // Load report job result template
             InputStream lReportJobResultInputStream = getClass().getResourceAsStream("/resources/templates/globalReportJobResult.html");
             BufferedReader lReportJobResultBuffer = new BufferedReader(new InputStreamReader(lReportJobResultInputStream));
             reportJobResultTemplate = lReportJobResultBuffer.lines().collect(Collectors.joining("\n"));
+            try {
+                lReportJobResultInputStream.close();
+                lReportJobResultBuffer.close();
+            } catch (IOException e) {}
 
             HashMap<EnumTypes.ConnectionType, Double> lStatsPerConnectionType = new HashMap<>();
 
